@@ -1,0 +1,11 @@
+{
+  "owner": "tmustier",
+  "slug": "dyson-cli",
+  "displayName": "Dyson Fan Control",
+  "latest": {
+    "version": "0.1.0",
+    "publishedAt": 1767700977982,
+    "commit": null
+  },
+  "history": []
+}
