@@ -1,0 +1,11 @@
+{
+  "owner": "buddyh",
+  "slug": "todoist-cli",
+  "displayName": "Todoist CLI",
+  "latest": {
+    "version": "0.2.0",
+    "publishedAt": 1767626758699,
+    "commit": null
+  },
+  "history": []
+}
