@@ -1,0 +1,11 @@
+{
+  "name": "picnic-skill",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "picnic": "./picnic-cli.mjs"
+  },
+  "dependencies": {
+    "picnic-api": "^3.2.0"
+  }
+}
