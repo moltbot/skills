@@ -1,0 +1,11 @@
+{
+  "owner": "steipete",
+  "slug": "tmux",
+  "displayName": "Tmux",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1767545387948,
+    "commit": null
+  },
+  "history": []
+}
