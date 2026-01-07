@@ -1,0 +1,11 @@
+{
+  "owner": "pvoo",
+  "slug": "marktplaats",
+  "displayName": "Marktplaats",
+  "latest": {
+    "version": "0.3.0",
+    "publishedAt": 1767735501201,
+    "commit": null
+  },
+  "history": []
+}
