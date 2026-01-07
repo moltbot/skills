@@ -1,0 +1,11 @@
+{
+  "owner": "scald",
+  "slug": "granola",
+  "displayName": "Granola Meeting Transcripts",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1767669610434,
+    "commit": null
+  },
+  "history": []
+}
