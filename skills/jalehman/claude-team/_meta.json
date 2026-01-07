@@ -1,0 +1,11 @@
+{
+  "owner": "jalehman",
+  "slug": "claude-team",
+  "displayName": "Claude Team",
+  "latest": {
+    "version": "1.5.0",
+    "publishedAt": 1767653321243,
+    "commit": null
+  },
+  "history": []
+}
