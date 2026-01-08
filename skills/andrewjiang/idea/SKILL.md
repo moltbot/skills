@@ -1,6 +1,6 @@
 ---
 name: idea
-description: Launch background Claude sessions to explore and analyze business ideas. Say "Idea: [description]" to trigger.
+description: "Launch background Claude sessions to explore and analyze business ideas. Say 'Idea: [description]' to trigger."
 homepage: https://github.com/anthropics/claude-code
 metadata: {"clawdbot":{"emoji":"💡","requires":{"bins":["claude","tmux","telegram"]}}}
 ---

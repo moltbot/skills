@@ -3,11 +3,16 @@
   "slug": "idea",
   "displayName": "Idea Recorder",
   "latest": {
-    "version": "1.0.3",
-    "publishedAt": 1767899553958,
-    "commit": "https://github.com/clawdbot/skills/commit/0a6ff278aa62d39d69a129053a89a0e6edbb08d4"
+    "version": "1.0.4",
+    "publishedAt": 1767903771087,
+    "commit": null
   },
   "history": [
+    {
+      "version": "1.0.3",
+      "publishedAt": 1767899553958,
+      "commit": "https://github.com/clawdbot/skills/commit/0a6ff278aa62d39d69a129053a89a0e6edbb08d4"
+    },
     {
       "version": "1.0.2",
       "publishedAt": 1767821479443,
