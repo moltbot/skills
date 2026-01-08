@@ -3,11 +3,16 @@
   "slug": "radarr",
   "displayName": "Radarr",
   "latest": {
-    "version": "1.2.0",
-    "publishedAt": 1767862856769,
-    "commit": "https://github.com/clawdbot/skills/commit/f5f861978856b6c067bc94f0aa2d9632d624786f"
+    "version": "1.3.0",
+    "publishedAt": 1767863077881,
+    "commit": null
   },
   "history": [
+    {
+      "version": "1.2.0",
+      "publishedAt": 1767862856769,
+      "commit": "https://github.com/clawdbot/skills/commit/f5f861978856b6c067bc94f0aa2d9632d624786f"
+    },
     {
       "version": "1.0.0",
       "publishedAt": 1767859241659,

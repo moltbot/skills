@@ -204,6 +204,20 @@ case "$cmd" in
     if [ "$searchFlag" = "true" ] && [ "$added" -gt 0 ]; then
       echo "🔍 Search started for new movies"
     fi
+    
+    # Monitor the collection for future movies
+    collections=$(curl -s -H "$AUTH" "$API/collection")
+    collection=$(echo "$collections" | jq --argjson tid "$collectionTmdbId" '.[] | select(.tmdbId == $tid)')
+    
+    if [ -n "$collection" ] && [ "$collection" != "null" ]; then
+      collectionId=$(echo "$collection" | jq -r '.id')
+      
+      # Update collection to monitored
+      updatePayload=$(echo "$collection" | jq --arg rf "$rootFolder" --argjson qp "$qualityProfile" '. + {monitored: true, searchOnAdd: true, qualityProfileId: $qp, rootFolderPath: $rf}')
+      
+      curl -s -X PUT -H "$AUTH" -H "Content-Type: application/json" -d "$updatePayload" "$API/collection/$collectionId" > /dev/null
+      echo "👁️ Collection monitored (new releases auto-added)"
+    fi
     ;;
     
   remove)
