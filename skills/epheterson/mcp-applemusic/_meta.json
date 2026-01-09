@@ -1,0 +1,11 @@
+{
+  "owner": "epheterson",
+  "slug": "mcp-applemusic",
+  "displayName": "Apple Music",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1767940548751,
+    "commit": null
+  },
+  "history": []
+}
