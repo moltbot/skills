@@ -1,6 +1,6 @@
 ---
 name: radarr
-version: 1.0.0
+version: 1.0.1
 description: Search and add movies to Radarr. Supports collections, search-on-add option.
 metadata: {"clawdbot":{"emoji":"🎬","requires":{"bins":["curl","jq"]}}}
 ---

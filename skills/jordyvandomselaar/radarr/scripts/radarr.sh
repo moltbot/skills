@@ -212,11 +212,15 @@ case "$cmd" in
     if [ -n "$collection" ] && [ "$collection" != "null" ]; then
       collectionId=$(echo "$collection" | jq -r '.id')
       
-      # Update collection to monitored
-      updatePayload=$(echo "$collection" | jq --arg rf "$rootFolder" --argjson qp "$qualityProfile" '. + {monitored: true, searchOnAdd: true, qualityProfileId: $qp, rootFolderPath: $rf}')
+      # Get full collection details and update with monitoring
+      fullCollection=$(curl -s -H "$AUTH" "$API/collection/$collectionId")
+      updatePayload=$(echo "$fullCollection" | jq '. + {monitored: true, searchOnAdd: true}')
       
-      curl -s -X PUT -H "$AUTH" -H "Content-Type: application/json" -d "$updatePayload" "$API/collection/$collectionId" > /dev/null
-      echo "👁️ Collection monitored (new releases auto-added)"
+      updateResult=$(curl -s -X PUT -H "$AUTH" -H "Content-Type: application/json" -d "$updatePayload" "$API/collection/$collectionId")
+      
+      if echo "$updateResult" | jq -e '.monitored' > /dev/null 2>&1; then
+        echo "👁️ Collection monitored (new releases auto-added)"
+      fi
     fi
     ;;
     
