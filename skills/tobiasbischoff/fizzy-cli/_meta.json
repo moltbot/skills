@@ -1,0 +1,11 @@
+{
+  "owner": "tobiasbischoff",
+  "slug": "fizzy-cli",
+  "displayName": "fizzy.do - have your agent read, understand and update your fizzy.do boards",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1767960489992,
+    "commit": null
+  },
+  "history": []
+}
