@@ -29,7 +29,10 @@ brew install rursache/tap/solo-cli
 - Queue: `solo-cli queue`
 - E-Factura: `solo-cli efactura`
 - Company: `solo-cli company`
+- Upload: `solo-cli upload file.pdf`
+- Delete: `solo-cli queue delete <ID>`
 - TUI: `solo-cli` (no command)
+- Demo: `solo-cli demo`
 
 ## Configuration
 Config file structure:
@@ -78,12 +81,14 @@ solo-cli exp              # Alias
 Output: Amount, currency, category, supplier name
 
 ### queue
-List pending documents in expense queue.
+List pending documents in expense queue or delete them.
 ```bash
-solo-cli queue
+solo-cli queue            # List queue
 solo-cli q                # Alias
+solo-cli queue delete 123 # Delete item by ID
+solo-cli q del 123        # Alias
 ```
-Output: Document name, days pending, overdue status
+Output: Document name, days pending, overdue status (ID included)
 
 ### efactura
 List e-Factura documents.
@@ -99,6 +104,20 @@ Show company profile.
 solo-cli company
 ```
 Output: Company name, CUI, registration number, address
+
+### upload <file>
+Upload an expense document (PDF or image).
+```bash
+solo-cli upload invoice.pdf
+solo-cli up invoice.pdf   # Alias
+```
+Output: Upload status and confirmation.
+
+### demo
+Start TUI with mock data for screenshots or testing (no API calls).
+```bash
+solo-cli demo
+```
 
 ### tui
 Start interactive TUI mode (default when no command given).
@@ -129,6 +148,12 @@ solo-cli expenses | grep -i "food"
 
 # View specific year
 solo-cli summary 2024
+
+# Upload a document
+solo-cli upload invoice.pdf
+
+# Delete a queued item
+solo-cli queue delete 123456
 ```
 
 ## Authentication flow

@@ -3,9 +3,15 @@
   "slug": "solo-cli",
   "displayName": "SOLO.ro cli",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1768044156980,
-    "commit": "https://github.com/clawdbot/skills/commit/5a3d8118ebb32065eac017365c80cabce2a327f1"
+    "version": "1.1.0",
+    "publishedAt": 1768049400407,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1768044156980,
+      "commit": "https://github.com/clawdbot/skills/commit/5a3d8118ebb32065eac017365c80cabce2a327f1"
+    }
+  ]
 }
