@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.2
+
+- Add `homeycli` wrapper entrypoint to reduce "permission denied" issues and automatically install npm deps if missing.
+- Add `homeycli device <name> capabilities` to list settable capabilities.
+- Local onboarding smoothing: `auth set-local` attempts mDNS discovery if address is missing.
+
 ## 1.1.1
 
 - Auth hardening: reject wrong token types early (local triple-part key vs cloud token) and validate token characters to avoid invalid HTTP header errors.

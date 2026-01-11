@@ -135,7 +135,7 @@ program
 // Device operations
 program
   .command('device <nameOrId> <action> [capability] [value]')
-  .description('Device operations (on/off/set/get/values/inspect)')
+  .description('Device operations (on/off/set/get/values/inspect/capabilities)')
   .action((nameOrId, action, capability, value) =>
     runOrExit((opts) => {
       if (action === 'on') return commands.controlDevice(nameOrId, 'on', opts);
@@ -152,10 +152,11 @@ program
       }
       if (action === 'values') return commands.getDeviceValues(nameOrId, opts);
       if (action === 'inspect') return commands.inspectDevice(nameOrId, opts);
+      if (action === 'capabilities') return commands.getDeviceCapabilities(nameOrId, opts);
 
       throw cliError(
         'INVALID_VALUE',
-        'invalid device action. Use: on, off, set <capability> <value>, get [capability], values, inspect'
+        'invalid device action. Use: on, off, set <capability> <value>, get [capability], values, inspect, capabilities'
       );
     })
   );

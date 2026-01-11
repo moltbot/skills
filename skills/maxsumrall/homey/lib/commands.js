@@ -28,17 +28,18 @@ function createClient() {
           path: conn.path,
           help:
             'Local mode (LAN/VPN):\n' +
-            '  1) Generate a local API key in the Homey Web App\n' +
-            '  2) Configure address + token:\n' +
-            '     export HOMEY_MODE=local\n' +
-            '     homeycli auth discover-local --save\n' +
-            '     echo "<LOCAL_API_KEY>" | homeycli auth set-local --stdin\n' +
-            '     # (or set address explicitly: --address http://<homey-ip>)\n\n' +
+            '  1) Discover + save address (mDNS):\n' +
+            '     homeycli auth discover-local --json\n' +
+            '     homeycli auth discover-local --save --pick 1\n' +
+            '  2) Save local API key:\n' +
+            '     homeycli auth set-local --prompt\n' +
+            '     # or: echo "<LOCAL_API_KEY>" | homeycli auth set-local --stdin\n\n' +
             'Cloud mode (remote/headless):\n' +
             '  1) Create a token in Homey Developer Tools\n' +
             '  2) Configure token:\n' +
             '     export HOMEY_MODE=cloud\n' +
-            '     echo "<CLOUD_TOKEN>" | homeycli auth set-token --stdin\n\n' +
+            '     homeycli auth set-token --prompt\n' +
+            '     # or: echo "<CLOUD_TOKEN>" | homeycli auth set-token --stdin\n\n' +
             'OAuth (advanced): https://api.developer.homey.app/',
         }
       );
@@ -293,6 +294,84 @@ async function inspectDevice(name, options) {
 }
 
 /**
+ * List device capabilities (with a focus on what is settable).
+ */
+async function getDeviceCapabilities(name, options) {
+  const client = createClient();
+  const device = await client.getDevice(name, options);
+
+  const capsObj = device.capabilitiesObj || {};
+  const all = Object.entries(capsObj).map(([id, cap]) => {
+    const type = cap?.type || (cap && 'value' in cap ? typeof cap.value : null);
+    const setable = Boolean(cap?.setable);
+    const getable = cap?.getable !== undefined ? Boolean(cap?.getable) : true;
+
+    return {
+      id,
+      type,
+      setable,
+      getable,
+      units: cap?.units || null,
+      min: cap?.min ?? null,
+      max: cap?.max ?? null,
+      step: cap?.step ?? null,
+      decimals: cap?.decimals ?? null,
+      title: cap?.title || null,
+    };
+  });
+
+  const settable = all.filter((c) => c.setable).map((c) => c.id).sort();
+  const readable = all.filter((c) => c.getable).map((c) => c.id).sort();
+
+  const data = {
+    device: { id: device.id, name: device.name },
+    settable,
+    readable,
+    capabilities: all
+      .sort((a, b) => {
+        // Show settable first, then alphabetical.
+        if (a.setable !== b.setable) return a.setable ? -1 : 1;
+        return a.id.localeCompare(b.id);
+      }),
+  };
+
+  if (options.json) {
+    output(data, options);
+    return;
+  }
+
+  console.log(chalk.bold(`\n🧩 Capabilities: ${device.name}\n`));
+
+  if (!settable.length) {
+    console.log(chalk.yellow('No settable capabilities found (device may be read-only).'));
+  } else {
+    console.log(chalk.green(`Settable (${settable.length}):`));
+    console.log(`  ${settable.join(', ')}`);
+  }
+
+  const table = new Table({
+    head: [chalk.cyan('Capability'), chalk.cyan('Settable'), chalk.cyan('Type'), chalk.cyan('Units'), chalk.cyan('Range')],
+    colWidths: [28, 10, 10, 10, 20],
+  });
+
+  for (const c of data.capabilities) {
+    const range = (c.min !== null || c.max !== null)
+      ? `${c.min ?? ''}..${c.max ?? ''}${c.step !== null ? ` step ${c.step}` : ''}`
+      : '-';
+    table.push([
+      c.id,
+      c.setable ? chalk.green('yes') : chalk.gray('no'),
+      c.type || '-',
+      c.units || '-',
+      range,
+    ]);
+  }
+
+  console.log('');
+  console.log(table.toString());
+}
+
+/**
  * Get all current capability values for a device
  */
 async function getDeviceValues(name, options) {
@@ -499,10 +578,26 @@ async function authSetLocal(token, options) {
     address = String(config.getLocalAddressInfo().address || '').trim();
   }
   if (!address) {
-    throw cliError(
-      'INVALID_VALUE',
-      'address is required (use --address http://<homey-ip> or run: homeycli auth discover-local --save)'
-    );
+    // Onboarding smoothing: try best-effort discovery.
+    const discovered = await discoverLocalHomeys({ timeoutMs: 4000 });
+    if (discovered.length === 1) {
+      address = discovered[0].address;
+      config.saveLocalAddress(address);
+    } else if (discovered.length > 1) {
+      throw cliError(
+        'AMBIGUOUS',
+        `found ${discovered.length} local Homey candidates; choose one and save it first`,
+        {
+          candidates: formatCandidates(discovered),
+          help: 'Run: homeycli auth discover-local --save --pick <n> (or --homey-id <id>)',
+        }
+      );
+    } else {
+      throw cliError(
+        'INVALID_VALUE',
+        'address is required (use --address http://<homey-ip> or run: homeycli auth discover-local --save)'
+      );
+    }
   }
 
   const t = String(token || '').trim();
@@ -767,6 +862,7 @@ module.exports = {
   setCapability,
   getCapability,
   getDeviceValues,
+  getDeviceCapabilities,
   inspectDevice,
   listFlows,
   triggerFlow,

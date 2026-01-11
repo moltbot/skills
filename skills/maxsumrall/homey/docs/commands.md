@@ -25,6 +25,7 @@ homeycli devices --match "kitchen" --json
 ```bash
 homeycli device <nameOrId> values --json
 homeycli device <nameOrId> inspect --json
+homeycli device <nameOrId> capabilities --json
 homeycli device <nameOrId> get <capability> --json
 homeycli device <nameOrId> set <capability> <value> --json
 homeycli device <nameOrId> on --json

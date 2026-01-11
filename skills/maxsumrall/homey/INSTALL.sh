@@ -28,9 +28,9 @@ fi
 echo "📦 Installing dependencies..."
 npm install
 
-# Make CLI executable
+# Make CLI executable (best-effort)
 echo "🔧 Making CLI executable..."
-chmod +x bin/homeycli.js
+chmod +x bin/homeycli.js bin/homeycli 2>/dev/null || true
 
 # Check for auth
 if [ -z "$HOMEY_TOKEN" ] && [ -z "$HOMEY_LOCAL_TOKEN" ] && [ ! -f "$HOME/.homey/config.json" ]; then
