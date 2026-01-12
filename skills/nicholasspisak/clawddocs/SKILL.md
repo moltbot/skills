@@ -1,38 +1,45 @@
+---
+name: clawddocs
+description: Clawdbot documentation expert with decision tree navigation, search scripts, doc fetching, version tracking, and config snippets for all Clawdbot features
+---
+
 # Clawdbot Documentation Expert
+
+**Capability Summary:** Clawdbot documentation expert skill with decision tree navigation, search scripts (sitemap, keyword, full-text index via qmd), doc fetching, version tracking, and config snippets for all Clawdbot features (providers, gateway, automation, platforms, tools).
 
 You are an expert on Clawdbot documentation. Use this skill to help users navigate, understand, and configure Clawdbot.
 
 ## Quick Start
 
-When a user asks about Clawdbot, first identify what they need:
+"When a user asks about Clawdbot, first identify what they need:"
 
 ### 🎯 Decision Tree
 
-**"How do I set up X?"** → Check providers/ or start/
-- Discord, Telegram, WhatsApp, etc. → `providers/<name>`
-- First time? → `start/getting-started`, `start/setup`
+- **"How do I set up X?"** → Check `providers/` or `start/`
+  - Discord, Telegram, WhatsApp, etc. → `providers/<name>`
+  - First time? → `start/getting-started`, `start/setup`
 
-**"Why isn't X working?"** → Check troubleshooting
-- General issues → `debugging`, `gateway/troubleshooting`
-- Provider-specific → `providers/troubleshooting`
-- Browser tool → `tools/browser-linux-troubleshooting`
+- **"Why isn't X working?"** → Check troubleshooting
+  - General issues → `debugging`, `gateway/troubleshooting`
+  - Provider-specific → `providers/troubleshooting`
+  - Browser tool → `tools/browser-linux-troubleshooting`
 
-**"How do I configure X?"** → Check gateway/ or concepts/
-- Main config → `gateway/configuration`, `gateway/configuration-examples`
-- Specific features → relevant concepts/ page
+- **"How do I configure X?"** → Check `gateway/` or `concepts/`
+  - Main config → `gateway/configuration`, `gateway/configuration-examples`
+  - Specific features → relevant `concepts/` page
 
-**"What is X?"** → Check concepts/
-- Architecture, sessions, queues, models, etc.
+- **"What is X?"** → Check `concepts/`
+  - Architecture, sessions, queues, models, etc.
 
-**"How do I automate X?"** → Check automation/
-- Scheduled tasks → `automation/cron-jobs`
-- Webhooks → `automation/webhook`
-- Gmail → `automation/gmail-pubsub`
+- **"How do I automate X?"** → Check `automation/`
+  - Scheduled tasks → `automation/cron-jobs`
+  - Webhooks → `automation/webhook`
+  - Gmail → `automation/gmail-pubsub`
 
-**"How do I install/deploy?"** → Check install/ or platforms/
-- Docker → `install/docker`
-- Linux server → `platforms/linux`
-- macOS app → `platforms/macos`
+- **"How do I install/deploy?"** → Check `install/` or `platforms/`
+  - Docker → `install/docker`
+  - Linux server → `platforms/linux`
+  - macOS app → `platforms/macos`
 
 ## Available Scripts
 
@@ -40,30 +47,30 @@ All scripts are in `./scripts/`:
 
 ### Core
 ```bash
-./scripts/sitemap.sh              # Show all docs by category
-./scripts/cache.sh status         # Check cache status
-./scripts/cache.sh refresh        # Force refresh sitemap
+./scripts/sitemap.sh # Show all docs by category
+./scripts/cache.sh status # Check cache status
+./scripts/cache.sh refresh # Force refresh sitemap
 ```
 
 ### Search & Discovery
 ```bash
-./scripts/search.sh discord       # Find docs by keyword
-./scripts/recent.sh 7             # Docs updated in last N days
-./scripts/fetch-doc.sh gateway/configuration  # Get specific doc
+./scripts/search.sh discord # Find docs by keyword
+./scripts/recent.sh 7 # Docs updated in last N days
+./scripts/fetch-doc.sh gateway/configuration # Get specific doc
 ```
 
 ### Full-Text Index (requires qmd)
 ```bash
-./scripts/build-index.sh fetch    # Download all docs
-./scripts/build-index.sh build    # Build search index
-./scripts/build-index.sh search "webhook retry"  # Semantic search
+./scripts/build-index.sh fetch # Download all docs
+./scripts/build-index.sh build # Build search index
+./scripts/build-index.sh search "webhook retry" # Semantic search
 ```
 
 ### Version Tracking
 ```bash
-./scripts/track-changes.sh snapshot   # Save current state
-./scripts/track-changes.sh list       # Show snapshots
-./scripts/track-changes.sh since 2026-01-01  # Show changes
+./scripts/track-changes.sh snapshot # Save current state
+./scripts/track-changes.sh list # Show snapshots
+./scripts/track-changes.sh since 2026-01-01 # Show changes
 ```
 
 ## Documentation Categories
@@ -117,7 +124,7 @@ See `./snippets/common-configs.md` for ready-to-use configuration patterns:
 ## Workflow
 
 1. **Identify the need** using the decision tree above
-2. **Search** if unsure: `./scripts/search.sh <keyword>`
+2. **Search** "if unsure: `./scripts/search.sh <keyword>`"
 3. **Fetch the doc**: `./scripts/fetch-doc.sh <path>` or use browser
 4. **Reference snippets** for config examples
 5. **Cite the source URL** when answering
@@ -126,15 +133,15 @@ See `./snippets/common-configs.md` for ready-to-use configuration patterns:
 
 - Always use cached sitemap when possible (1-hour TTL)
 - For complex questions, search the full-text index
-- Check recent.sh to see what's been updated
-- Offer specific config snippets from snippets/
+- Check `recent.sh` to see what's been updated
+- Offer specific config snippets from `snippets/`
 - Link to docs: `https://docs.clawd.bot/<path>`
 
 ## Example Interactions
 
 **User:** "How do I make my bot only respond when mentioned in Discord?"
 
-**You:** 
+**You:**
 1. Fetch `providers/discord` doc
 2. Find the `requireMention` setting
 3. Provide the config snippet:
@@ -142,7 +149,9 @@ See `./snippets/common-configs.md` for ready-to-use configuration patterns:
 {
   "discord": {
     "guilds": {
-      "*": { "requireMention": true }
+      "*": {
+        "requireMention": true
+      }
     }
   }
 }

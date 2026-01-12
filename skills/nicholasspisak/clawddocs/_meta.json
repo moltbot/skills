@@ -3,11 +3,16 @@
   "slug": "clawddocs",
   "displayName": "Clawdbot Documentation Expert",
   "latest": {
-    "version": "1.1.0",
-    "publishedAt": 1768100537275,
-    "commit": "https://github.com/clawdbot/skills/commit/4573e568d7550ddf5ba9b9046d12643c76edf66b"
+    "version": "1.2.2",
+    "publishedAt": 1768244234558,
+    "commit": null
   },
   "history": [
+    {
+      "version": "1.1.0",
+      "publishedAt": 1768100537275,
+      "commit": "https://github.com/clawdbot/skills/commit/4573e568d7550ddf5ba9b9046d12643c76edf66b"
+    },
     {
       "version": "1.0.0",
       "publishedAt": 1768099309187,
