@@ -1,0 +1,10 @@
+{
+  "_comment": "Add to your clawdbot.json or use environment variables",
+  
+  "fathom": {
+    "apiKey": "YOUR_FATHOM_API_KEY"
+  },
+  
+  "_alternative": "Or set environment variable: FATHOM_API_KEY=your_key",
+  "_file": "Or store in file: ~/.fathom_api_key"
+}
