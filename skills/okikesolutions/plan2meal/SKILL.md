@@ -6,7 +6,7 @@ A ClawdHub skill for managing recipes and grocery lists via Plan2Meal, a React N
 
 - **Recipe Management**: Add recipes from URLs, search, view, and delete your recipes
 - **Grocery Lists**: Create and manage shopping lists with recipes
-- **GitHub OAuth**: Secure authentication via GitHub
+- **Backend Authentication**: Secure authentication via Plan2Meal web app (no secrets in skill)
 - **Recipe Extraction**: Automatically fetch recipe metadata from URLs
 - **Telegram Formatting**: Pretty-printed output for Telegram
 
@@ -24,10 +24,15 @@ A ClawdHub skill for managing recipes and grocery lists via Plan2Meal, a React N
    ```
 
 3. Required environment variables:
-   - `CONVEX_URL`: Your Convex deployment URL
-   - `GITHUB_CLIENT_ID`: GitHub OAuth App Client ID
-   - `GITHUB_CLIENT_SECRET`: GitHub OAuth App Client Secret
-   - `CLAWDBOT_URL`: Your ClawdBot URL (for OAuth callback)
+   - `PLAN2MEAL_API_URL`: Your Plan2Meal backend API URL (e.g., `https://api.plan2meal.app`)
+
+   **Optional:**
+   - `PLAN2MEAL_AUTH_URL`: Custom authentication URL (defaults to `https://app.plan2meal.com/sign-in`)
+
+   **Important**: 
+   - **Public Skill**: This skill is published on ClawdHub. No secrets are stored in the skill.
+   - **Authentication**: Users authenticate via your Plan2Meal web app, then copy a session token back to Telegram.
+   - **Backend Security**: All OAuth credentials (GitHub, Convex) are configured in your backend only, never exposed.
 
 ## Commands
 
@@ -106,9 +111,39 @@ plan2meal list-add <listId> <recipeId>
 
 The free tier allows up to **5 recipes**. You'll receive a warning when approaching this limit.
 
-## Authentication
+## Authentication Architecture
 
-First-time users will be prompted to authenticate via GitHub OAuth. The token is stored securely in your session.
+### How It Works
+
+**Skill Owner Setup** (one-time):
+1. Configure your Plan2Meal backend API URL in the skill
+2. Your backend handles all OAuth (GitHub credentials configured in Convex environment variables)
+3. Your backend is configured with the Convex URL (stays private)
+
+**End User Flow**:
+1. User sends a command (e.g., `plan2meal list`)
+2. Skill responds with a link to your Plan2Meal sign-in page (`app.plan2meal.com/sign-in`)
+3. User clicks the link and authenticates with GitHub via your web app
+4. Your backend (using Convex Auth) handles the GitHub OAuth flow
+5. After successful authentication, your backend shows the user a session token
+6. User copies the token and sends it back to Telegram (or types `token: <token>`)
+7. Skill validates the token with your backend and stores it securely
+
+**Backend Processing**:
+- Your Plan2Meal backend uses Convex Auth with GitHub provider
+- GitHub OAuth credentials are stored in Convex environment variables (never exposed)
+- After GitHub auth, backend generates a session token for the user
+- Skill sends session token to your backend API for all requests
+- Your backend validates the token and makes Convex API calls on behalf of the user
+- Convex URL is never exposed to users or the skill
+
+### Key Points
+
+- **Public Skill**: No secrets in the skill - safe to publish on ClawdHub
+- **Backend OAuth**: All OAuth credentials (GitHub, Convex) stay in your backend
+- **User Identification**: Your backend maps session tokens to Convex users internally
+- **Privacy**: Convex URL stays private in your backend only
+- **Security**: Session tokens are validated with your backend before use
 
 ## License
 
