@@ -1,0 +1,11 @@
+{
+  "owner": "portavion",
+  "slug": "glab-cli",
+  "displayName": "Gitlab",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1768381287925,
+    "commit": null
+  },
+  "history": []
+}
