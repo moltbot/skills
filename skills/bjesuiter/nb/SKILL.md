@@ -1,6 +1,8 @@
 ---
 name: nb
 description: Manage notes, bookmarks, and notebooks using the nb CLI. Create, list, search, and organize notes across multiple notebooks with Git-backed versioning.
+author: Benjamin Jesuiter <bjesuiter@gmail.com>
+homepage: https://github.com/xwmx/nb
 metadata:
   clawdbot:
     emoji: "📓"
@@ -214,25 +216,6 @@ nb add <folder>/<filename>.md
 
 ## Common Patterns
 
-### JB's Notebooks
-
-```bash
-# Ideas notebook
-nb ideas: add -t "New Idea" --tags feature,cool
-
-# Projects notebook
-nb projects: add -t "Project Name"
-
-# Reads notebook
-nb reads: add -t "Article Title" -c "URL and notes"
-
-# References notebook
-nb references: add -t "Topic" -c "Reference content"
-
-# Agents notebook (agent scratch space)
-nb agents: add -t "Note" -c "Content"
-```
-
 ### Adding Note with Full Content
 
 For longer notes, create a temp file and import:
@@ -261,11 +244,9 @@ Notes are stored in `~/.nb/<notebook>/` as markdown files with Git versioning.
 
 ```
 ~/.nb/
-├── ideas/           # Ideas notebook
-├── projects/        # Projects notebook
-├── reads/           # Reads notebook
-├── references/      # References notebook
-└── agents/          # Agent scratch space
+├── notebook-name-1/ # Your first notebook
+├── notebook-name-2/ # Your second notebook
+└── ...
 ```
 
 ## Tips
