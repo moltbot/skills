@@ -11,6 +11,8 @@ Analyze US stocks using Yahoo Finance data for quick actionable insights during 
 
 ## Quick Start
 
+**IMPORTANT:** Pass ONLY the stock ticker symbol(s) as arguments. Do NOT add extra text, headers, or formatting in the command.
+
 Analyze a single ticker:
 
 ```bash
@@ -23,6 +25,13 @@ Compare multiple tickers:
 ```bash
 uv run {baseDir}/scripts/analyze_stock.py AAPL MSFT GOOGL
 ```
+
+**Examples:**
+- ✅ CORRECT: `uv run {baseDir}/scripts/analyze_stock.py BAC`
+- ❌ WRONG: `uv run {baseDir}/scripts/analyze_stock.py === BANK OF AMERICA (BAC) - Q4 2025 EARNINGS ===`
+- ❌ WRONG: `uv run {baseDir}/scripts/analyze_stock.py "Bank of America"`
+
+Use the ticker symbol only (e.g., BAC, not "Bank of America").
 
 ## Analysis Components
 
