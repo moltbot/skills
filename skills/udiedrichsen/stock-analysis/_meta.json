@@ -3,11 +3,16 @@
   "slug": "stock-analysis",
   "displayName": "Stock Analysis",
   "latest": {
-    "version": "2.0.0",
-    "publishedAt": 1768408281094,
-    "commit": "https://github.com/clawdbot/skills/commit/e381887e572635fc39bfe331ead82c6f330cfa62"
+    "version": "3.0.0",
+    "publishedAt": 1768457437779,
+    "commit": null
   },
   "history": [
+    {
+      "version": "2.0.0",
+      "publishedAt": 1768408281094,
+      "commit": "https://github.com/clawdbot/skills/commit/e381887e572635fc39bfe331ead82c6f330cfa62"
+    },
     {
       "version": "1.0.1",
       "publishedAt": 1768404118281,
