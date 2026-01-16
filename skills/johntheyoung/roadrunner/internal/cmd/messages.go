@@ -91,11 +91,19 @@ func (c *MessagesListCmd) Run(ctx context.Context, flags *RootFlags) error {
 
 // MessagesSearchCmd searches for messages.
 type MessagesSearchCmd struct {
-	Query     string `arg:"" help:"Search query (literal word match)"`
-	ChatID    string `help:"Filter by chat ID" name:"chat-id"`
-	Cursor    string `help:"Pagination cursor"`
-	Direction string `help:"Pagination direction: before|after" enum:"before,after," default:""`
-	Limit     int    `help:"Max results (1-20)" default:"20"`
+	Query              string   `arg:"" optional:"" help:"Search query (literal word match)"`
+	AccountIDs         []string `help:"Filter by account IDs" name:"account-ids"`
+	ChatIDs            []string `help:"Filter by chat IDs" name:"chat-id"`
+	ChatType           string   `help:"Filter by chat type: single|group" name:"chat-type" enum:"single,group," default:""`
+	Sender             string   `help:"Filter by sender: me|others|<user-id>" name:"sender"`
+	MediaTypes         []string `help:"Filter by media types: any|image|video|link|file" name:"media-types"`
+	DateAfter          string   `help:"Only include messages after time (RFC3339 or duration)" name:"date-after"`
+	DateBefore         string   `help:"Only include messages before time (RFC3339 or duration)" name:"date-before"`
+	IncludeMuted       *bool    `help:"Include muted chats (default true)" name:"include-muted"`
+	ExcludeLowPriority *bool    `help:"Exclude low priority messages (default true)" name:"exclude-low-priority"`
+	Cursor             string   `help:"Pagination cursor"`
+	Direction          string   `help:"Pagination direction: before|after" enum:"before,after," default:""`
+	Limit              int      `help:"Max results (1-20)" default:"20"`
 }
 
 // Run executes the messages search command.
@@ -104,6 +112,36 @@ func (c *MessagesSearchCmd) Run(ctx context.Context, flags *RootFlags) error {
 
 	if c.Limit < 1 || c.Limit > 20 {
 		return errfmt.UsageError("invalid --limit %d (expected 1-20)", c.Limit)
+	}
+	allowedMedia := map[string]struct{}{
+		"any":   {},
+		"image": {},
+		"video": {},
+		"link":  {},
+		"file":  {},
+	}
+	for _, media := range c.MediaTypes {
+		if _, ok := allowedMedia[media]; !ok {
+			return errfmt.UsageError("invalid --media-types %q (expected any|image|video|link|file)", media)
+		}
+	}
+
+	var dateAfter *time.Time
+	if c.DateAfter != "" {
+		t, err := parseTime(c.DateAfter)
+		if err != nil {
+			return errfmt.UsageError("invalid --date-after %q (expected RFC3339 or duration)", c.DateAfter)
+		}
+		dateAfter = &t
+	}
+
+	var dateBefore *time.Time
+	if c.DateBefore != "" {
+		t, err := parseTime(c.DateBefore)
+		if err != nil {
+			return errfmt.UsageError("invalid --date-before %q (expected RFC3339 or duration)", c.DateBefore)
+		}
+		dateBefore = &t
 	}
 
 	token, _, err := config.GetToken()
@@ -118,11 +156,19 @@ func (c *MessagesSearchCmd) Run(ctx context.Context, flags *RootFlags) error {
 	}
 
 	resp, err := client.Messages().Search(ctx, beeperapi.MessageSearchParams{
-		Query:     c.Query,
-		ChatID:    c.ChatID,
-		Cursor:    c.Cursor,
-		Direction: c.Direction,
-		Limit:     c.Limit,
+		Query:              c.Query,
+		AccountIDs:         c.AccountIDs,
+		ChatIDs:            c.ChatIDs,
+		ChatType:           c.ChatType,
+		Sender:             c.Sender,
+		MediaTypes:         c.MediaTypes,
+		DateAfter:          dateAfter,
+		DateBefore:         dateBefore,
+		IncludeMuted:       c.IncludeMuted,
+		ExcludeLowPriority: c.ExcludeLowPriority,
+		Cursor:             c.Cursor,
+		Direction:          c.Direction,
+		Limit:              c.Limit,
 	})
 	if err != nil {
 		return err

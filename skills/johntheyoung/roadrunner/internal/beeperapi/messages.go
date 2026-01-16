@@ -20,11 +20,19 @@ type MessageListParams struct {
 
 // MessageSearchParams configures message search queries.
 type MessageSearchParams struct {
-	Query     string
-	ChatID    string
-	Cursor    string
-	Direction string // before|after
-	Limit     int
+	Query              string
+	AccountIDs         []string
+	ChatIDs            []string
+	ChatType           string // group|single
+	Sender             string // me|others|<user-id>
+	MediaTypes         []string
+	DateAfter          *time.Time
+	DateBefore         *time.Time
+	IncludeMuted       *bool
+	ExcludeLowPriority *bool
+	Cursor             string
+	Direction          string // before|after
+	Limit              int
 }
 
 // MessageListResult is the list response with pagination info.
@@ -162,8 +170,35 @@ func (s *MessagesService) Search(ctx context.Context, params MessageSearchParams
 	if params.Query != "" {
 		sdkParams.Query = beeperdesktopapi.String(params.Query)
 	}
-	if params.ChatID != "" {
-		sdkParams.ChatIDs = []string{params.ChatID}
+	if len(params.AccountIDs) > 0 {
+		sdkParams.AccountIDs = params.AccountIDs
+	}
+	if len(params.ChatIDs) > 0 {
+		sdkParams.ChatIDs = params.ChatIDs
+	}
+	switch params.ChatType {
+	case "group":
+		sdkParams.ChatType = beeperdesktopapi.MessageSearchParamsChatTypeGroup
+	case "single":
+		sdkParams.ChatType = beeperdesktopapi.MessageSearchParamsChatTypeSingle
+	}
+	if params.Sender != "" {
+		sdkParams.Sender = beeperdesktopapi.MessageSearchParamsSender(params.Sender)
+	}
+	if len(params.MediaTypes) > 0 {
+		sdkParams.MediaTypes = params.MediaTypes
+	}
+	if params.DateAfter != nil {
+		sdkParams.DateAfter = beeperdesktopapi.Time(*params.DateAfter)
+	}
+	if params.DateBefore != nil {
+		sdkParams.DateBefore = beeperdesktopapi.Time(*params.DateBefore)
+	}
+	if params.IncludeMuted != nil {
+		sdkParams.IncludeMuted = beeperdesktopapi.Bool(*params.IncludeMuted)
+	}
+	if params.ExcludeLowPriority != nil {
+		sdkParams.ExcludeLowPriority = beeperdesktopapi.Bool(*params.ExcludeLowPriority)
 	}
 	if params.Cursor != "" {
 		sdkParams.Cursor = beeperdesktopapi.String(params.Cursor)

@@ -50,6 +50,7 @@ type CLI struct {
 
 	Auth       AuthCmd       `cmd:"" help:"Manage authentication"`
 	Accounts   AccountsCmd   `cmd:"" help:"Manage messaging accounts"`
+	Contacts   ContactsCmd   `cmd:"" help:"Search contacts"`
 	Chats      ChatsCmd      `cmd:"" help:"Manage chats"`
 	Messages   MessagesCmd   `cmd:"" help:"Manage messages"`
 	Reminders  RemindersCmd  `cmd:"" help:"Manage chat reminders"`

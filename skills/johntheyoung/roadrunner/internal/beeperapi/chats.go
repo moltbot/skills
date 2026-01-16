@@ -39,14 +39,18 @@ type ChatListItem struct {
 
 // ChatSearchParams configures chat search queries.
 type ChatSearchParams struct {
-	Query      string
-	Inbox      string // primary|low-priority|archive
-	UnreadOnly bool
-	Type       string // direct|group|any
-	Scope      string // titles|participants
-	Limit      int
-	Cursor     string
-	Direction  string // before|after
+	Query              string
+	AccountIDs         []string
+	Inbox              string // primary|low-priority|archive
+	UnreadOnly         bool
+	IncludeMuted       *bool
+	LastActivityAfter  *time.Time
+	LastActivityBefore *time.Time
+	Type               string // direct|group|any
+	Scope              string // titles|participants
+	Limit              int
+	Cursor             string
+	Direction          string // before|after
 }
 
 // ChatSearchResult is the search response with pagination info.
@@ -88,6 +92,20 @@ type ChatDetail struct {
 	ParticipantsTotal      int64  `json:"participants_total"`
 	ParticipantsReturned   int    `json:"participants_returned"`
 	ParticipantsHasMore    bool   `json:"participants_has_more"`
+}
+
+// ChatCreateParams configures chat creation.
+type ChatCreateParams struct {
+	AccountID      string
+	ParticipantIDs []string
+	Type           string // single|group
+	Title          string
+	MessageText    string
+}
+
+// ChatCreateResult is the response from creating a chat.
+type ChatCreateResult struct {
+	ChatID string `json:"chat_id"`
 }
 
 // List retrieves chats with cursor-based pagination.
@@ -149,8 +167,20 @@ func (s *ChatsService) Search(ctx context.Context, params ChatSearchParams) (Cha
 	if params.Query != "" {
 		sdkParams.Query = beeperdesktopapi.String(params.Query)
 	}
+	if len(params.AccountIDs) > 0 {
+		sdkParams.AccountIDs = params.AccountIDs
+	}
 	if params.UnreadOnly {
 		sdkParams.UnreadOnly = beeperdesktopapi.Bool(true)
+	}
+	if params.IncludeMuted != nil {
+		sdkParams.IncludeMuted = beeperdesktopapi.Bool(*params.IncludeMuted)
+	}
+	if params.LastActivityAfter != nil {
+		sdkParams.LastActivityAfter = beeperdesktopapi.Time(*params.LastActivityAfter)
+	}
+	if params.LastActivityBefore != nil {
+		sdkParams.LastActivityBefore = beeperdesktopapi.Time(*params.LastActivityBefore)
 	}
 	if params.Limit > 0 {
 		sdkParams.Limit = beeperdesktopapi.Int(int64(params.Limit))
@@ -250,6 +280,36 @@ func (s *ChatsService) Get(ctx context.Context, chatID string) (ChatDetail, erro
 	detail.DisplayName = displayNameForChat(string(chat.Type), chat.Title, chat.Participants.Items)
 
 	return detail, nil
+}
+
+// Create creates a new chat.
+func (s *ChatsService) Create(ctx context.Context, params ChatCreateParams) (ChatCreateResult, error) {
+	ctx, cancel := s.client.contextWithTimeout(ctx)
+	defer cancel()
+
+	sdkParams := beeperdesktopapi.ChatNewParams{
+		AccountID:      params.AccountID,
+		ParticipantIDs: params.ParticipantIDs,
+	}
+	switch params.Type {
+	case "single":
+		sdkParams.Type = beeperdesktopapi.ChatNewParamsTypeSingle
+	case "group":
+		sdkParams.Type = beeperdesktopapi.ChatNewParamsTypeGroup
+	}
+	if params.Title != "" {
+		sdkParams.Title = beeperdesktopapi.String(params.Title)
+	}
+	if params.MessageText != "" {
+		sdkParams.MessageText = beeperdesktopapi.String(params.MessageText)
+	}
+
+	resp, err := s.client.SDK.Chats.New(ctx, sdkParams)
+	if err != nil {
+		return ChatCreateResult{}, err
+	}
+
+	return ChatCreateResult{ChatID: resp.ChatID}, nil
 }
 
 // Archive archives or unarchives a chat.

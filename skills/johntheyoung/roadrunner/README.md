@@ -62,13 +62,37 @@ rr messages send "!chatid:beeper.com" "Hello!"
 rr search "dinner" --json
 ```
 
+## Reply and Draft
+
+```bash
+# Reply to a specific message
+rr messages send "!chatid:beeper.com" "Thanks!" --reply-to "<message-id>"
+
+# Pre-fill a draft (no message sent)
+rr focus --chat-id="!chatid:beeper.com" --draft-text="Hello!" --draft-attachment="/path/to/file.jpg"
+```
+
+## Start a New Chat
+
+```bash
+# Find a contact on an account
+rr contacts search "<account-id>" "Alice" --json
+
+# Create a chat (single)
+rr chats create "<account-id>" --participant "<user-id>"
+
+# Create a chat (group)
+rr chats create "<account-id>" --participant "<user-a>" --participant "<user-b>" --type group --title "Project Chat" --message "Welcome!"
+```
+
 ## Commands
 
 | Command | Description |
 |---------|-------------|
 | `rr auth set/status/clear` | Manage authentication |
 | `rr accounts list` | List messaging accounts |
-| `rr chats list/search/get/archive` | Manage chats |
+| `rr contacts search` | Search contacts on an account |
+| `rr chats list/search/get/create/archive` | Manage chats |
 | `rr messages list/search/send` | Manage messages |
 | `rr reminders set/clear` | Manage chat reminders |
 | `rr search <query>` | Global search |
@@ -107,7 +131,10 @@ Destructive commands require confirmation. If stdin is not a TTY or `--no-input`
 
 - Message search is literal word match; all words must match exactly.
 - Global `rr search` can page message results with `--messages-cursor`, `--messages-direction`, and `--messages-limit` (max 20).
+- Global `rr search` includes an "In Groups" section for participant name matches.
 - Use `rr chats search --scope=participants` to search by participant names.
+- `rr messages search` supports filters like `--account-ids`, `--chat-id`, `--chat-type`, `--sender`, `--media-types`, `--date-after`, `--date-before`, `--include-muted`, and `--exclude-low-priority`.
+- `rr chats search` supports `--account-ids`, `--include-muted`, and `--last-activity-after/--last-activity-before`.
 - JSON output includes `display_name` for single chats (derived from participants).
 
 ```bash
@@ -117,6 +144,9 @@ rr search "dinner" --messages-cursor="<cursor>" --messages-direction=before --js
 
 # Search chats by participant name
 rr chats search "Jamie" --scope=participants --json
+
+# Filter message search by sender and date
+rr messages search --sender=me --date-after="2024-07-01T00:00:00Z" --json
 ```
 
 ## Scripting Examples

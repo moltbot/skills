@@ -16,19 +16,27 @@ Setup (once)
 
 Common commands
 - List accounts: `rr accounts list --json`
+- Search contacts: `rr contacts search "<account-id>" "Alice" --json`
 - List chats: `rr chats list --json`
 - Search chats: `rr chats search "John" --json`
 - Search chats (filters): `rr chats search --inbox=primary --unread-only --json`
+- Search chats (activity): `rr chats search --last-activity-after="2024-07-01T00:00:00Z" --json`
 - Search by participant name: `rr chats search "Jamie" --scope=participants --json`
 - Get chat: `rr chats get "!chatid:beeper.com" --json`
+- Create chat (single): `rr chats create "<account-id>" --participant "<user-id>"`
+- Create chat (group): `rr chats create "<account-id>" --participant "<user-a>" --participant "<user-b>" --type group --title "Project Chat" --message "Welcome!"`
 - List messages: `rr messages list "!chatid:beeper.com" --json`
 - Search messages: `rr messages search "dinner" --json`
+- Search messages (filters): `rr messages search --sender=me --date-after="2024-07-01T00:00:00Z" --media-types=image --json`
 - Send message: `rr messages send "!chatid:beeper.com" "Hello!"`
+- Reply to message: `rr messages send "!chatid:beeper.com" "Thanks!" --reply-to "<message-id>"`
 - Draft message (pre-fill without sending): `rr focus --chat-id="!chatid:beeper.com" --draft-text="Hello!"`
+- Draft with attachment: `rr focus --chat-id="!chatid:beeper.com" --draft-attachment="/path/to/file.jpg"`
 - Reminders: `rr reminders set "!chatid:beeper.com" "2h"` / `rr reminders clear "!chatid:beeper.com"`
 - Archive chat: `rr chats archive "!chatid:beeper.com"` / `rr chats archive "!chatid:beeper.com" --unarchive`
 - Focus app: `rr focus`
 - Global search: `rr search "dinner" --json`
+- Global search includes `in_groups` for participant matches.
 
 Pagination
 - Chats: `rr chats list --cursor="<oldestCursor>" --direction=before --json`

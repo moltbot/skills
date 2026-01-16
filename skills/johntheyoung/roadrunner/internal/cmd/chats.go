@@ -19,6 +19,7 @@ type ChatsCmd struct {
 	List    ChatsListCmd    `cmd:"" help:"List chats"`
 	Search  ChatsSearchCmd  `cmd:"" help:"Search chats"`
 	Get     ChatsGetCmd     `cmd:"" help:"Get chat details"`
+	Create  ChatsCreateCmd  `cmd:"" help:"Create a new chat"`
 	Archive ChatsArchiveCmd `cmd:"" help:"Archive or unarchive a chat"`
 }
 
@@ -93,14 +94,18 @@ func (c *ChatsListCmd) Run(ctx context.Context, flags *RootFlags) error {
 
 // ChatsSearchCmd searches for chats.
 type ChatsSearchCmd struct {
-	Query      string `arg:"" optional:"" help:"Search query"`
-	Inbox      string `help:"Filter by inbox: primary|low-priority|archive" enum:"primary,low-priority,archive," default:""`
-	UnreadOnly bool   `help:"Only show unread chats" name:"unread-only"`
-	Type       string `help:"Filter by type: direct|group|any" enum:"direct,group,any," default:""`
-	Scope      string `help:"Search scope: titles|participants" enum:"titles,participants," default:""`
-	Limit      int    `help:"Max results (1-200)" default:"50"`
-	Cursor     string `help:"Pagination cursor"`
-	Direction  string `help:"Pagination direction: before|after" enum:"before,after," default:""`
+	Query              string   `arg:"" optional:"" help:"Search query"`
+	AccountIDs         []string `help:"Filter by account IDs" name:"account-ids"`
+	Inbox              string   `help:"Filter by inbox: primary|low-priority|archive" enum:"primary,low-priority,archive," default:""`
+	UnreadOnly         bool     `help:"Only show unread chats" name:"unread-only"`
+	IncludeMuted       *bool    `help:"Include muted chats (default true)" name:"include-muted"`
+	LastActivityAfter  string   `help:"Only include chats after time (RFC3339 or duration)" name:"last-activity-after"`
+	LastActivityBefore string   `help:"Only include chats before time (RFC3339 or duration)" name:"last-activity-before"`
+	Type               string   `help:"Filter by type: direct|group|any" enum:"direct,group,any," default:""`
+	Scope              string   `help:"Search scope: titles|participants" enum:"titles,participants," default:""`
+	Limit              int      `help:"Max results (1-200)" default:"50"`
+	Cursor             string   `help:"Pagination cursor"`
+	Direction          string   `help:"Pagination direction: before|after" enum:"before,after," default:""`
 }
 
 // Run executes the chats search command.
@@ -109,6 +114,24 @@ func (c *ChatsSearchCmd) Run(ctx context.Context, flags *RootFlags) error {
 
 	if c.Limit < 1 || c.Limit > 200 {
 		return errfmt.UsageError("invalid --limit %d (expected 1-200)", c.Limit)
+	}
+
+	var lastAfter *time.Time
+	if c.LastActivityAfter != "" {
+		t, err := parseTime(c.LastActivityAfter)
+		if err != nil {
+			return errfmt.UsageError("invalid --last-activity-after %q (expected RFC3339 or duration)", c.LastActivityAfter)
+		}
+		lastAfter = &t
+	}
+
+	var lastBefore *time.Time
+	if c.LastActivityBefore != "" {
+		t, err := parseTime(c.LastActivityBefore)
+		if err != nil {
+			return errfmt.UsageError("invalid --last-activity-before %q (expected RFC3339 or duration)", c.LastActivityBefore)
+		}
+		lastBefore = &t
 	}
 
 	token, _, err := config.GetToken()
@@ -123,14 +146,18 @@ func (c *ChatsSearchCmd) Run(ctx context.Context, flags *RootFlags) error {
 	}
 
 	resp, err := client.Chats().Search(ctx, beeperapi.ChatSearchParams{
-		Query:      c.Query,
-		Inbox:      c.Inbox,
-		UnreadOnly: c.UnreadOnly,
-		Type:       c.Type,
-		Scope:      c.Scope,
-		Limit:      c.Limit,
-		Cursor:     c.Cursor,
-		Direction:  c.Direction,
+		Query:              c.Query,
+		AccountIDs:         c.AccountIDs,
+		Inbox:              c.Inbox,
+		UnreadOnly:         c.UnreadOnly,
+		IncludeMuted:       c.IncludeMuted,
+		LastActivityAfter:  lastAfter,
+		LastActivityBefore: lastBefore,
+		Type:               c.Type,
+		Scope:              c.Scope,
+		Limit:              c.Limit,
+		Cursor:             c.Cursor,
+		Direction:          c.Direction,
 	})
 	if err != nil {
 		return err
@@ -181,6 +208,15 @@ func (c *ChatsSearchCmd) Run(ctx context.Context, flags *RootFlags) error {
 // ChatsGetCmd gets a single chat.
 type ChatsGetCmd struct {
 	ChatID string `arg:"" name:"chatID" help:"Chat ID to retrieve"`
+}
+
+// ChatsCreateCmd creates a new chat.
+type ChatsCreateCmd struct {
+	AccountID    string   `arg:"" name:"accountID" help:"Account ID to create the chat on"`
+	Participants []string `help:"Participant IDs (repeatable)" name:"participant"`
+	Type         string   `help:"Chat type: single|group" enum:"single,group," default:""`
+	Title        string   `help:"Title for group chats"`
+	Message      string   `help:"Optional first message content"`
 }
 
 // Run executes the chats get command.
@@ -234,6 +270,70 @@ func (c *ChatsGetCmd) Run(ctx context.Context, flags *RootFlags) error {
 		u.Out().Printf("Last:    %s", chat.LastActivity)
 	}
 
+	return nil
+}
+
+// Run executes the chats create command.
+func (c *ChatsCreateCmd) Run(ctx context.Context, flags *RootFlags) error {
+	u := ui.FromContext(ctx)
+
+	if c.AccountID == "" {
+		return errfmt.UsageError("account ID is required")
+	}
+	if len(c.Participants) == 0 {
+		return errfmt.UsageError("at least one --participant is required")
+	}
+
+	chatType := c.Type
+	if chatType == "" {
+		if len(c.Participants) == 1 {
+			chatType = "single"
+		} else {
+			chatType = "group"
+		}
+	}
+	if chatType == "single" && len(c.Participants) != 1 {
+		return errfmt.UsageError("single chats require exactly one --participant")
+	}
+	if chatType == "group" && len(c.Participants) < 2 {
+		return errfmt.UsageError("group chats require at least two --participant values")
+	}
+
+	token, _, err := config.GetToken()
+	if err != nil {
+		return err
+	}
+
+	timeout := time.Duration(flags.Timeout) * time.Second
+	client, err := beeperapi.NewClient(token, flags.BaseURL, timeout)
+	if err != nil {
+		return err
+	}
+
+	resp, err := client.Chats().Create(ctx, beeperapi.ChatCreateParams{
+		AccountID:      c.AccountID,
+		ParticipantIDs: c.Participants,
+		Type:           chatType,
+		Title:          c.Title,
+		MessageText:    c.Message,
+	})
+	if err != nil {
+		return err
+	}
+
+	// JSON output
+	if outfmt.IsJSON(ctx) {
+		return outfmt.WriteJSON(os.Stdout, resp)
+	}
+
+	// Plain output
+	if outfmt.IsPlain(ctx) {
+		u.Out().Printf("%s", resp.ChatID)
+		return nil
+	}
+
+	u.Out().Success("Chat created")
+	u.Out().Printf("Chat ID: %s", resp.ChatID)
 	return nil
 }
 
