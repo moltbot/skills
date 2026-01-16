@@ -1,7 +1,7 @@
 ---
 name: morning-email-rollup
-description: Daily morning rollup of important emails and calendar events at 8am
-metadata: {"clawdbot":{"emoji":"📧","requires":{"bins":["gog","jq","date"]}}}
+description: Daily morning rollup of important emails and calendar events at 8am with AI-generated summaries
+metadata: {"clawdbot":{"emoji":"📧","requires":{"bins":["gog","gemini","jq","date"]}}}
 ---
 
 # Morning Email Rollup
@@ -22,12 +22,13 @@ Or edit the script directly to set the default.
 - Runs every day at 8:00 AM (configurable timezone)
 - **Shows today's calendar events** from Google Calendar
 - Searches for emails marked as **important** or **starred** from the last 24 hours
+- Uses AI (Gemini CLI) to generate natural language summaries of each email
 - Shows up to 20 most important emails with:
-  - 🔴 Unread indicator
+  - 🔴 Unread indicator (red)
+  - 🟢 Read indicator (green)
   - Sender name/email
   - Subject line
-  - Date/time received
-  - Preview snippet (first 150 characters)
+  - **AI-generated 1-sentence summary** (natural language, not scraped content)
 - Delivers formatted summary to Telegram
 
 ## Usage
@@ -51,9 +52,10 @@ cat $HOME/clawd/morning-email-rollup-log.md
 
 1. **Checks calendar** - Lists today's events from Google Calendar via `gog`
 2. **Searches Gmail** - Query: `is:important OR is:starred newer_than:1d`
-3. **Fetches details** - Gets sender, subject, date, snippet for each email
-4. **Formats output** - Creates readable summary with unread markers
-5. **Sends to Telegram** - Delivers via Clawdbot's messaging system
+3. **Fetches details** - Gets sender, subject, date, and body for each email
+4. **AI Summarization** - Uses Gemini CLI to generate natural language summaries
+5. **Formats output** - Creates readable summary with read/unread markers
+6. **Sends to Telegram** - Delivers via Clawdbot's messaging system
 
 ## Calendar Integration
 
@@ -75,6 +77,27 @@ Emails are included if they match **any** of:
 - Manually **Starred** by you
 - Received in the **last 24 hours**
 
+## AI Summarization
+
+Each email is summarized using the Gemini CLI (`gemini`):
+- Extracts the email body (cleans HTML/CSS)
+- Sends to `gemini --model gemini-2.0-flash` with a prompt to summarize in 1 sentence
+- The summary is medium-to-long length natural language (not scraped content)
+- Falls back to cleaned body text if Gemini is unavailable
+
+**Example output:**
+```
+🔴 **William Ryan: Invitation to team meeting**
+   The email invites you to a team meeting tomorrow at 2pm to discuss the Q1 roadmap and assign tasks for the upcoming sprint.
+```
+
+## Read/Unread Indicators
+
+- 🔴 Red dot = Unread email
+- 🟢 Green dot = Read email
+
+All emails show one of these markers for visual consistency.
+
 ## Cron Schedule
 
 Set up a daily cron job at your preferred time:
@@ -83,7 +106,7 @@ cron add --name "Morning Email Rollup" \
   --schedule "0 8 * * *" \
   --tz "America/Denver" \
   --session isolated \
-  --message "bash /path/to/skills/morning-email-rollup/rollup.sh"
+  --message "GOG_ACCOUNT=your-email@gmail.com bash /path/to/skills/morning-email-rollup/rollup.sh"
 ```
 
 Adjust the time (8:00 AM) and timezone to your preference.
@@ -135,9 +158,31 @@ cron list
 cron update <job-id> --schedule "0 7 * * *" --tz "America/Denver"
 ```
 
-### Change Max Emails
+### Change Summary Style
 
-Edit the `--max 20` parameter in rollup.sh to show more/fewer emails.
+Edit the prompt in the `summarize_email()` function in `rollup.sh`:
+
+```bash
+# Current: medium-to-long 1 sentence
+"Summarize this email in exactly 1 sentence of natural language. Make it medium to long length. Don't use quotes:"
+
+# Shorter summaries
+"Summarize in 1 short sentence:"
+
+# More detail
+"Summarize in 2-3 sentences with key details:"
+```
+
+### Change AI Model
+
+Edit the gemini command in `summarize_email()`:
+```bash
+# Current: gemini-2.0-flash (fast)
+gemini --model gemini-2.0-flash "Summarize..."
+
+# Use a different model
+gemini --model gemini-pro "Summarize..."
+```
 
 ## Troubleshooting
 
@@ -157,6 +202,11 @@ bash skills/morning-email-rollup/rollup.sh
 - Gmail's importance markers may filter out expected emails
 - Check if emails are actually marked important/starred in Gmail
 - Try running manual search: `gog gmail search 'is:important newer_than:1d'`
+
+### Summaries not appearing
+- Check if `gemini` CLI is installed: `which gemini`
+- Test manually: `echo "test" | gemini "Summarize this:"`
+- Verify Gemini is authenticated (it should prompt on first run)
 
 ### Wrong timezone
 - Cron uses `America/Denver` (MST/MDT)
