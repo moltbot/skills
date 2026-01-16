@@ -1,11 +1,17 @@
 {
   "owner": "sherajdev",
   "slug": "pocket-tts",
-  "displayName": "Pocket TTS",
+  "displayName": "Pocket Tts",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1768563083239,
-    "commit": "https://github.com/clawdbot/skills/commit/e02819935cc9a2ae9006b8d6da38c2ad0b799bda"
+    "version": "1.0.1",
+    "publishedAt": 1768568885036,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1768563083239,
+      "commit": "https://github.com/clawdbot/skills/commit/e02819935cc9a2ae9006b8d6da38c2ad0b799bda"
+    }
+  ]
 }

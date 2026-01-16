@@ -1,15 +1,16 @@
 # Pocket TTS Skill
 
-Local text-to-speech using Kyutai's Pocket TTS model. Runs entirely offline with no API calls.
+Fully local, offline text-to-speech using Kyutai's Pocket TTS model. Generate high-quality audio from text without any API calls or internet connection. Features 8 built-in voices, voice cloning support, and runs entirely on CPU.
 
 ## Features
 
-- 🎯 **Fully local** - No API calls, runs offline
-- 🚀 **CPU-only** - No GPU required
-- ⚡ **Fast** - ~6x real-time on MacBook Air M4
-- 🎤 **Multiple voices** - 8 built-in voices + voice cloning
-- 🔊 **Streaming** - Low latency (~200ms first chunk)
-- 📚 **Python API** - Easy integration
+- 🎯 **Fully local** - No API calls, runs completely offline
+- 🚀 **CPU-only** - No GPU required, works on any computer
+- ⚡ **Fast generation** - ~2-6x real-time on CPU
+- 🎤 **8 built-in voices** - alba, marius, javert, jean, fantine, cosette, eponine, azelma
+- 🎭 **Voice cloning** - Clone any voice from a WAV sample
+- 🔊 **Low latency** - ~200ms first audio chunk
+- 📚 **Simple Python API** - Easy integration into any project
 
 ## Installation
 
