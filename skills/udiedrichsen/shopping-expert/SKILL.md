@@ -30,19 +30,27 @@ uv run {baseDir}/scripts/shop.py "running shoes" \
 Find local stores:
 
 ```bash
-uv run {baseDir}/scripts/shop.py "organic vegetables" \
+uv run {baseDir}/scripts/shop.py "Bio Gemüse" \
   --mode local \
-  --location "Brooklyn, NY"
+  --location "Hamburg, Germany"
 ```
 
 Hybrid search (online + local):
 
 ```bash
-uv run {baseDir}/scripts/shop.py "DSLR camera" \
+uv run {baseDir}/scripts/shop.py "Spiegelreflexkamera" \
   --mode hybrid \
-  --location "San Francisco, CA" \
+  --location "München, Germany" \
   --budget high \
-  --preferences "Canon, 4K video"
+  --preferences "Canon, 4K Video"
+```
+
+Search US stores:
+
+```bash
+uv run {baseDir}/scripts/shop.py "running shoes" \
+  --country us \
+  --budget "$100"
 ```
 
 ## Search Modes
@@ -56,19 +64,20 @@ uv run {baseDir}/scripts/shop.py "DSLR camera" \
 
 - `query`: Product search query (required)
 - `--mode`: Search mode (online|local|hybrid|auto, default: auto)
-- `--budget`: "low/medium/high" or "$X" amount (default: medium)
+- `--budget`: "low/medium/high" or "€X"/"$X" amount (default: medium)
 - `--location`: Location for local/hybrid searches
 - `--preferences`: Comma-separated (e.g., "brand:Sony, wireless, black")
 - `--max-results`: Maximum products to return (default: 5, max: 20)
 - `--sort-by`: Sort order (relevance|price-low|price-high|rating)
 - `--output`: text|json (default: text)
+- `--country`: Country code for search (default: de). Use "us" for US, "uk" for UK, etc.
 
 ## Budget Levels
 
-- **low**: Under $50
-- **medium**: $50-$150
-- **high**: Over $150
-- **exact**: "$75", "$250" (any dollar amount)
+- **low**: Under €50
+- **medium**: €50-€150
+- **high**: Over €150
+- **exact**: "€75", "€250" (or "$X" for US searches)
 
 ## Output Format
 

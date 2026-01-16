@@ -278,13 +278,13 @@ def resolve_location(location: str) -> Coordinates | None:
 # Search Functions
 # ============================================================================
 
-def search_online_products(query: str, budget: BudgetConstraints, max_results: int = 20) -> list[Product]:
+def search_online_products(query: str, budget: BudgetConstraints, max_results: int = 20, country: str = "de") -> list[Product]:
     """Search for products online via SerpAPI Google Shopping."""
     params = {
         "engine": "google_shopping",
         "q": query,
-        "gl": "us",
-        "hl": "en",
+        "gl": country,
+        "hl": country,
         "num": min(max_results, 20)
     }
 
@@ -303,7 +303,7 @@ def search_online_products(query: str, budget: BudgetConstraints, max_results: i
 
     products = []
     for item in result["shopping_results"][:max_results]:
-        product = normalize_online_product(item)
+        product = normalize_online_product(item, country)
         if product:
             products.append(product)
 
@@ -347,12 +347,12 @@ def search_local_stores(query: str, location: Coordinates, radius: int = 5000, m
 # Data Normalization
 # ============================================================================
 
-def normalize_online_product(item: dict) -> Product | None:
+def normalize_online_product(item: dict, country: str = "de") -> Product | None:
     """Normalize SerpAPI shopping result to Product dataclass."""
     try:
         # Extract price
         price_str = item.get("extracted_price") or item.get("price") or "0"
-        price = float(price_str) if isinstance(price_str, (int, float)) else float(re.sub(r'[^\d.]', '', str(price_str)))
+        price = float(price_str) if isinstance(price_str, (int, float)) else float(re.sub(r'[^\d.,]', '', str(price_str).replace(',', '.')))
 
         # Extract rating
         rating = None
@@ -385,10 +385,14 @@ def normalize_online_product(item: dict) -> Product | None:
         # Extract buy link (try multiple field names)
         buy_link = item.get("link") or item.get("product_link") or item.get("url") or ""
 
+        # Infer currency from country
+        country_currencies = {"de": "EUR", "us": "USD", "uk": "GBP", "gb": "GBP", "fr": "EUR", "es": "EUR", "it": "EUR"}
+        currency = country_currencies.get(country.lower(), "EUR")
+
         return Product(
             name=item.get("title", "Unknown Product"),
             price=price,
-            currency="USD",
+            currency=currency,
             source=item.get("source", "Unknown"),
             source_type="online",
             rating=rating,
@@ -589,9 +593,11 @@ def format_output_text(shopping_list: ShoppingList) -> str:
     lines.append("|------|---------|-------|--------|--------------|--------|------|")
 
     for i, product in enumerate(shopping_list.products, 1):
-        # Format price
+        # Format price with currency symbol
+        currency_symbols = {"EUR": "€", "USD": "$", "GBP": "£"}
+        currency_sym = currency_symbols.get(product.currency, product.currency)
         if product.source_type == "online":
-            price_str = f"${product.price:.2f}"
+            price_str = f"{currency_sym}{product.price:.2f}"
         else:
             price_str = "N/A"
             if product.store_distance_miles:
@@ -716,6 +722,12 @@ def parse_arguments():
         help="Output format (default: text)"
     )
 
+    parser.add_argument(
+        "--country",
+        default="de",
+        help="Country code for search (default: de). Use 'us' for US, 'uk' for UK, etc."
+    )
+
     return parser.parse_args()
 
 
@@ -736,7 +748,7 @@ def main():
     warnings = []
 
     if search_mode in [SearchMode.ONLINE, SearchMode.HYBRID]:
-        online_products = search_online_products(args.query, budget, args.max_results * 2)
+        online_products = search_online_products(args.query, budget, args.max_results * 2, args.country)
         if not online_products:
             warnings.append("No online products found")
 
