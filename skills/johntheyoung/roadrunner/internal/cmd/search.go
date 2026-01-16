@@ -84,7 +84,11 @@ func (c *SearchCmd) Run(ctx context.Context, flags *RootFlags) error {
 		u.Out().Printf("Chats (%d):", len(resp.Chats))
 		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 		for _, chat := range resp.Chats {
-			title := ui.Truncate(chat.Title, 35)
+			title := chat.Title
+			if chat.DisplayName != "" {
+				title = chat.DisplayName
+			}
+			title = ui.Truncate(title, 35)
 			_, _ = w.Write([]byte(fmt.Sprintf("  %s\t%s\t%s\n", title, chat.Type, chat.ID)))
 		}
 		w.Flush()
@@ -96,7 +100,11 @@ func (c *SearchCmd) Run(ctx context.Context, flags *RootFlags) error {
 		u.Out().Printf("In Groups (%d):", len(resp.InGroups))
 		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 		for _, chat := range resp.InGroups {
-			title := ui.Truncate(chat.Title, 35)
+			title := chat.Title
+			if chat.DisplayName != "" {
+				title = chat.DisplayName
+			}
+			title = ui.Truncate(title, 35)
 			_, _ = w.Write([]byte(fmt.Sprintf("  %s\t%s\t%s\n", title, chat.Type, chat.ID)))
 		}
 		w.Flush()

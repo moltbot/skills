@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"os"
+	"runtime/debug"
 
 	"github.com/alecthomas/kong"
 
@@ -18,6 +19,17 @@ var (
 	Commit  = ""
 	Date    = ""
 )
+
+func init() {
+	// If Version wasn't set by ldflags (goreleaser), try to get it from
+	// Go module info embedded by "go install". This ensures users who
+	// install via "go install ...@latest" see the correct version.
+	if Version == "dev" {
+		if info, ok := debug.ReadBuildInfo(); ok && info.Main.Version != "" {
+			Version = info.Main.Version
+		}
+	}
+}
 
 // RootFlags contains global flags available to all commands.
 type RootFlags struct {

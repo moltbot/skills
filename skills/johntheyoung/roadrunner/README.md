@@ -14,6 +14,14 @@ Beeper Desktop in your terminal — CLI for chats, messages, search, and reminde
 
 ## Install
 
+### Homebrew (macOS)
+
+```bash
+brew install johntheyoung/tap/roadrunner
+```
+
+### Go install
+
 ```bash
 go install github.com/johntheyoung/roadrunner/cmd/rr@latest
 ```
@@ -99,11 +107,16 @@ Destructive commands require confirmation. If stdin is not a TTY or `--no-input`
 
 - Message search is literal word match; all words must match exactly.
 - Global `rr search` can page message results with `--messages-cursor`, `--messages-direction`, and `--messages-limit` (max 20).
+- Use `rr chats search --scope=participants` to search by participant names.
+- JSON output includes `display_name` for single chats (derived from participants).
 
 ```bash
 # Paginate message results within global search
 rr search "dinner" --messages-limit=20 --json
 rr search "dinner" --messages-cursor="<cursor>" --messages-direction=before --json
+
+# Search chats by participant name
+rr chats search "Jamie" --scope=participants --json
 ```
 
 ## Scripting Examples

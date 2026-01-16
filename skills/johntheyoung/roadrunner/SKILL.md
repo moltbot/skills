@@ -19,6 +19,7 @@ Common commands
 - List chats: `rr chats list --json`
 - Search chats: `rr chats search "John" --json`
 - Search chats (filters): `rr chats search --inbox=primary --unread-only --json`
+- Search by participant name: `rr chats search "Jamie" --scope=participants --json`
 - Get chat: `rr chats get "!chatid:beeper.com" --json`
 - List messages: `rr messages list "!chatid:beeper.com" --json`
 - Search messages: `rr messages search "dinner" --json`
@@ -41,6 +42,8 @@ Notes
 - Requires Beeper Desktop running; token from app settings.
 - Token stored at `~/.config/beeper/config.json`. `BEEPER_TOKEN` overrides.
 - Message search is literal word match (not semantic).
+- If a DM title shows your own Matrix ID, use `--scope=participants` to find by name.
+- JSON output includes `display_name` for single chats (derived from participants).
 - `rr messages send` returns `pending_message_id` (temporary ID).
 - Prefer `--json` (and `--no-input`) for automation.
 - `BEEPER_URL` overrides API base URL; `BEEPER_TIMEOUT` sets timeout in seconds.

@@ -75,7 +75,11 @@ func (c *ChatsListCmd) Run(ctx context.Context, flags *RootFlags) error {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 	u.Out().Printf("Chats (%d):\n", len(resp.Items))
 	for _, item := range resp.Items {
-		title := ui.Truncate(item.Title, 40)
+		title := item.Title
+		if item.DisplayName != "" {
+			title = item.DisplayName
+		}
+		title = ui.Truncate(title, 40)
 		_, _ = w.Write([]byte(fmt.Sprintf("  %s\t%s\n", title, item.ID)))
 	}
 	w.Flush()
@@ -93,6 +97,7 @@ type ChatsSearchCmd struct {
 	Inbox      string `help:"Filter by inbox: primary|low-priority|archive" enum:"primary,low-priority,archive," default:""`
 	UnreadOnly bool   `help:"Only show unread chats" name:"unread-only"`
 	Type       string `help:"Filter by type: direct|group|any" enum:"direct,group,any," default:""`
+	Scope      string `help:"Search scope: titles|participants" enum:"titles,participants," default:""`
 	Limit      int    `help:"Max results (1-200)" default:"50"`
 	Cursor     string `help:"Pagination cursor"`
 	Direction  string `help:"Pagination direction: before|after" enum:"before,after," default:""`
@@ -122,6 +127,7 @@ func (c *ChatsSearchCmd) Run(ctx context.Context, flags *RootFlags) error {
 		Inbox:      c.Inbox,
 		UnreadOnly: c.UnreadOnly,
 		Type:       c.Type,
+		Scope:      c.Scope,
 		Limit:      c.Limit,
 		Cursor:     c.Cursor,
 		Direction:  c.Direction,
@@ -152,7 +158,11 @@ func (c *ChatsSearchCmd) Run(ctx context.Context, flags *RootFlags) error {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 	u.Out().Printf("Found %d chats:\n", len(resp.Items))
 	for _, item := range resp.Items {
-		title := ui.Truncate(item.Title, 35)
+		title := item.Title
+		if item.DisplayName != "" {
+			title = item.DisplayName
+		}
+		title = ui.Truncate(title, 35)
 		unread := ""
 		if item.UnreadCount > 0 {
 			unread = fmt.Sprintf("(%d)", item.UnreadCount)
@@ -205,7 +215,14 @@ func (c *ChatsGetCmd) Run(ctx context.Context, flags *RootFlags) error {
 	}
 
 	// Human-readable output
-	u.Out().Printf("Chat: %s", chat.Title)
+	displayTitle := chat.Title
+	if chat.DisplayName != "" {
+		displayTitle = chat.DisplayName
+	}
+	u.Out().Printf("Chat: %s", displayTitle)
+	if chat.DisplayName != "" && chat.DisplayName != chat.Title {
+		u.Out().Printf("Title:  %s", chat.Title)
+	}
 	u.Out().Printf("ID:      %s", chat.ID)
 	u.Out().Printf("Account: %s", chat.AccountID)
 	u.Out().Printf("Type:    %s", chat.Type)

@@ -31,6 +31,7 @@ type ChatListResult struct {
 type ChatListItem struct {
 	ID           string `json:"id"`
 	Title        string `json:"title"`
+	DisplayName  string `json:"display_name,omitempty"`
 	AccountID    string `json:"account_id"`
 	LastActivity string `json:"last_activity,omitempty"`
 	Preview      string `json:"preview,omitempty"`
@@ -42,6 +43,7 @@ type ChatSearchParams struct {
 	Inbox      string // primary|low-priority|archive
 	UnreadOnly bool
 	Type       string // direct|group|any
+	Scope      string // titles|participants
 	Limit      int
 	Cursor     string
 	Direction  string // before|after
@@ -59,6 +61,7 @@ type ChatSearchResult struct {
 type ChatSearchItem struct {
 	ID          string `json:"id"`
 	Title       string `json:"title"`
+	DisplayName string `json:"display_name,omitempty"`
 	Type        string `json:"type"`
 	Network     string `json:"network"`
 	UnreadCount int64  `json:"unread_count"`
@@ -70,6 +73,7 @@ type ChatSearchItem struct {
 type ChatDetail struct {
 	ID                     string `json:"id"`
 	Title                  string `json:"title"`
+	DisplayName            string `json:"display_name,omitempty"`
 	AccountID              string `json:"account_id"`
 	Network                string `json:"network"`
 	Type                   string `json:"type"`
@@ -123,6 +127,7 @@ func (s *ChatsService) List(ctx context.Context, params ChatListParams) (ChatLis
 			Title:     chat.Title,
 			AccountID: chat.AccountID,
 		}
+		item.DisplayName = displayNameForChat(string(chat.Type), chat.Title, chat.Participants.Items)
 		if !chat.LastActivity.IsZero() {
 			item.LastActivity = chat.LastActivity.Format(time.RFC3339)
 		}
@@ -175,6 +180,12 @@ func (s *ChatsService) Search(ctx context.Context, params ChatSearchParams) (Cha
 	case "any":
 		sdkParams.Type = beeperdesktopapi.ChatSearchParamsTypeAny
 	}
+	switch params.Scope {
+	case "titles":
+		sdkParams.Scope = beeperdesktopapi.ChatSearchParamsScopeTitles
+	case "participants":
+		sdkParams.Scope = beeperdesktopapi.ChatSearchParamsScopeParticipants
+	}
 
 	page, err := s.client.SDK.Chats.Search(ctx, sdkParams)
 	if err != nil {
@@ -189,10 +200,13 @@ func (s *ChatsService) Search(ctx context.Context, params ChatSearchParams) (Cha
 	}
 
 	for _, chat := range page.Items {
+		displayName := displayNameForChat(string(chat.Type), chat.Title, chat.Participants.Items)
 		result.Items = append(result.Items, ChatSearchItem{
 			ID:          chat.ID,
 			Title:       chat.Title,
+			DisplayName: displayName,
 			Type:        string(chat.Type),
+			//nolint:staticcheck // Network is deprecated in SDK but still returned by API for display.
 			Network:     chat.Network,
 			UnreadCount: chat.UnreadCount,
 			IsArchived:  chat.IsArchived,
@@ -214,9 +228,10 @@ func (s *ChatsService) Get(ctx context.Context, chatID string) (ChatDetail, erro
 	}
 
 	detail := ChatDetail{
-		ID:                     chat.ID,
-		Title:                  chat.Title,
-		AccountID:              chat.AccountID,
+		ID:        chat.ID,
+		Title:     chat.Title,
+		AccountID: chat.AccountID,
+		//nolint:staticcheck // Network is deprecated in SDK but still returned by API for display.
 		Network:                chat.Network,
 		Type:                   string(chat.Type),
 		UnreadCount:            chat.UnreadCount,
@@ -232,6 +247,7 @@ func (s *ChatsService) Get(ctx context.Context, chatID string) (ChatDetail, erro
 	if !chat.LastActivity.IsZero() {
 		detail.LastActivity = chat.LastActivity.Format(time.RFC3339)
 	}
+	detail.DisplayName = displayNameForChat(string(chat.Type), chat.Title, chat.Participants.Items)
 
 	return detail, nil
 }

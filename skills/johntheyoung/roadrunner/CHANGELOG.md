@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Makefile targets for formatting, linting, and tests.
 - golangci-lint config and CI lint step.
 - Docs folder with troubleshooting and API notes.
+- Homebrew tap publishing via GoReleaser and brew install instructions.
 - This CHANGELOG.
 
 ## v0.1.0 - 2026-01-16
