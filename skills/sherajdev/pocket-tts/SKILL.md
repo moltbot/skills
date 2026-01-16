@@ -1,0 +1,120 @@
+# Pocket TTS Skill
+
+Local text-to-speech using Kyutai's Pocket TTS model. Runs entirely offline with no API calls.
+
+## Features
+
+- 🎯 **Fully local** - No API calls, runs offline
+- 🚀 **CPU-only** - No GPU required
+- ⚡ **Fast** - ~6x real-time on MacBook Air M4
+- 🎤 **Multiple voices** - 8 built-in voices + voice cloning
+- 🔊 **Streaming** - Low latency (~200ms first chunk)
+- 📚 **Python API** - Easy integration
+
+## Installation
+
+```bash
+# 1. Accept the model license on Hugging Face
+# https://huggingface.co/kyutai/pocket-tts
+
+# 2. Install the package
+pip install pocket-tts
+
+# Or use uv for automatic dependency management
+uvx pocket-tts generate "Hello world"
+```
+
+## Usage
+
+### CLI
+
+```bash
+# Basic usage
+pocket-tts "Hello, I am your AI assistant"
+
+# With specific voice
+pocket-tts "Hello" --voice alba --output hello.wav
+
+# With custom voice file (voice cloning)
+pocket-tts "Hello" --voice-file myvoice.wav --output output.wav
+
+# Adjust speed
+pocket-tts "Hello" --speed 1.2
+
+# Start local server
+pocket-tts --serve
+
+# List available voices
+pocket-tts --list-voices
+```
+
+### Python API
+
+```python
+from pocket_tts import TTSModel
+import scipy.io.wavfile
+
+# Load model
+tts_model = TTSModel.load_model()
+
+# Get voice state
+voice_state = tts_model.get_state_for_audio_prompt(
+    "hf://kyutai/tts-voices/alba-mackenna/casual.wav"
+)
+
+# Generate audio
+audio = tts_model.generate_audio(voice_state, "Hello world!")
+
+# Save to WAV
+scipy.io.wavfile.write("output.wav", tts_model.sample_rate, audio.numpy())
+
+# Check sample rate
+print(f"Sample rate: {tts_model.sample_rate} Hz")
+```
+
+## Available Voices
+
+| Voice | Description |
+|-------|-------------|
+| alba | Casual female voice |
+| marius | Male voice |
+| javert | Clear male voice |
+| jean | Natural male voice |
+| fantine | Female voice |
+| cosette | Female voice |
+| eponine | Female voice |
+| azelma | Female voice |
+
+Or use `--voice-file /path/to/wav.wav` for custom voice cloning.
+
+## Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `text` | Text to convert | Required |
+| `-o, --output` | Output WAV file | `output.wav` |
+| `-v, --voice` | Voice preset | `alba` |
+| `-s, --speed` | Speech speed (0.5-2.0) | `1.0` |
+| `--voice-file` | Custom WAV for cloning | None |
+| `--serve` | Start HTTP server | False |
+| `--list-voices` | List all voices | False |
+
+## Requirements
+
+- Python 3.10-3.14
+- PyTorch 2.5+ (CPU version works)
+- Works on 2 CPU cores
+
+## Notes
+
+- ⚠️ Model is gated - accept license on Hugging Face first
+- 🌍 English language only (v1)
+- 💾 First run downloads model (~100M parameters)
+- 🔊 Audio is returned as 1D torch tensor (PCM data)
+
+## Links
+
+- [Demo](https://kyutai.org/tts)
+- [GitHub](https://github.com/kyutai-labs/pocket-tts)
+- [Hugging Face](https://huggingface.co/kyutai/pocket-tts)
+- [Paper](https://arxiv.org/abs/2509.06926)
