@@ -1,0 +1,32 @@
+{
+  "active": true,
+  "mode": "restaurant",
+  "mode_info": {
+    "name": "Restaurant-Modus",
+    "emoji": "\ud83c\udf7d\ufe0f",
+    "response_delay": 45,
+    "message_length": "short",
+    "depth": "light"
+  },
+  "started_at": "2026-01-16T18:16:20.920493+00:00",
+  "last_activity": "2026-01-16T18:16:20.920493+00:00",
+  "topics_discussed": [],
+  "user_mentions": {},
+  "message_count": 0,
+  "current_game": null,
+  "game_offered": true,
+  "suggest_game": false,
+  "game_history": [
+    {
+      "type": "trivia",
+      "difficulty": "medium",
+      "started_at": "2026-01-16T18:16:20.953118+00:00",
+      "questions_asked": 3,
+      "correct_answers": 2,
+      "hints_used": 0,
+      "ended_at": "2026-01-16T18:16:21.097733+00:00",
+      "final_score": 66.66666666666666,
+      "accuracy": "2/3"
+    }
+  ]
+}

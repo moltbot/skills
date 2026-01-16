@@ -1,0 +1,11 @@
+[
+  {
+    "id": "harvey_1768587386.701773",
+    "message": "Hey, wie schmeckt's? \ud83d\udc30",
+    "scheduled_at": "2026-01-16T18:16:26.701773+00:00",
+    "send_at": "2026-01-16T18:16:31.701773+00:00",
+    "delay_seconds": 5,
+    "mode": "restaurant",
+    "sent": false
+  }
+]
