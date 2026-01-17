@@ -1,0 +1,11 @@
+{
+  "owner": "gumadeiras",
+  "slug": "lastfm",
+  "displayName": "Last.fm",
+  "latest": {
+    "version": "1.0.1",
+    "publishedAt": 1768677572307,
+    "commit": null
+  },
+  "history": []
+}
