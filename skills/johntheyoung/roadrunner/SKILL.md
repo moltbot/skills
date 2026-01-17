@@ -64,6 +64,7 @@ Notes
 - Requires Beeper Desktop running; token from app settings.
 - Token stored at `~/.config/beeper/config.json`. `BEEPER_TOKEN` overrides.
 - Message search is literal word match (not semantic).
+- `rr contacts resolve` is strict and fails on ambiguous names; resolve by ID after `contacts search` when needed.
 - If a DM title shows your own Matrix ID, use `--scope=participants` to find by name.
 - JSON output includes `display_name` for single chats (derived from participants).
 - `rr messages send` returns `pending_message_id` (temporary ID).
