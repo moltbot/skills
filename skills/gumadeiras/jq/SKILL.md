@@ -5,6 +5,19 @@ description: Command-line JSON processor. Extract, filter, transform JSON.
 
 # jq
 
+Command-line JSON processor for extracting, filtering, and transforming JSON.
+
+## Installation
+
+**macOS / Linux (Homebrew):**
+```bash
+brew install jq
+```
+
+**All platforms:** See [jqlang.org/download](https://jqlang.org/download/) for packages, binaries, and build instructions.
+
+## Usage
+
 ```bash
 jq '[filter]' [file.json]
 cat file.json | jq '[filter]'

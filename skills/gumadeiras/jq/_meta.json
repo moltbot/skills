@@ -3,9 +3,15 @@
   "slug": "jq",
   "displayName": "jq",
   "latest": {
-    "version": "1.1.0",
-    "publishedAt": 1768428059543,
-    "commit": "https://github.com/clawdbot/skills/commit/572d20f9a254fbfe387f616b3b9ecf887ed1c16e"
+    "version": "1.2.0",
+    "publishedAt": 1768679388324,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.1.0",
+      "publishedAt": 1768428059543,
+      "commit": "https://github.com/clawdbot/skills/commit/572d20f9a254fbfe387f616b3b9ecf887ed1c16e"
+    }
+  ]
 }
