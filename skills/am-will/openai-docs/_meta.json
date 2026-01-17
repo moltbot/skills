@@ -1,0 +1,11 @@
+{
+  "owner": "am-will",
+  "slug": "openai-docs",
+  "displayName": "OpenAI Developer Docs",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1768677068215,
+    "commit": null
+  },
+  "history": []
+}
