@@ -3,9 +3,15 @@
   "slug": "lastfm",
   "displayName": "Last.fm",
   "latest": {
-    "version": "1.0.1",
-    "publishedAt": 1768677572307,
-    "commit": "https://github.com/clawdbot/skills/commit/104ceeaa6d0d7dc2a66f87c0059a257ed54ec20f"
+    "version": "1.0.2",
+    "publishedAt": 1768748691677,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.1",
+      "publishedAt": 1768677572307,
+      "commit": "https://github.com/clawdbot/skills/commit/104ceeaa6d0d7dc2a66f87c0059a257ed54ec20f"
+    }
+  ]
 }

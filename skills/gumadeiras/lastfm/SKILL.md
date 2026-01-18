@@ -1,3 +1,8 @@
+---
+name: lastfm
+description: Access Last.fm listening history, music stats, and discovery. Query recent tracks, top artists/albums/tracks, loved tracks, similar artists, and global charts.
+---
+
 # Last.fm API Skill
 
 Access Last.fm listening history, music stats, and discovery.
