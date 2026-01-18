@@ -1,3 +1,9 @@
+---
+name: nordpool-fi
+description: Hourly electricity prices for Finland with optimal EV charging window calculation (3h, 4h, 5h).
+metadata: {"tags": ["energy", "finland", "nordpool", "electricity", "ev-charging"]}
+---
+
 # Nordpool Finland Energy Prices 🇫🇮
 
 Hourly electricity prices for Finland with optimal EV charging window calculation (3h, 4h, 5h).

@@ -1,11 +1,17 @@
 {
   "owner": "ovaris",
   "slug": "nordpool-fi",
-  "displayName": "Nordpool Finland",
+  "displayName": "Nordpool Fi",
   "latest": {
-    "version": "1.0.3",
-    "publishedAt": 1768750122788,
-    "commit": "https://github.com/clawdbot/skills/commit/230b20be41e3556b8ee939005e504f7e07d353ad"
+    "version": "1.0.4",
+    "publishedAt": 1768750540321,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.3",
+      "publishedAt": 1768750122788,
+      "commit": "https://github.com/clawdbot/skills/commit/230b20be41e3556b8ee939005e504f7e07d353ad"
+    }
+  ]
 }
