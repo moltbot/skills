@@ -13,6 +13,9 @@ Prefer `--json` and `--no-input` for agent use.
 Safety
 - Require explicit recipient (chat ID) and message text before sending.
 - Confirm or ask a clarifying question if the chat ID is ambiguous.
+- Use `--readonly` to block writes: `rr --readonly chats list --json`
+- Use `--enable-commands` to allowlist: `rr --enable-commands=chats,messages chats list --json`
+- Use `--envelope` for structured errors: `rr --json --envelope chats get "!chatid"`
 
 Setup (once)
 - `rr auth set <token>`
@@ -81,3 +84,5 @@ Notes
 - Use `--fail-if-empty` on list/search commands to exit with code 1 if no results.
 - Use `--fields` with `--plain` to select columns (comma-separated).
 - In bash/zsh, `!` triggers history expansion. Prefer single quotes, or disable history expansion (`set +H` in bash, `setopt NO_HIST_EXPAND` in zsh).
+- `rr version --json` returns `features` array for capability discovery.
+- Envelope error codes: `AUTH_ERROR`, `NOT_FOUND`, `VALIDATION_ERROR`, `CONNECTION_ERROR`, `INTERNAL_ERROR`.
