@@ -17,7 +17,7 @@ Get from MILKEE Settings → API:
 
 **Example**:
 ```
-28014|MqF8I04nbuFd4aT44fg4545aDDd9T2sjVT5fgfgf39c9d2
+28014|MqF8I04nbuFd4aT5Xu2ZAc799c9d2
 ```
 
 ### MILKEE_COMPANY_ID (required)
@@ -30,7 +30,7 @@ Get from MILKEE URL or Settings:
 
 **Example**:
 ```
-8032
+4086
 ```
 
 ---
@@ -45,7 +45,7 @@ Add to `~/.clawdbot/clawdbot.json`:
     "milkee": {
       "env": {
         "MILKEE_API_TOKEN": "USER_ID|API_KEY",
-        "MILKEE_COMPANY_ID": "8032"
+        "MILKEE_COMPANY_ID": "4226"
       }
     }
   }
@@ -59,8 +59,8 @@ Add to `~/.clawdbot/clawdbot.json`:
 Test configuration:
 
 ```bash
-export MILKEE_API_TOKEN="28014|MqF8I04nbuFd4aT44fg4545aDDd9T2sjVT5fgfgf39c9d2"
-export MILKEE_COMPANY_ID="8032"
+export MILKEE_API_TOKEN="28014|MqF8I04nbuFd4aT4A5Y6hBqaDDd9T2sjVT5Xu2ZAc799c9d2"
+export MILKEE_COMPANY_ID="4186"
 
 python3 scripts/milkee.py list_projects
 ```

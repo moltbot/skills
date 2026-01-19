@@ -12,7 +12,7 @@ Header: `Authorization: Bearer USER_ID|API_KEY`
 
 Example:
 ```
-Authorization: Bearer 28014|MqF8I04nbuFd4aT44fg4545aDDd9T2sjVT5fgfgf39c9d2
+Authorization: Bearer 28014|MqF8I04nb2ZAc799c9d2
 ```
 
 ---
@@ -86,7 +86,7 @@ PUT /customers/{id}
 ### List Times
 ```
 GET /times
-GET /times?filter[date]=2032-01-26
+GET /times?filter[date]=2024-01-26
 GET /times?filter[project_id]=123
 ```
 
