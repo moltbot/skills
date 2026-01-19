@@ -261,3 +261,114 @@ Consider system preference detection.
 
 ---
 ```
+
+## Learning: Promoted to Skill
+
+```markdown
+## [LRN-20250118-001] best_practice
+
+**Logged**: 2025-01-18T11:00:00Z
+**Priority**: high
+**Status**: promoted_to_skill
+**Skill-Path**: skills/docker-m1-fixes
+**Area**: infra
+
+### Summary
+Docker build fails on Apple Silicon due to platform mismatch
+
+### Details
+When building Docker images on M1/M2 Macs, the build fails because
+the base image doesn't have an ARM64 variant. This is a common issue
+that affects many developers.
+
+### Suggested Action
+Add `--platform linux/amd64` to docker build command, or use
+`FROM --platform=linux/amd64` in Dockerfile.
+
+### Metadata
+- Source: error
+- Related Files: Dockerfile
+- Tags: docker, arm64, m1, apple-silicon
+- See Also: ERR-20250115-A3F, ERR-20250117-B2D
+
+---
+```
+
+## Extracted Skill Example
+
+When the above learning is extracted as a skill, it becomes:
+
+**File**: `skills/docker-m1-fixes/SKILL.md`
+
+```markdown
+---
+name: docker-m1-fixes
+description: "Fixes Docker build failures on Apple Silicon (M1/M2). Use when docker build fails with platform mismatch errors."
+---
+
+# Docker M1 Fixes
+
+Solutions for Docker build issues on Apple Silicon Macs.
+
+## Quick Reference
+
+| Error | Fix |
+|-------|-----|
+| `no match for platform linux/arm64` | Add `--platform linux/amd64` to build |
+| Image runs but crashes | Use emulation or find ARM-compatible base |
+
+## The Problem
+
+Many Docker base images don't have ARM64 variants. When building on
+Apple Silicon (M1/M2/M3), Docker attempts to pull ARM64 images by
+default, causing platform mismatch errors.
+
+## Solutions
+
+### Option 1: Build Flag (Recommended)
+
+Add platform flag to your build command:
+
+\`\`\`bash
+docker build --platform linux/amd64 -t myapp .
+\`\`\`
+
+### Option 2: Dockerfile Modification
+
+Specify platform in the FROM instruction:
+
+\`\`\`dockerfile
+FROM --platform=linux/amd64 python:3.11-slim
+\`\`\`
+
+### Option 3: Docker Compose
+
+Add platform to your service:
+
+\`\`\`yaml
+services:
+  app:
+    platform: linux/amd64
+    build: .
+\`\`\`
+
+## Trade-offs
+
+| Approach | Pros | Cons |
+|----------|------|------|
+| Build flag | No file changes | Must remember flag |
+| Dockerfile | Explicit, versioned | Affects all builds |
+| Compose | Convenient for dev | Requires compose |
+
+## Performance Note
+
+Running AMD64 images on ARM64 uses Rosetta 2 emulation. This works
+for development but may be slower. For production, find ARM-native
+alternatives when possible.
+
+## Source
+
+- Learning ID: LRN-20250118-001
+- Category: best_practice
+- Extraction Date: 2025-01-18
+```

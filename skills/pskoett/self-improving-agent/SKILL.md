@@ -18,7 +18,7 @@ Log learnings and errors to markdown files for continuous improvement. Coding ag
 | Knowledge was outdated | Log to `.learnings/LEARNINGS.md` with category `knowledge_gap` |
 | Found better approach | Log to `.learnings/LEARNINGS.md` with category `best_practice` |
 | Similar to existing entry | Link with `**See Also**`, consider priority bump |
-| Broadly applicable learning | Promote to `CLAUDE.md` and/or `AGENTS.md` |
+| Broadly applicable learning | Promote to `CLAUDE.md`, `AGENTS.md`, and/or `.github/copilot-instructions.md` |
 
 ## Setup
 
@@ -155,7 +155,7 @@ When an issue is fixed, update the entry:
 Other status values:
 - `in_progress` - Actively being worked on
 - `wont_fix` - Decided not to address (add reason in Resolution notes)
-- `promoted` - Elevated to CLAUDE.md or AGENTS.md
+- `promoted` - Elevated to CLAUDE.md, AGENTS.md, or .github/copilot-instructions.md
 
 ## Promoting to Project Memory
 
@@ -174,14 +174,15 @@ When a learning is broadly applicable (not a one-off fix), promote it to permane
 |--------|-------------------|
 | `CLAUDE.md` | Project facts, conventions, gotchas for all Claude interactions |
 | `AGENTS.md` | Agent-specific workflows, tool usage patterns, automation rules |
+| `.github/copilot-instructions.md` | Project context and conventions for GitHub Copilot |
 
 ### How to Promote
 
 1. **Distill** the learning into a concise rule or fact
-2. **Add** to appropriate section in target file
+2. **Add** to appropriate section in target file (create file if needed)
 3. **Update** original entry:
    - Change `**Status**: pending` → `**Status**: promoted`
-   - Add `**Promoted**: CLAUDE.md` or `**Promoted**: AGENTS.md`
+   - Add `**Promoted**: CLAUDE.md`, `AGENTS.md`, or `.github/copilot-instructions.md`
 
 ### Promotion Examples
 
@@ -214,7 +215,7 @@ If logging something similar to an existing entry:
 2. **Link entries**: Add `**See Also**: ERR-20250110-001` in Metadata
 3. **Bump priority** if issue keeps recurring
 4. **Consider systemic fix**: Recurring issues often indicate:
-   - Missing documentation (→ promote to CLAUDE.md)
+   - Missing documentation (→ promote to CLAUDE.md or .github/copilot-instructions.md)
    - Missing automation (→ add to AGENTS.md)
    - Architectural problem (→ create tech debt ticket)
 
@@ -303,7 +304,7 @@ Use to filter learnings by codebase region:
 4. **Link related files** - makes fixes easier
 5. **Suggest concrete fixes** - not just "investigate"
 6. **Use consistent categories** - enables filtering
-7. **Promote aggressively** - if in doubt, add to CLAUDE.md
+7. **Promote aggressively** - if in doubt, add to CLAUDE.md or .github/copilot-instructions.md
 8. **Review regularly** - stale learnings lose value
 
 ## Gitignore Options
@@ -321,3 +322,179 @@ Don't add to .gitignore - learnings become shared knowledge.
 .learnings/*.md
 !.learnings/.gitkeep
 ```
+
+## Hook Integration
+
+Enable automatic reminders through agent hooks. This is **opt-in** - you must explicitly configure hooks.
+
+### Quick Setup (Claude Code / Codex)
+
+Create `.claude/settings.json` in your project:
+
+```json
+{
+  "hooks": {
+    "UserPromptSubmit": [{
+      "matcher": "",
+      "hooks": [{
+        "type": "command",
+        "command": "./skills/self-improvement/scripts/activator.sh"
+      }]
+    }]
+  }
+}
+```
+
+This injects a learning evaluation reminder after each prompt (~50-100 tokens overhead).
+
+### Full Setup (With Error Detection)
+
+```json
+{
+  "hooks": {
+    "UserPromptSubmit": [{
+      "matcher": "",
+      "hooks": [{
+        "type": "command",
+        "command": "./skills/self-improvement/scripts/activator.sh"
+      }]
+    }],
+    "PostToolUse": [{
+      "matcher": "Bash",
+      "hooks": [{
+        "type": "command",
+        "command": "./skills/self-improvement/scripts/error-detector.sh"
+      }]
+    }]
+  }
+}
+```
+
+### Available Hook Scripts
+
+| Script | Hook Type | Purpose |
+|--------|-----------|---------|
+| `scripts/activator.sh` | UserPromptSubmit | Reminds to evaluate learnings after tasks |
+| `scripts/error-detector.sh` | PostToolUse (Bash) | Triggers on command errors |
+
+See `references/hooks-setup.md` for detailed configuration and troubleshooting.
+
+## Automatic Skill Extraction
+
+When a learning is valuable enough to become a reusable skill, extract it using the provided helper.
+
+### Skill Extraction Criteria
+
+A learning qualifies for skill extraction when ANY of these apply:
+
+| Criterion | Description |
+|-----------|-------------|
+| **Recurring** | Has `See Also` links to 2+ similar issues |
+| **Verified** | Status is `resolved` with working fix |
+| **Non-obvious** | Required actual debugging/investigation to discover |
+| **Broadly applicable** | Not project-specific; useful across codebases |
+| **User-flagged** | User says "save this as a skill" or similar |
+
+### Extraction Workflow
+
+1. **Identify candidate**: Learning meets extraction criteria
+2. **Run helper** (or create manually):
+   ```bash
+   ./skills/self-improvement/scripts/extract-skill.sh skill-name --dry-run
+   ./skills/self-improvement/scripts/extract-skill.sh skill-name
+   ```
+3. **Customize SKILL.md**: Fill in template with learning content
+4. **Update learning**: Set status to `promoted_to_skill`, add `Skill-Path`
+5. **Verify**: Read skill in fresh session to ensure it's self-contained
+
+### Manual Extraction
+
+If you prefer manual creation:
+
+1. Create `skills/<skill-name>/SKILL.md`
+2. Use template from `assets/SKILL-TEMPLATE.md`
+3. Follow [Agent Skills spec](https://agentskills.io/specification):
+   - YAML frontmatter with `name` and `description`
+   - Name must match folder name
+   - No README.md inside skill folder
+
+### Extraction Detection Triggers
+
+Watch for these signals that a learning should become a skill:
+
+**In conversation:**
+- "Save this as a skill"
+- "I keep running into this"
+- "This would be useful for other projects"
+- "Remember this pattern"
+
+**In learning entries:**
+- Multiple `See Also` links (recurring issue)
+- High priority + resolved status
+- Category: `best_practice` with broad applicability
+- User feedback praising the solution
+
+### Skill Quality Gates
+
+Before extraction, verify:
+
+- [ ] Solution is tested and working
+- [ ] Description is clear without original context
+- [ ] Code examples are self-contained
+- [ ] No project-specific hardcoded values
+- [ ] Follows skill naming conventions (lowercase, hyphens)
+
+## Multi-Agent Support
+
+This skill works across different AI coding agents with agent-specific activation.
+
+### Claude Code
+
+**Activation**: Hooks (UserPromptSubmit, PostToolUse)
+**Setup**: `.claude/settings.json` with hook configuration
+**Detection**: Automatic via hook scripts
+
+### Codex CLI
+
+**Activation**: Hooks (same pattern as Claude Code)
+**Setup**: `.codex/settings.json` with hook configuration
+**Detection**: Automatic via hook scripts
+
+### GitHub Copilot
+
+**Activation**: Manual (no hook support)
+**Setup**: Add to `.github/copilot-instructions.md`:
+
+```markdown
+## Self-Improvement
+
+After solving non-obvious issues, consider logging to `.learnings/`:
+1. Use format from self-improvement skill
+2. Link related entries with See Also
+3. Promote high-value learnings to skills
+
+Ask in chat: "Should I log this as a learning?"
+```
+
+**Detection**: Manual review at session end
+
+### Agent-Agnostic Guidance
+
+Regardless of agent, apply self-improvement when you:
+
+1. **Discover something non-obvious** - solution wasn't immediate
+2. **Correct yourself** - initial approach was wrong
+3. **Learn project conventions** - discovered undocumented patterns
+4. **Hit unexpected errors** - especially if diagnosis was difficult
+5. **Find better approaches** - improved on your original solution
+
+### Copilot Chat Integration
+
+For Copilot users, add this to your prompts when relevant:
+
+> After completing this task, evaluate if any learnings should be logged to `.learnings/` using the self-improvement skill format.
+
+Or use quick prompts:
+- "Log this to learnings"
+- "Create a skill from this solution"
+- "Check .learnings/ for related issues"
