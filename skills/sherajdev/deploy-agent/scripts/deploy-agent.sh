@@ -74,6 +74,99 @@ check_prerequisites() {
     log "All prerequisites satisfied!"
 }
 
+# New: Check Next.js + D1 deployment requirements
+check_nextjs_d1() {
+    local app_dir="$1"
+    
+    if [ ! -d "$app_dir" ]; then
+        error "Directory not found: $app_dir"
+        return 1
+    fi
+    
+    cd "$app_dir"
+    
+    log "Checking Next.js + D1 deployment requirements..."
+    
+    # Check 1: Next.js version
+    local next_version=$(npm list next 2>/dev/null | grep next | awk '{print $2}')
+    if [ -z "$next_version" ]; then
+        warn "Next.js not found in dependencies"
+    elif [[ "$next_version" =~ ^16\. ]]; then
+        error "Next.js $next_version is too new for Cloudflare Pages"
+        info "Fix: npm install next@15.5.2"
+        return 1
+    elif [[ "$next_version" =~ ^15\.6 ]] || [[ "$next_version" =~ ^15\.[7-9] ]] || [[ "$next_version" =~ ^1[6-9] ]]; then
+        warn "Next.js $next_version may have compatibility issues"
+        info "Recommended: next@15.5.2"
+    else
+        info "Next.js version: $next_version ✅"
+    fi
+    
+    # Check 2: @cloudflare/next-on-pages
+    if ! npm list @cloudflare/next-on-pages &> /dev/null; then
+        warn "@cloudflare/next-on-pages not installed"
+        info "Fix: npm install -D @cloudflare/next-on-pages"
+    else
+        info "Cloudflare adapter installed ✅"
+    fi
+    
+    # Check 3: wrangler in devDependencies
+    if ! npm list wrangler &> /dev/null; then
+        warn "wrangler not in devDependencies"
+        info "Fix: npm install -D wrangler"
+    else
+        info "wrangler installed ✅"
+    fi
+    
+    # Check 4: package-lock.json sync
+    if [ ! -f "package-lock.json" ]; then
+        warn "package-lock.json missing"
+        info "Fix: npm install && git add package-lock.json"
+    else
+        info "package-lock.json exists ✅"
+    fi
+    
+    # Check 5: wrangler.toml
+    if [ ! -f "wrangler.toml" ]; then
+        warn "wrangler.toml not found"
+        info "Create wrangler.toml with D1 database binding"
+    else
+        info "wrangler.toml exists ✅"
+        
+        # Check for D1 database
+        if grep -q "d1_databases" wrangler.toml; then
+            info "D1 database configured ✅"
+        else
+            warn "No D1 database in wrangler.toml"
+            info "Add D1 binding for database access"
+        fi
+        
+        # Check for compatibility_flags
+        if grep -q "compatibility_flags" wrangler.toml; then
+            info "Compatibility flags set ✅"
+        else
+            warn "compatibility_flags not set"
+            info "Add: compatibility_flags = [\"nodejs_compat\"]"
+        fi
+    fi
+    
+    # Check 6: API routes have edge runtime
+    local api_dir="$app_dir/src/app/api"
+    if [ -d "$api_dir" ]; then
+        local edge_count=$(grep -r "runtime = 'edge'" "$api_dir" 2>/dev/null | wc -l)
+        if [ "$edge_count" -gt 0 ]; then
+            info "$api_dir routes have edge runtime ✅"
+        else
+            warn "API routes missing 'export const runtime = \"edge\"'"
+            info "Add to each API route file"
+        fi
+    else
+        info "No API routes found (static site)"
+    fi
+    
+    log "Next.js + D1 check complete!"
+}
+
 cmd_init() {
     local name="$1"
     
@@ -191,6 +284,16 @@ cmd_continue() {
             error "Unknown step: $step"
             ;;
     esac
+}
+
+cmd_check_nextjs_d1() {
+    local dir="${1:-.}"
+    
+    if [ "$dir" = "." ] || [ -z "$dir" ]; then
+        dir=$(pwd)
+    fi
+    
+    check_nextjs_d1 "$dir"
 }
 
 cmd_build() {
@@ -374,6 +477,7 @@ Commands:
   init <name>           Start a new deployment
   status <name>         Check deployment status
   continue <name>       Continue to next step
+  check_nextjs_d1 <dir> Check Next.js + D1 deployment requirements
   build <name>          Build the app (after design)
   test <name>           Test locally before push
   push <name> [repo]    Push to GitHub
@@ -383,6 +487,7 @@ Commands:
 
 Examples:
   deploy-agent init my-app
+  deploy-agent check_nextjs_d1 ./my-app
   deploy-agent status my-app
   deploy-agent push my-app my-repo-name
   deploy-agent deploy my-app myapp.sheraj.org
@@ -392,7 +497,7 @@ EOF
 
 # Main
 case "$1" in
-    init|status|continue|build|test|push|deploy|cancel|list)
+    init|status|continue|check_nextjs_d1|build|test|push|deploy|cancel|list)
         cmd_"$1" "${@:2}"
         ;;
     help|--help|-h)
