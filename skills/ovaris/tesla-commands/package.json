@@ -1,0 +1,8 @@
+{
+  "name": "tesla-commands",
+  "version": "1.0.0",
+  "description": "Control your Tesla via MyTeslaMate API. Supports multi-vehicle accounts and charging schedules.",
+  "author": "Olli Varis",
+  "license": "MIT",
+  "homepage": "https://github.com/ovaris/agent-skills/tree/main/tesla-commands"
+}
