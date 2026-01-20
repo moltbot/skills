@@ -1,6 +1,6 @@
 {
   "name": "@clawdbot/smart-followups",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "Clawdbot skill: Say 'followups' to get 3 contextual suggestions (Quick, Deep Dive, Related) as buttons or text",
   "main": "handler.js",
   "bin": {
@@ -25,7 +25,7 @@
     "imessage",
     "chat"
   ],
-  "author": "Robby <robby@clawdbot.com>",
+  "author": "Robby <robbyczgw@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
