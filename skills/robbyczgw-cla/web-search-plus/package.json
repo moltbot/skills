@@ -1,0 +1,45 @@
+{
+  "name": "@clawdbot/web-search-plus",
+  "version": "1.0.6",
+  "description": "Unified search skill supporting Serper (Google results), Tavily (AI-optimized research), and Exa (neural semantic search). Choose the right provider for your task - product specs, deep research, or similar page discovery. Includes images, domain filters, time ranges, and comprehensive documentation.",
+  "keywords": [
+    "clawdbot",
+    "skill",
+    "search",
+    "serper",
+    "tavily",
+    "exa",
+    "google",
+    "research",
+    "semantic-search",
+    "web-search",
+    "ai-agent"
+  ],
+  "author": "Robby <robby@clawdbot.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/robbyczgw-cla/web-search-plus.git"
+  },
+  "homepage": "https://clawdhub.com/robbyczgw-cla/web-search-plus",
+  "bugs": {
+    "url": "https://github.com/robbyczgw-cla/web-search-plus/issues"
+  },
+  "clawdbot": {
+    "skill": true,
+    "triggers": ["search", "find", "look up", "research"],
+    "capabilities": [
+      "web-search",
+      "image-search",
+      "semantic-search",
+      "multi-provider"
+    ],
+    "providers": ["serper", "tavily", "exa"]
+  },
+  "files": [
+    "SKILL.md",
+    "README.md",
+    "scripts/",
+    ".env.example"
+  ]
+}

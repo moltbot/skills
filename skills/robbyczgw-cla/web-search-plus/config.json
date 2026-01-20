@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Web Search Plus configuration — customize defaults per provider",
+  
+  "defaults": {
+    "provider": "serper",
+    "max_results": 5
+  },
+  
+  "serper": {
+    "country": "us",
+    "language": "en",
+    "type": "search",
+    "autocorrect": true,
+    "include_images": false
+  },
+  
+  "tavily": {
+    "depth": "basic",
+    "topic": "general",
+    "include_images": false,
+    "include_raw_content": false,
+    "include_domains": [],
+    "exclude_domains": []
+  },
+  
+  "exa": {
+    "type": "neural",
+    "category": null,
+    "include_domains": [],
+    "exclude_domains": []
+  }
+}
