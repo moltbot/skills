@@ -46,7 +46,7 @@ const p = zipClassicSudoku2(normalized);
 
 const wrapper = {
   p,
-  n: `${title} (shared)`,  // "(shared)" suffix ensures valid Base64 padding
+  n: title,
   s: '',
   m: message,
 };
