@@ -160,9 +160,27 @@ wrangler queues list
 wrangler queues delete <name>
 ```
 
-## wrangler.toml Configuration
+## Configuration Files
 
-Minimal worker config:
+Wrangler supports both TOML and JSON/JSONC config formats:
+
+- `wrangler.toml` — traditional format
+- `wrangler.json` or `wrangler.jsonc` — newer, with JSON schema support
+
+**⚠️ Important:** If both exist, JSON takes precedence. Pick one format to avoid confusion where edits to TOML are ignored.
+
+### JSONC format (with schema autocomplete)
+
+```jsonc
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "my-worker",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-12-30"
+}
+```
+
+### TOML format
 
 ```toml
 name = "my-worker"
@@ -241,13 +259,23 @@ wrangler deployments list
 wrangler deployments view
 ```
 
+## What Wrangler Does NOT Do
+
+- **DNS management** — Use the Cloudflare dashboard or API for DNS records
+- **Custom domains** — Configure via dashboard (Worker Settings > Domains & Routes) or API
+- **SSL certificates** — Managed automatically by Cloudflare when custom domains are added
+- **Firewall/WAF rules** — Use dashboard or API
+
+For DNS/domain management, see the `cloudflare` skill (uses Cloudflare API directly).
+
 ## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
 | "Not authenticated" | Run `wrangler login` |
 | Node version error | Requires Node.js v20+ |
-| "No config found" | Ensure `wrangler.toml` exists in cwd or use `-c path/to/wrangler.toml` |
+| "No config found" | Ensure config file exists (`wrangler.toml` or `wrangler.jsonc`) or use `-c path/to/config` |
+| Config changes ignored | Check for `wrangler.json`/`wrangler.jsonc` — JSON takes precedence over TOML |
 | Binding not found | Check `wrangler.toml` bindings match code references |
 
 ## Resources
