@@ -1,0 +1,11 @@
+{
+  "owner": "am-will",
+  "slug": "llm-council",
+  "displayName": "LLM Council",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1768962695659,
+    "commit": null
+  },
+  "history": []
+}
