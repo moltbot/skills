@@ -3,9 +3,15 @@
   "slug": "tldr",
   "displayName": "tldr",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1768935236822,
-    "commit": "https://github.com/clawdbot/skills/commit/e52eb5cddcaa92c619dac05d1625d8b9a66bea17"
+    "version": "1.0.1",
+    "publishedAt": 1769060848674,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1768935236822,
+      "commit": "https://github.com/clawdbot/skills/commit/e52eb5cddcaa92c619dac05d1625d8b9a66bea17"
+    }
+  ]
 }
