@@ -1,0 +1,11 @@
+{
+  "owner": "tmigone",
+  "slug": "invoice-generator",
+  "displayName": "Invoice Generator",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769105817562,
+    "commit": null
+  },
+  "history": []
+}
