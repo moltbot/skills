@@ -1,0 +1,27 @@
+{
+  "_comment": "Clawdbot OAuth Token Refresh Configuration",
+  "_usage": "Copy to claude-oauth-refresh-config.json and customize",
+  
+  "refresh_buffer_minutes": 30,
+  "log_file": "~/clawd/logs/claude-oauth-refresh.log",
+  
+  "_keychain_comment": "Keychain settings - where tokens are stored",
+  "keychain_service": "Claude Code-credentials",
+  "keychain_account": "claude",
+  "keychain_field": "claudeAiOauth",
+  
+  "_auth_file_comment": "Clawdbot auth-profiles.json location",
+  "auth_file": "~/.clawdbot/agents/main/agent/auth-profiles.json",
+  "profile_name": "anthropic:default",
+  
+  "_oauth_comment": "OAuth endpoint configuration",
+  "client_id": "9d1c250a-e61b-44d9-88ed-5944d1962f5e",
+  "token_url": "https://console.anthropic.com/v1/oauth/token",
+  
+  "notifications": {
+    "on_success": false,
+    "on_failure": true
+  },
+  "notification_channel": "telegram",
+  "notification_target": "YOUR_CHAT_ID"
+}
