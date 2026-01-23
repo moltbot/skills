@@ -1,0 +1,38 @@
+{
+  "name": "clawdlink",
+  "version": "1.0.0",
+  "description": "Encrypted Clawdbot-to-Clawdbot messaging",
+  "author": "Dave Morin",
+  
+  "entrypoints": {
+    "handler": "./handler.js",
+    "heartbeat": "./heartbeat.js",
+    "cli": "./cli.js"
+  },
+  
+  "heartbeat": {
+    "enabled": true,
+    "script": "./heartbeat.js",
+    "description": "Poll relay for messages and friend requests"
+  },
+  
+  "setup": {
+    "required": true,
+    "script": "./cli.js setup",
+    "instructions": "Run: clawdlink setup \"Your Name\""
+  },
+  
+  "triggers": [
+    "clawdlink",
+    "friend link", 
+    "add friend",
+    "send message to",
+    "tell * that",
+    "message from",
+    "accept friend request"
+  ],
+  
+  "dependencies": {
+    "relay": "https://clawdlink-relay.vercel.app"
+  }
+}
