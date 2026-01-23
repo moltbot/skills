@@ -1,0 +1,11 @@
+{
+  "owner": "jmagar",
+  "slug": "gotify",
+  "displayName": "Gotify Notifications",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769150837198,
+    "commit": null
+  },
+  "history": []
+}
