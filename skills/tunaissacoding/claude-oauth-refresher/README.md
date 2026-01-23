@@ -1,188 +1,197 @@
-# Claude OAuth Refresher 🔐
+# Claude OAuth Token Refresher
 
-Auto-refresh system for Claude Code OAuth tokens on macOS. Prevents authentication failures by automatically renewing tokens before they expire (~8 hours).
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platform: macOS](https://img.shields.io/badge/platform-macOS-lightgrey.svg)](https://www.apple.com/macos/)
-
-## Features
-
-- ✅ **Automatic token refresh** - Runs 30 minutes before expiry
-- ✅ **Smart notifications** - Configurable alerts via Telegram, Slack, Discord, WhatsApp, iMessage, or Signal
-- ✅ **Pre-flight verification** - Checks all requirements before installation
-- ✅ **One-command setup** - Interactive installation with auto-detection
-- ✅ **Zero maintenance** - Config changes apply automatically
-- ✅ **Detailed error reporting** - Context-specific troubleshooting when things break
+Automatically refreshes your Claude tokens before they expire. No more authentication failures.
 
 ## Requirements
 
-⚠️ **Must have:**
-- **macOS 10.13 (High Sierra) or newer** - Requires Keychain access
-- **Claude Code CLI** installed - [Get it here](https://code.claude.com/docs/en/setup)
-- **Already authenticated** via `claude auth`
-- **Clawdbot running** - [Install Clawdbot](https://docs.clawd.bot/start/getting-started) or run: `curl -fsSL https://clawd.bot/install.sh | bash`
+- macOS with Keychain
+- `jq` (`brew install jq`)
+- Clawdbot (for scheduling)
 
-## Quick Start
+## What It Does
 
-```bash
-# 1. Verify your setup
-cd ~/clawd/skills/claude-oauth-refresher
-./verify-setup.sh
+- Checks your Claude token every few hours
+- Refreshes it 30 minutes before expiry
+- Updates both Keychain and Clawdbot automatically
+- Works silently in the background
 
-# 2. Install (interactive, ~1 minute)
-./install.sh
+## Installation
 
-# 3. Done! Token refreshes automatically
-```
-
-## What You'll See
-
-### During Installation
-
-The installer will:
-1. ✅ Verify all requirements
-2. ✅ Auto-detect your Clawdbot channel (Telegram, WhatsApp, etc.)
-3. ✅ Configure notifications interactively
-4. ✅ Test refresh immediately
-5. ✅ Set up automatic scheduling
-
-### During Operation
-
-**When refresh starts:**
-```
-🔄 Refreshing Claude token...
-```
-
-**When refresh succeeds:**
-```
-✅ Claude token refreshed!
-New expiry: 2026-01-23 18:30:00
-```
-
-**When refresh fails:**
-```
-❌ Claude token refresh failed
-
-Error: Network timeout connecting to auth.anthropic.com
-Details: Connection timed out after 30s
-
-Troubleshooting:
-- Check internet connection
-- Verify Keychain has valid refresh token
-- Run: ./verify-setup.sh
-
-Need help? Check logs:
-~/clawd/logs/claude-oauth-refresh.log
-```
-
-## Configuration
-
-Edit anytime: `~/clawd/claude-oauth-refresh-config.json`
-
-```json
-{
-  "refresh_buffer_minutes": 30,
-  "log_file": "~/clawd/logs/claude-oauth-refresh.log",
-  
-  "notifications": {
-    "on_start": true,      // "Refreshing token..."
-    "on_success": true,    // "Token refreshed!"
-    "on_failure": true     // "Refresh failed: ..."
-  },
-  
-  "notification_channel": "telegram",
-  "notification_target": "123456789"
-}
-```
-
-Changes apply automatically on next refresh - no need to reinstall!
-
-### Notification Channels
-
-Supports all Clawdbot channels:
-- **Telegram** - `notification_target`: chat ID (e.g., `123456789`)
-- **Slack** - `notification_target`: `user:<id>` or `channel:<id>`
-- **Discord** - `notification_target`: `user:<id>` or `channel:<id>`
-- **WhatsApp** - `notification_target`: E.164 phone (e.g., `+15551234567`)
-- **iMessage** - `notification_target`: `chat_id:123` or phone/email
-- **Signal** - `notification_target`: E.164 phone (e.g., `+15551234567`)
-
-See [SKILL.md](SKILL.md) for detailed instructions on finding your target ID.
-
-### Control via Clawdbot
-
-You can also ask Clawdbot to manage notifications:
-- "disable Claude refresh success notifications"
-- "enable all Claude refresh notifications"
-- "show Claude refresh notification settings"
-
-## How It Works
-
-1. **Smart refresh** - Runs 30 minutes before token expiration
-2. **Dual update** - Updates both `auth-profiles.json` AND Keychain
-3. **Auto-reschedule** - Calculates next refresh based on new expiry
-4. **Fail-safe** - Detailed error messages with troubleshooting steps
-
-Claude tokens expire ~8 hours after refresh, so the next refresh happens in ~7.5 hours.
-
-## Uninstall
-
-```bash
-./uninstall.sh
-```
-
-Removes the refresh service but preserves config and logs. To reinstall: `./install.sh`
-
-## Documentation
-
-- **[SKILL.md](SKILL.md)** - Complete documentation
-- **[QUICKSTART.md](QUICKSTART.md)** - Quick reference
-- **[UPGRADE.md](UPGRADE.md)** - Migration guide from older versions
-
-## Troubleshooting
-
-**Installation fails?**
-```bash
-./verify-setup.sh
-```
-This runs 11 pre-flight checks and tells you exactly what's missing.
-
-**Refresh not working?**
-Check logs:
-```bash
-tail -f ~/clawd/logs/claude-oauth-refresh.log
-```
-
-**Common issues:**
-- **"Not macOS"** → This skill requires macOS for Keychain access
-- **"Claude CLI not found"** → Install: `brew install claude`
-- **"No Keychain credentials"** → Run: `claude auth`
-- **"Clawdbot not running"** → Start: `clawdbot gateway start`
-
-See [SKILL.md](SKILL.md) for comprehensive troubleshooting.
-
-## Credits
-
-Built by [Tuna](https://github.com/TunaIssaCoding) for the Clawdbot community.
-
-Extracted from my personal Claude workflow automation and generalized for everyone.
-
-## License
-
-MIT License - see LICENSE file for details.
-
-## Contributing
-
-Issues and PRs welcome! This is a community tool.
-
----
-
-**Install via ClawdHub:**
 ```bash
 clawdhub install claude-oauth-refresher
 ```
 
-**Links:**
-- [ClawdHub Page](#) (coming soon)
-- [GitHub Repository](https://github.com/TunaIssaCoding/claude-oauth-refresher)
-- [Clawdbot](https://clawdbot.com)
+### First-Time Setup
+
+**Most users: Just run it**
+```bash
+cd ~/clawd/skills/claude-oauth-refresher
+./refresh-token.sh
+```
+
+**Expected output:**
+```
+✅ Token still valid (475 minutes remaining)
+```
+
+**That's it!** The script auto-discovers your keychain setup.
+
+### What Happens
+
+- ✅ Finds your tokens in Keychain (tries common account names)
+- ✅ Validates token structure
+- ✅ Sets up automatic refresh schedule
+- ✅ Logs all operations to `~/clawd/logs/`
+
+## How It Works
+
+1. **Reads** your current token from macOS Keychain
+2. **Checks** expiry time (default: refresh 30 min before)
+3. **Calls** Anthropic OAuth API with refresh token
+4. **Updates** both Keychain and `~/.clawdbot/agents/main/agent/auth-profiles.json`
+
+**Automatic fallback:** If your account name isn't "claude", it tries:
+- "Claude Code"
+- "default"
+- "oauth"
+- "anthropic"
+
+**Example (force refresh):**
+```bash
+./refresh-token.sh --force
+```
+
+Output:
+```
+[17:48:16] ✓ Received new tokens
+[17:48:16] New expiry: 2026-01-24 01:48:16 (8 hours)
+[17:48:16] ✓ Auth file updated
+[17:48:16] ✓ Keychain updated
+✅ Token refreshed successfully!
+```
+
+---
+
+## 📚 Advanced Information
+
+<details>
+<summary><b>Configuration Options</b> (optional customization)</summary>
+
+Create `claude-oauth-refresh-config.json` if you need to customize:
+
+```json
+{
+  "refresh_buffer_minutes": 30,
+  "keychain_service": "Claude Code-credentials",
+  "keychain_account": "claude",
+  "auth_file": "~/.clawdbot/agents/main/agent/auth-profiles.json"
+}
+```
+
+**Most users don't need this** - the defaults work fine.
+
+</details>
+
+<details>
+<summary><b>Setting Up Another Device</b></summary>
+
+The script has automatic fallback, so usually you just:
+1. Copy the skill folder
+2. Run `./refresh-token.sh`
+3. It finds your tokens automatically
+
+**If your setup is unusual:**
+
+Check which keychain account has your tokens:
+```bash
+security find-generic-password -l "Claude Code-credentials"
+```
+
+Look for the entry with `"acct"<blob>="your-account-name"`
+
+Then create a config file with your account name.
+
+</details>
+
+<details>
+<summary><b>How Detection Works</b></summary>
+
+The script:
+1. Tries your configured account name first
+2. If that fails (or has incomplete data), tries common names
+3. Validates each entry has `refreshToken` and `expiresAt`
+4. Uses the first complete entry found
+
+**Data structure expected:**
+```json
+{
+  "claudeAiOauth": {
+    "accessToken": "sk-ant-oat01-...",
+    "refreshToken": "sk-ant-ort01-...",
+    "expiresAt": 1769190496000,
+    "scopes": [...],
+    "subscriptionType": "max",
+    "rateLimitTier": "default_claude_max_20x"
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><b>Troubleshooting</b></summary>
+
+**"No refreshToken in keychain"**
+- Your keychain account name is different
+- The script should auto-discover it, but if not:
+  ```bash
+  security find-generic-password -l "Claude Code-credentials"
+  ```
+  Check which account has the tokens
+
+**"Failed to retrieve from Keychain"**
+- Keychain is locked
+- Entry doesn't exist
+- Run: `security find-generic-password -s "Claude Code-credentials" -l`
+
+**Token refresh fails**
+- Check internet connection
+- Verify refresh token hasn't been revoked
+- Re-authenticate with Claude if needed
+
+</details>
+
+<details>
+<summary><b>For Developers</b></summary>
+
+### Data Flow
+
+```
+Keychain (claudeAiOauth JSON)
+    ↓ read refreshToken, expiresAt
+OAuth API (POST with refresh_token)
+    ↓ returns new accessToken, refreshToken, expires_in
+Update Keychain (complete JSON)
+    ↓
+Update auth-profiles.json (just accessToken)
+```
+
+### Automatic Scheduling
+
+After refresh, creates a Clawdbot cron job:
+```bash
+Next refresh = (new_expiry - buffer_minutes)
+```
+
+### Portability Features
+
+- Tries multiple common account names
+- Validates data structure before using
+- Helpful errors with diagnostic commands
+- Works without config file (sensible defaults)
+
+</details>
+
+## License
+
+MIT

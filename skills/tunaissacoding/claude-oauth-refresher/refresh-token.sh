@@ -1,33 +1,69 @@
 #!/bin/bash
-# refresh-token.sh - Claude CLI OAuth token refresh
+# refresh-token.sh - Clawdbot OAuth token refresh
+# Matches the exact process: Keychain JSON → OAuth API → Update auth-profiles.json + Keychain
+# Usage: ./refresh-token.sh [--force]
 
 set -euo pipefail
+
+FORCE_REFRESH=false
+if [[ "${1:-}" == "--force" ]]; then
+    FORCE_REFRESH=true
+fi
 
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 CONFIG_FILE="$SCRIPT_DIR/claude-oauth-refresh-config.json"
-AUTH_PROFILES="$HOME/.config/claude/auth-profiles.json"
-KEYCHAIN_SERVICE="claude-cli-auth"
-KEYCHAIN_ACCOUNT="default"
+
+# Defaults for Clawdbot setup
+DEFAULT_KEYCHAIN_SERVICE="Claude Code-credentials"
+DEFAULT_KEYCHAIN_ACCOUNT="claude"
+DEFAULT_KEYCHAIN_FIELD="claudeAiOauth"
+DEFAULT_AUTH_FILE="$HOME/.clawdbot/agents/main/agent/auth-profiles.json"
+DEFAULT_PROFILE_NAME="anthropic:default"
+DEFAULT_CLIENT_ID="9d1c250a-e61b-44d9-88ed-5944d1962f5e"
+DEFAULT_TOKEN_URL="https://console.anthropic.com/v1/oauth/token"
+DEFAULT_REFRESH_BUFFER=30
 
 # Load config or use defaults
 if [[ -f "$CONFIG_FILE" ]]; then
     REFRESH_BUFFER=$(jq -r '.refresh_buffer_minutes // 30' "$CONFIG_FILE")
     LOG_FILE=$(jq -r '.log_file // "~/clawd/logs/claude-oauth-refresh.log"' "$CONFIG_FILE" | sed "s|^~|$HOME|")
-    NOTIFY_START=$(jq -r '.notifications.on_start // true' "$CONFIG_FILE")
     NOTIFY_SUCCESS=$(jq -r '.notifications.on_success // true' "$CONFIG_FILE")
     NOTIFY_FAILURE=$(jq -r '.notifications.on_failure // true' "$CONFIG_FILE")
     NOTIFY_CHANNEL=$(jq -r '.notification_channel // "telegram"' "$CONFIG_FILE")
     NOTIFY_TARGET=$(jq -r '.notification_target // ""' "$CONFIG_FILE")
+    
+    KEYCHAIN_SERVICE=$(jq -r '.keychain_service // ""' "$CONFIG_FILE")
+    KEYCHAIN_ACCOUNT=$(jq -r '.keychain_account // ""' "$CONFIG_FILE")
+    KEYCHAIN_FIELD=$(jq -r '.keychain_field // ""' "$CONFIG_FILE")
+    AUTH_FILE=$(jq -r '.auth_file // ""' "$CONFIG_FILE" | sed "s|^~|$HOME|")
+    PROFILE_NAME=$(jq -r '.profile_name // ""' "$CONFIG_FILE")
+    CLIENT_ID=$(jq -r '.client_id // ""' "$CONFIG_FILE")
+    TOKEN_URL=$(jq -r '.token_url // ""' "$CONFIG_FILE")
 else
-    REFRESH_BUFFER=30
+    REFRESH_BUFFER=$DEFAULT_REFRESH_BUFFER
     LOG_FILE="$HOME/clawd/logs/claude-oauth-refresh.log"
-    NOTIFY_START=true
     NOTIFY_SUCCESS=true
     NOTIFY_FAILURE=true
     NOTIFY_CHANNEL="telegram"
     NOTIFY_TARGET=""
+    KEYCHAIN_SERVICE=""
+    KEYCHAIN_ACCOUNT=""
+    KEYCHAIN_FIELD=""
+    AUTH_FILE=""
+    PROFILE_NAME=""
+    CLIENT_ID=""
+    TOKEN_URL=""
 fi
+
+# Apply defaults if not set
+KEYCHAIN_SERVICE="${KEYCHAIN_SERVICE:-$DEFAULT_KEYCHAIN_SERVICE}"
+KEYCHAIN_ACCOUNT="${KEYCHAIN_ACCOUNT:-$DEFAULT_KEYCHAIN_ACCOUNT}"
+KEYCHAIN_FIELD="${KEYCHAIN_FIELD:-$DEFAULT_KEYCHAIN_FIELD}"
+AUTH_FILE="${AUTH_FILE:-$DEFAULT_AUTH_FILE}"
+PROFILE_NAME="${PROFILE_NAME:-$DEFAULT_PROFILE_NAME}"
+CLIENT_ID="${CLIENT_ID:-$DEFAULT_CLIENT_ID}"
+TOKEN_URL="${TOKEN_URL:-$DEFAULT_TOKEN_URL}"
 
 # Ensure log directory exists
 mkdir -p "$(dirname "$LOG_FILE")"
@@ -40,12 +76,8 @@ log() {
 # Notification function
 notify() {
     local message="$1"
-    local notification_type="$2"  # "start", "success", or "failure"
+    local notification_type="$2"
     
-    # Check if we should notify for this type
-    if [[ "$notification_type" == "start" ]] && [[ "$NOTIFY_START" != "true" ]]; then
-        return
-    fi
     if [[ "$notification_type" == "success" ]] && [[ "$NOTIFY_SUCCESS" != "true" ]]; then
         return
     fi
@@ -53,217 +85,192 @@ notify() {
         return
     fi
     
-    # Skip if no target configured
     if [[ -z "$NOTIFY_TARGET" ]] || [[ "$NOTIFY_TARGET" == "YOUR_CHAT_ID" ]]; then
-        log "WARN: No notification target configured, skipping notification"
         return
     fi
     
-    # Send via Clawdbot
     if command -v clawdbot &> /dev/null; then
-        clawdbot message send --target "$NOTIFY_TARGET" --message "$message" >> "$LOG_FILE" 2>&1 || \
-            log "ERROR: Failed to send notification"
-    else
-        log "WARN: clawdbot not found, cannot send notification"
+        clawdbot message send --target "$NOTIFY_TARGET" --message "$message" >> "$LOG_FILE" 2>&1 || true
     fi
 }
 
-# Enhanced error handler with detailed troubleshooting
+# Error handler
 error_exit() {
     local error_message="$1"
-    local error_details="${2:-}"
-    
     log "ERROR: $error_message"
-    if [[ -n "$error_details" ]]; then
-        log "DETAILS: $error_details"
-    fi
-    
-    # Build detailed failure notification
-    local troubleshooting=""
-    local full_message="❌ Claude token refresh failed
-
-Error: $error_message"
-    
-    if [[ -n "$error_details" ]]; then
-        full_message="$full_message
-Details: $error_details"
-    fi
-    
-    # Add specific troubleshooting based on error type
-    if [[ "$error_message" =~ "curl" ]] || [[ "$error_message" =~ "network" ]] || [[ "$error_message" =~ "timeout" ]]; then
-        troubleshooting="
-Troubleshooting:
-- Check your internet connection
-- Verify you can reach console.anthropic.com
-- Try running manually: $SCRIPT_DIR/refresh-token.sh"
-    elif [[ "$error_message" =~ "invalid_grant" ]] || [[ "$error_message" =~ "refresh token" ]]; then
-        troubleshooting="
-Troubleshooting:
-- Your refresh token may have expired
-- Re-authenticate: claude auth logout && claude auth
-- Verify Keychain access: security find-generic-password -s '$KEYCHAIN_SERVICE' -a '$KEYCHAIN_ACCOUNT'"
-    elif [[ "$error_message" =~ "Keychain" ]] || [[ "$error_message" =~ "security" ]]; then
-        troubleshooting="
-Troubleshooting:
-- Check Keychain permissions
-- Re-run authentication: claude auth
-- Verify setup: $SCRIPT_DIR/verify-setup.sh"
-    elif [[ "$error_message" =~ "auth-profiles" ]] || [[ "$error_message" =~ "profile" ]]; then
-        troubleshooting="
-Troubleshooting:
-- Run: claude auth
-- Verify file exists: ~/.config/claude/auth-profiles.json
-- Check file permissions: chmod 600 ~/.config/claude/auth-profiles.json"
-    else
-        troubleshooting="
-Troubleshooting:
-- Run verification: $SCRIPT_DIR/verify-setup.sh
-- Check logs: tail -20 $LOG_FILE
-- Try manual refresh: $SCRIPT_DIR/refresh-token.sh"
-    fi
-    
-    full_message="$full_message$troubleshooting
-
-Need help? Message Clawdbot or check logs:
-$LOG_FILE"
-    
-    notify "$full_message" "failure"
+    notify "❌ Claude token refresh failed: $error_message" "failure"
     exit 1
 }
 
-# Check dependencies
-command -v jq &> /dev/null || error_exit "jq not installed" "Install with: brew install jq"
-command -v security &> /dev/null || error_exit "security command not found" "This script requires macOS Keychain"
-[[ -f "$AUTH_PROFILES" ]] || error_exit "No auth profiles found" "Run: claude auth"
+echo "=== Claude OAuth Token Refresh ==="
+log "Refresh started"
 
-log "Starting token refresh check..."
+# Step 1: Read tokens from Keychain with fallback discovery
+log "Reading tokens from Keychain..."
 
-# Send start notification if enabled
-notify "🔄 Refreshing Claude token..." "start"
+# Helper function to validate keychain data
+validate_keychain_data() {
+    local data="$1"
+    local account_name="$2"
+    
+    # Try to parse and check for required fields
+    local has_refresh=$(echo "$data" | python3 -c "import sys, json; data=json.load(sys.stdin); print('yes' if '$KEYCHAIN_FIELD' in data and 'refreshToken' in data['$KEYCHAIN_FIELD'] and data['$KEYCHAIN_FIELD']['refreshToken'] else 'no')" 2>/dev/null)
+    local has_expires=$(echo "$data" | python3 -c "import sys, json; data=json.load(sys.stdin); print('yes' if '$KEYCHAIN_FIELD' in data and 'expiresAt' in data['$KEYCHAIN_FIELD'] and data['$KEYCHAIN_FIELD']['expiresAt'] else 'no')" 2>/dev/null)
+    
+    if [[ "$has_refresh" == "yes" ]] && [[ "$has_expires" == "yes" ]]; then
+        log "✓ Found complete token data in account: $account_name"
+        return 0
+    else
+        log "⚠ Account '$account_name' has incomplete data (refreshToken: $has_refresh, expiresAt: $has_expires)"
+        return 1
+    fi
+}
 
-# Read current auth profile
-PROFILE=$(jq -r '.default // empty' "$AUTH_PROFILES" 2>/dev/null) || \
-    error_exit "Failed to read auth profiles" "Cannot parse JSON from $AUTH_PROFILES"
-[[ -n "$PROFILE" ]] || error_exit "No default profile in auth-profiles.json" "Run: claude auth"
+# Try primary account first
+KEYCHAIN_DATA=""
+KEYCHAIN_DATA=$(security find-generic-password -s "$KEYCHAIN_SERVICE" -a "$KEYCHAIN_ACCOUNT" -w 2>&1 || echo "")
 
-# Extract expiry time
-EXPIRES_AT=$(echo "$PROFILE" | jq -r '.expiresAt // empty')
-[[ -n "$EXPIRES_AT" ]] || error_exit "No expiresAt field in auth profile" "Your auth profile may be corrupted. Re-run: claude auth"
-
-# Parse expiry (format: ISO 8601)
-if date --version &> /dev/null 2>&1; then
-    # GNU date
-    EXPIRES_EPOCH=$(date -d "$EXPIRES_AT" +%s 2>/dev/null) || \
-        error_exit "Failed to parse expiry time" "Invalid date format: $EXPIRES_AT"
+if [[ -n "$KEYCHAIN_DATA" ]] && validate_keychain_data "$KEYCHAIN_DATA" "$KEYCHAIN_ACCOUNT"; then
+    log "Using configured account: $KEYCHAIN_ACCOUNT"
 else
-    # BSD date (macOS)
-    EXPIRES_EPOCH=$(date -j -f "%Y-%m-%dT%H:%M:%S" "${EXPIRES_AT%.*}" +%s 2>/dev/null || \
-                    date -j -f "%Y-%m-%dT%H:%M:%SZ" "$EXPIRES_AT" +%s 2>/dev/null) || \
-        error_exit "Failed to parse expiry time" "Invalid date format: $EXPIRES_AT"
+    # Fallback: Auto-discover accounts with complete data
+    log "Primary account failed, trying common account names..."
+    
+    # Try common account names
+    COMMON_ACCOUNTS=("claude" "Claude Code" "default" "oauth" "anthropic")
+    
+    FOUND=false
+    for account in "${COMMON_ACCOUNTS[@]}"; do
+        log "Trying account: $account"
+        
+        KEYCHAIN_DATA=$(security find-generic-password -s "$KEYCHAIN_SERVICE" -a "$account" -w 2>&1 || echo "")
+        
+        if [[ -n "$KEYCHAIN_DATA" ]] && validate_keychain_data "$KEYCHAIN_DATA" "$account"; then
+            KEYCHAIN_ACCOUNT="$account"  # Update to use this account
+            FOUND=true
+            break
+        fi
+    done
+    
+    if [[ "$FOUND" == "false" ]]; then
+        error_exit "No account found with complete token data. Tried: ${COMMON_ACCOUNTS[*]}
+
+Hint: Check your keychain entry:
+  security find-generic-password -s '$KEYCHAIN_SERVICE' -l
+
+Verify the password (JSON) contains:
+  { \"$KEYCHAIN_FIELD\": { \"refreshToken\": \"...\", \"expiresAt\": ... } }"
+    fi
 fi
 
-NOW_EPOCH=$(date +%s)
-BUFFER_SECONDS=$((REFRESH_BUFFER * 60))
-REFRESH_THRESHOLD=$((EXPIRES_EPOCH - BUFFER_SECONDS))
+# Parse keychain JSON
+REFRESH_TOKEN=$(echo "$KEYCHAIN_DATA" | python3 -c "import sys, json; print(json.load(sys.stdin)['$KEYCHAIN_FIELD']['refreshToken'])")
+CURRENT_EXPIRES=$(echo "$KEYCHAIN_DATA" | python3 -c "import sys, json; print(json.load(sys.stdin)['$KEYCHAIN_FIELD']['expiresAt'])")
 
-TIME_UNTIL_EXPIRY=$((EXPIRES_EPOCH - NOW_EPOCH))
-MINUTES_UNTIL_EXPIRY=$((TIME_UNTIL_EXPIRY / 60))
-
-log "Token expires in $MINUTES_UNTIL_EXPIRY minutes"
+log "✓ Using keychain account: $KEYCHAIN_ACCOUNT"
+log "Current expiry: $(date -r $((CURRENT_EXPIRES / 1000)) '+%Y-%m-%d %H:%M:%S')"
 
 # Check if refresh needed
-if [[ $NOW_EPOCH -lt $REFRESH_THRESHOLD ]]; then
-    log "Token still valid, no refresh needed (buffer: $REFRESH_BUFFER min)"
+NOW_MS=$(($(date +%s) * 1000))
+TIME_LEFT_MS=$((CURRENT_EXPIRES - NOW_MS))
+TIME_LEFT_MIN=$((TIME_LEFT_MS / 60000))
+
+if [[ "$FORCE_REFRESH" == "false" ]] && [[ $TIME_LEFT_MIN -gt $REFRESH_BUFFER ]]; then
+    log "Token still valid for ${TIME_LEFT_MIN} minutes (buffer: ${REFRESH_BUFFER}m)"
+    echo "✅ Token still valid ($TIME_LEFT_MIN minutes remaining)"
+    echo "Use --force to refresh anyway"
     exit 0
 fi
 
-log "Token needs refresh (within $REFRESH_BUFFER min buffer)"
+if [[ "$FORCE_REFRESH" == "true" ]]; then
+    log "Force refresh requested (token expires in $TIME_LEFT_MIN minutes)"
+else
+    log "Token expires in $TIME_LEFT_MIN minutes, refreshing..."
+fi
 
-# Retrieve refresh token from Keychain
-log "Retrieving refresh token from Keychain..."
-REFRESH_TOKEN=$(security find-generic-password -s "$KEYCHAIN_SERVICE" -a "$KEYCHAIN_ACCOUNT" -w 2>&1) || \
-    error_exit "Failed to retrieve refresh token from Keychain" "$(echo "$REFRESH_TOKEN" | grep -o 'errSecItemNotFound\|errSecAuthFailed\|The specified item could not be found in the keychain' || echo 'Unknown keychain error')"
-
-[[ -n "$REFRESH_TOKEN" ]] || error_exit "Refresh token is empty" "Re-run: claude auth"
-
-# OAuth refresh request
-log "Requesting new access token..."
-OAUTH_RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" -X POST "https://console.anthropic.com/v1/oauth/token" \
+# Step 2: Call OAuth endpoint
+log "Calling OAuth endpoint..."
+RESPONSE=$(curl -s -X POST "$TOKEN_URL" \
     -H "Content-Type: application/json" \
     --max-time 30 \
     -d "{
         \"grant_type\": \"refresh_token\",
         \"refresh_token\": \"$REFRESH_TOKEN\",
-        \"client_id\": \"9d1c250a-e61b-44d9-88ed-5944d1962f5e\"
-    }" 2>&1)
+        \"client_id\": \"$CLIENT_ID\"
+    }") || error_exit "Network error calling OAuth endpoint"
 
-# Extract HTTP code and body
-HTTP_CODE=$(echo "$OAUTH_RESPONSE" | grep "HTTP_CODE:" | cut -d: -f2)
-OAUTH_BODY=$(echo "$OAUTH_RESPONSE" | sed '/HTTP_CODE:/d')
+# Parse response
+NEW_ACCESS=$(echo "$RESPONSE" | python3 -c "import sys, json; print(json.load(sys.stdin).get('access_token', ''))" 2>/dev/null) || \
+    error_exit "Failed to parse OAuth response"
 
-# Check for curl errors
-if [[ -z "$HTTP_CODE" ]]; then
-    error_exit "Network error connecting to console.anthropic.com" "Connection failed or timed out after 30s. Check your internet connection."
-fi
+NEW_REFRESH=$(echo "$RESPONSE" | python3 -c "import sys, json; print(json.load(sys.stdin).get('refresh_token', ''))" 2>/dev/null) || \
+    error_exit "Failed to parse OAuth response"
 
-# Check for HTTP errors
-if [[ "$HTTP_CODE" != "200" ]]; then
-    ERROR_MSG=$(echo "$OAUTH_BODY" | jq -r '.error_description // .error // "Unknown error"')
-    error_exit "OAuth refresh failed (HTTP $HTTP_CODE)" "$ERROR_MSG"
-fi
+EXPIRES_IN=$(echo "$RESPONSE" | python3 -c "import sys, json; print(json.load(sys.stdin).get('expires_in', 0))" 2>/dev/null) || \
+    error_exit "Failed to parse OAuth response"
 
-# Check for errors in response
-if echo "$OAUTH_BODY" | jq -e '.error' &> /dev/null; then
-    ERROR_MSG=$(echo "$OAUTH_BODY" | jq -r '.error_description // .error')
-    error_exit "OAuth refresh failed" "$ERROR_MSG"
-fi
+[[ -n "$NEW_ACCESS" ]] || error_exit "No access_token in OAuth response: $RESPONSE"
+[[ -n "$NEW_REFRESH" ]] || error_exit "No refresh_token in OAuth response"
 
-# Extract new tokens
-NEW_ACCESS_TOKEN=$(echo "$OAUTH_BODY" | jq -r '.access_token // empty')
-NEW_REFRESH_TOKEN=$(echo "$OAUTH_BODY" | jq -r '.refresh_token // empty')
-EXPIRES_IN=$(echo "$OAUTH_BODY" | jq -r '.expires_in // 3600')
+NEW_EXPIRES_AT=$(($(date +%s) * 1000 + EXPIRES_IN * 1000))
+NEW_EXPIRES_TIME=$(date -r $((NEW_EXPIRES_AT / 1000)) '+%Y-%m-%d %H:%M:%S')
 
-[[ -n "$NEW_ACCESS_TOKEN" ]] || error_exit "No access token in OAuth response" "Response may be malformed. Try re-authenticating: claude auth"
+log "✓ Received new tokens"
+log "New expiry: $NEW_EXPIRES_TIME (${EXPIRES_IN}s / $((EXPIRES_IN / 3600))h)"
 
-# Calculate new expiry
-NEW_EXPIRES_AT=$(date -u -j -f "%s" "$((NOW_EPOCH + EXPIRES_IN))" "+%Y-%m-%dT%H:%M:%SZ" 2>/dev/null) || \
-    error_exit "Failed to calculate new expiry time" "Invalid expires_in value: $EXPIRES_IN"
-
-# Update auth-profiles.json
-log "Updating auth profile..."
-UPDATED_PROFILE=$(echo "$PROFILE" | jq \
-    --arg access_token "$NEW_ACCESS_TOKEN" \
-    --arg expires_at "$NEW_EXPIRES_AT" \
-    '.accessToken = $access_token | .expiresAt = $expires_at' 2>/dev/null) || \
-    error_exit "Failed to update auth profile" "Cannot modify auth profile JSON"
-
-jq --arg profile "$UPDATED_PROFILE" '.default = ($profile | fromjson)' "$AUTH_PROFILES" > "$AUTH_PROFILES.tmp" && \
-    mv "$AUTH_PROFILES.tmp" "$AUTH_PROFILES" || \
-    error_exit "Failed to write updated auth profile" "Cannot write to $AUTH_PROFILES"
-
-# Update refresh token in Keychain if it changed
-if [[ -n "$NEW_REFRESH_TOKEN" ]] && [[ "$NEW_REFRESH_TOKEN" != "$REFRESH_TOKEN" ]]; then
-    log "Updating refresh token in Keychain..."
-    security add-generic-password -U -s "$KEYCHAIN_SERVICE" -a "$KEYCHAIN_ACCOUNT" -w "$NEW_REFRESH_TOKEN" &> /dev/null || \
-        log "WARN: Failed to update refresh token in Keychain (will retry next refresh)"
-fi
-
-# Success
-EXPIRES_IN_HOURS=$((EXPIRES_IN / 3600))
-NEXT_REFRESH_SECONDS=$((EXPIRES_IN - REFRESH_BUFFER * 60))
-NEXT_REFRESH_HOURS=$((NEXT_REFRESH_SECONDS / 3600))
-NEXT_REFRESH_MINUTES=$(((NEXT_REFRESH_SECONDS % 3600) / 60))
-
-# Format next refresh time
-if [[ $NEXT_REFRESH_HOURS -gt 0 ]]; then
-    NEXT_REFRESH_TIME="${NEXT_REFRESH_HOURS}h ${NEXT_REFRESH_MINUTES}m"
+# Step 3: Update auth-profiles.json
+log "Updating auth-profiles.json..."
+if [[ -f "$AUTH_FILE" ]]; then
+    python3 << PYEOF
+import json
+with open('$AUTH_FILE') as f:
+    data = json.load(f)
+data['profiles']['$PROFILE_NAME']['token'] = '$NEW_ACCESS'
+with open('$AUTH_FILE', 'w') as f:
+    json.dump(data, f, indent=2)
+PYEOF
+    log "✓ Auth file updated: $AUTH_FILE"
 else
-    NEXT_REFRESH_TIME="${NEXT_REFRESH_MINUTES}m"
+    log "WARN: Auth file not found: $AUTH_FILE"
 fi
 
-log "✓ Token refreshed successfully (expires in ${EXPIRES_IN_HOURS}h, next refresh in ${NEXT_REFRESH_TIME})"
-notify "✅ Claude token refreshed!
-New expiry: $NEW_EXPIRES_AT
-Next refresh: ~${NEXT_REFRESH_TIME}" "success"
+# Step 4: Update Keychain
+log "Updating Keychain..."
 
-exit 0
+# Read existing metadata from keychain
+SCOPES=$(echo "$KEYCHAIN_DATA" | python3 -c "import sys, json; import json as j; print(j.dumps(json.load(sys.stdin)['$KEYCHAIN_FIELD'].get('scopes', [])))" 2>/dev/null || echo "[]")
+SUB_TYPE=$(echo "$KEYCHAIN_DATA" | python3 -c "import sys, json; print(json.load(sys.stdin)['$KEYCHAIN_FIELD'].get('subscriptionType', 'max'))" 2>/dev/null || echo "max")
+RATE_TIER=$(echo "$KEYCHAIN_DATA" | python3 -c "import sys, json; print(json.load(sys.stdin)['$KEYCHAIN_FIELD'].get('rateLimitTier', 'default'))" 2>/dev/null || echo "default")
+
+# Build new keychain data
+NEW_KEYCHAIN_DATA=$(python3 << PYEOF
+import json
+data = {
+    '$KEYCHAIN_FIELD': {
+        'accessToken': '$NEW_ACCESS',
+        'refreshToken': '$NEW_REFRESH',
+        'expiresAt': $NEW_EXPIRES_AT,
+        'scopes': $SCOPES,
+        'subscriptionType': '$SUB_TYPE',
+        'rateLimitTier': '$RATE_TIER'
+    }
+}
+print(json.dumps(data))
+PYEOF
+)
+
+# Update keychain (delete old + add new)
+security delete-generic-password -s "$KEYCHAIN_SERVICE" -a "$KEYCHAIN_ACCOUNT" 2>/dev/null || true
+security add-generic-password -s "$KEYCHAIN_SERVICE" -a "$KEYCHAIN_ACCOUNT" -w "$NEW_KEYCHAIN_DATA" -U
+
+log "✓ Keychain updated"
+log "Refresh complete"
+
+notify "✅ Claude token refreshed!
+New expiry: $NEW_EXPIRES_TIME
+Next refresh: ~$((EXPIRES_IN / 3600 - REFRESH_BUFFER / 60))h" "success"
+
+echo ""
+echo "✅ Token refreshed successfully!"
+echo "New expiry: $NEW_EXPIRES_TIME"
+echo "Expires in: $((EXPIRES_IN / 3600)) hours"
