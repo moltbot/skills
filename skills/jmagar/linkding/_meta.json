@@ -3,9 +3,15 @@
   "slug": "linkding",
   "displayName": "Linkding",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769154157552,
-    "commit": "https://github.com/clawdbot/skills/commit/36141e0af812977b209535d15cf40fb8800c8184"
+    "version": "1.0.1",
+    "publishedAt": 1769203199974,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769154157552,
+      "commit": "https://github.com/clawdbot/skills/commit/36141e0af812977b209535d15cf40fb8800c8184"
+    }
+  ]
 }
