@@ -7,7 +7,7 @@ description: Keep your Claude access token fresh 24/7. Automatically refreshes O
 
 **Automatic OAuth token refresh for Claude Code CLI on macOS**
 
-Keep your Claude CLI authenticated 24/7 by automatically refreshing OAuth tokens before they expire.
+Keep your Claude account logged in 24/7 by automatically refreshing OAuth tokens before they expire.
 
 ---
 
@@ -17,7 +17,7 @@ This skill is **macOS-only** and requires:
 
 1. **macOS** (uses Keychain for secure credential storage)
 2. **Claude Code CLI** already installed (`claude` command available)
-3. **Already authenticated** via `claude auth` (refresh token stored in Keychain)
+3. **Already logged into your Claude account** (run `claude` then `login` - stores tokens in Keychain)
 4. **Clawdbot** installed and running
 
 **Not sure if you're set up?** Run the verification script:
