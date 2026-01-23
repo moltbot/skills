@@ -1,0 +1,12 @@
+{
+  "_comment": "Run ./install.sh for auto-detection and interactive setup",
+  "refresh_buffer_minutes": 30,
+  "log_file": "~/clawd/logs/claude-oauth-refresh.log",
+  "notifications": {
+    "on_start": true,
+    "on_success": true,
+    "on_failure": true
+  },
+  "notification_channel": "telegram",
+  "notification_target": "YOUR_CHAT_ID"
+}
