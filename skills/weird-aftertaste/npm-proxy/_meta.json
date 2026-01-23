@@ -1,0 +1,11 @@
+{
+  "owner": "weird-aftertaste",
+  "slug": "npm-proxy",
+  "displayName": "Nginx Proxy Manager",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769192190699,
+    "commit": null
+  },
+  "history": []
+}
