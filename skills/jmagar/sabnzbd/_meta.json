@@ -1,0 +1,11 @@
+{
+  "owner": "jmagar",
+  "slug": "sabnzbd",
+  "displayName": "Sabnzbd",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769203157269,
+    "commit": null
+  },
+  "history": []
+}
