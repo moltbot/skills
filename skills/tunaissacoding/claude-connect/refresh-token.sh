@@ -210,6 +210,8 @@ if [[ "$FORCE_REFRESH" == "false" ]] && [[ $TIME_LEFT_MIN -gt $REFRESH_BUFFER ]]
             python3 << PYEOF
 import json
 import os
+import tempfile
+
 data = {'version': 1, 'profiles': {}}
 if os.path.exists('$AUTH_FILE'):
     try:
@@ -221,11 +223,33 @@ if os.path.exists('$AUTH_FILE'):
         pass  # Use default empty structure
 if 'profiles' not in data:
     data['profiles'] = {}
+
+# DELETE anthropic:claude-cli if it exists (OAuth takes priority, blocks our token)
+if 'anthropic:claude-cli' in data['profiles']:
+    del data['profiles']['anthropic:claude-cli']
+    print("  ⚠ Removed anthropic:claude-cli (OAuth profiles block token profiles)")
+
+# Ensure anthropic:default exists with type: token
 if '$PROFILE_NAME' not in data['profiles']:
     data['profiles']['$PROFILE_NAME'] = {'type': 'token', 'provider': 'anthropic'}
+data['profiles']['$PROFILE_NAME']['type'] = 'token'
+data['profiles']['$PROFILE_NAME']['provider'] = 'anthropic'
 data['profiles']['$PROFILE_NAME']['token'] = '$ACCESS_TOKEN'
-with open('$AUTH_FILE', 'w') as f:
-    json.dump(data, f, indent=2)
+
+# Clean up any OAuth-specific fields
+for field in ['access', 'refresh', 'expires', 'email']:
+    data['profiles']['$PROFILE_NAME'].pop(field, None)
+
+# Atomic write: write to temp file, then rename
+auth_dir = os.path.dirname('$AUTH_FILE')
+fd, temp_path = tempfile.mkstemp(dir=auth_dir, suffix='.tmp')
+try:
+    with os.fdopen(fd, 'w') as f:
+        json.dump(data, f, indent=2)
+    os.rename(temp_path, '$AUTH_FILE')  # Atomic on same filesystem
+except:
+    os.unlink(temp_path)
+    raise
 PYEOF
             log "✓ Token synced to auth-profiles.json"
         fi
@@ -272,12 +296,17 @@ NEW_EXPIRES_TIME=$(date -r $((NEW_EXPIRES_AT / 1000)) '+%Y-%m-%d %H:%M:%S')
 log "✓ Received new tokens"
 log "New expiry: $NEW_EXPIRES_TIME (${EXPIRES_IN}s / $((EXPIRES_IN / 3600))h)"
 
-# Step 3: Update auth-profiles.json
+# Step 3: Update auth-profiles.json (ATOMIC WRITE to prevent race condition)
+# DELETE anthropic:claude-cli if it exists (OAuth profiles take priority over tokens,
+# so a revoked OAuth profile would block our working token profile)
+# Only maintain anthropic:default with type: token
 log "Updating auth-profiles.json..."
 mkdir -p "$(dirname "$AUTH_FILE")"
 python3 << PYEOF
 import json
 import os
+import tempfile
+
 data = {'version': 1, 'profiles': {}}
 if os.path.exists('$AUTH_FILE'):
     try:
@@ -289,11 +318,38 @@ if os.path.exists('$AUTH_FILE'):
         pass
 if 'profiles' not in data:
     data['profiles'] = {}
+
+# DELETE anthropic:claude-cli if it exists - it may have revoked OAuth tokens
+# that take priority over our working token profile
+deleted_cli = False
+if 'anthropic:claude-cli' in data['profiles']:
+    del data['profiles']['anthropic:claude-cli']
+    deleted_cli = True
+
+# Ensure anthropic:default exists with type: token
 if '$PROFILE_NAME' not in data['profiles']:
     data['profiles']['$PROFILE_NAME'] = {'type': 'token', 'provider': 'anthropic'}
+data['profiles']['$PROFILE_NAME']['type'] = 'token'  # Force type to token
+data['profiles']['$PROFILE_NAME']['provider'] = 'anthropic'
 data['profiles']['$PROFILE_NAME']['token'] = '$NEW_ACCESS'
-with open('$AUTH_FILE', 'w') as f:
-    json.dump(data, f, indent=2)
+
+# Clean up any OAuth-specific fields that might confuse Clawdbot
+for field in ['access', 'refresh', 'expires', 'email']:
+    data['profiles']['$PROFILE_NAME'].pop(field, None)
+
+# Atomic write: write to temp file, then rename (atomic on POSIX)
+auth_dir = os.path.dirname('$AUTH_FILE')
+fd, temp_path = tempfile.mkstemp(dir=auth_dir, suffix='.tmp')
+try:
+    with os.fdopen(fd, 'w') as f:
+        json.dump(data, f, indent=2)
+    os.rename(temp_path, '$AUTH_FILE')  # Atomic on same filesystem
+except:
+    os.unlink(temp_path)
+    raise
+
+if deleted_cli:
+    print("  ⚠ Removed anthropic:claude-cli (OAuth profiles block token profiles)")
 PYEOF
 log "✓ Auth file updated: $AUTH_FILE"
 
