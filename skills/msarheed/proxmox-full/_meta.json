@@ -1,0 +1,11 @@
+{
+  "owner": "msarheed",
+  "slug": "proxmox-full",
+  "displayName": "Proxmox Full",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769279195141,
+    "commit": null
+  },
+  "history": []
+}
