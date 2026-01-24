@@ -1,0 +1,11 @@
+{
+  "owner": "biostartechnology",
+  "slug": "linkedin",
+  "displayName": "LinkedIn",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769231729796,
+    "commit": null
+  },
+  "history": []
+}
