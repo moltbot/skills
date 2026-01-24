@@ -9,6 +9,7 @@ metadata: {"clawdbot":{"emoji":"🛠️"}}
 Dispatch tasks to OpenCode/Claude Code on Perry workspaces.
 
 ## Rules
+- **Always create dex task FIRST** — before any dispatch, no exceptions
 - **No hard timeouts** — background dispatch, let agent run
 - **Use IPs** — MagicDNS broken in containers (`tailscale status` for IPs)
 - **One task per PR** — same session continues until done
