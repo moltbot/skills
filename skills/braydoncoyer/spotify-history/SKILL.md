@@ -9,31 +9,64 @@ Access Spotify listening history and get personalized recommendations.
 
 ## Setup (One-Time)
 
-### 1. Create Spotify Developer App
+### Quick Setup (Recommended)
 
-1. Go to [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard)
-2. Click **Create App** (or use existing app)
-3. Fill in:
-   - **App name:** `Clawd` (or any name)
-   - **App description:** `Personal assistant integration`
-   - **Redirect URI:** `http://127.0.0.1:8888/callback` ⚠️ Use IP, not localhost!
-4. Save and note the **Client ID** and **Client Secret**
-
-### 2. Store Credentials
-
+Run the setup wizard:
 ```bash
-# Set environment variables (add to ~/.zshrc or ~/.bashrc)
-export SPOTIFY_CLIENT_ID="your_client_id"
-export SPOTIFY_CLIENT_SECRET="your_client_secret"
+bash skills/spotify-history/scripts/setup.sh
 ```
 
-### 3. Authenticate
+This guides you through:
+1. Creating a Spotify Developer App
+2. Saving credentials securely
+3. Authorizing access
 
-```bash
-python3 scripts/spotify-auth.py
-```
+### Manual Setup
 
-A browser opens for Spotify login. Authorize the app, and tokens are saved to `~/.config/spotify-clawd/token.json`.
+1. **Create Spotify Developer App**
+   - Go to [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard)
+   - Click **Create App**
+   - Fill in:
+     - **App name:** `Clawd` (or any name)
+     - **App description:** `Personal assistant integration`
+     - **Redirect URI:** `http://127.0.0.1:8888/callback` ⚠️ Use exact URL!
+   - Save and copy **Client ID** and **Client Secret**
+
+2. **Store Credentials**
+
+   **Option A: Credentials file (recommended)**
+   ```bash
+   mkdir -p credentials
+   cat > credentials/spotify.json <<EOF
+   {
+     "client_id": "your_client_id",
+     "client_secret": "your_client_secret"
+   }
+   EOF
+   chmod 600 credentials/spotify.json
+   ```
+
+   **Option B: Environment variables**
+   ```bash
+   # Add to ~/.zshrc or ~/.bashrc
+   export SPOTIFY_CLIENT_ID="your_client_id"
+   export SPOTIFY_CLIENT_SECRET="your_client_secret"
+   ```
+
+3. **Authenticate**
+
+   **With browser (local machine):**
+   ```bash
+   python3 scripts/spotify-auth.py
+   ```
+
+   **Headless (no browser):**
+   ```bash
+   python3 scripts/spotify-auth.py --headless
+   ```
+   Follow the prompts to authorize via URL and paste the callback.
+
+Tokens are saved to `~/.config/spotify-clawd/token.json` and auto-refresh when expired.
 
 ## Usage
 
@@ -83,11 +116,35 @@ When user asks about music:
 
 For recommendations, combine API data with music knowledge to suggest similar artists not in their library.
 
-## Token Refresh
+## Troubleshooting
 
-Tokens auto-refresh when expired. If issues occur:
-1. Delete `~/.config/spotify-clawd/token.json`
-2. Re-run `spotify-auth.py`
+### "Spotify credentials not found!"
+- Make sure `credentials/spotify.json` exists **or** environment variables are set
+- Credential file is checked first, then env vars
+- Run `bash skills/spotify-history/scripts/setup.sh` to create credentials
+
+### "Not authenticated. Run spotify-auth.py first."
+- Tokens don't exist or are invalid
+- Run: `python3 scripts/spotify-auth.py` (or with `--headless` if no browser)
+
+### "HTTP Error 400: Bad Request" during token refresh
+- Credentials changed or are invalid
+- Re-run setup: `bash skills/spotify-history/scripts/setup.sh`
+- Or update `credentials/spotify.json` with correct Client ID/Secret
+
+### "HTTP Error 401: Unauthorized"
+- Token expired and auto-refresh failed
+- Delete token and re-authenticate:
+  ```bash
+  rm ~/.config/spotify-clawd/token.json
+  python3 scripts/spotify-auth.py
+  ```
+
+### Headless / No Browser
+- Use `--headless` flag: `python3 scripts/spotify-auth.py --headless`
+- Manually open the auth URL on any device
+- Copy the callback URL (starts with `http://127.0.0.1:8888/callback?code=...`)
+- Paste it back when prompted
 
 ## Security Notes
 
