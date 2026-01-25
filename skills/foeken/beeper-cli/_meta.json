@@ -1,0 +1,11 @@
+{
+  "owner": "foeken",
+  "slug": "beeper-cli",
+  "displayName": "Beeper CLI",
+  "latest": {
+    "version": "1.0.2",
+    "publishedAt": 1769340465917,
+    "commit": null
+  },
+  "history": []
+}
