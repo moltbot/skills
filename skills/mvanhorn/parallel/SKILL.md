@@ -1,6 +1,6 @@
 ---
 name: parallel
-description: High-accuracy web search and research via Parallel.ai API. Better than Brave for deep research tasks.
+description: High-accuracy web search and research via Parallel.ai API. Optimized for AI agents with rich excerpts and citations.
 triggers:
   - parallel
   - deep search
@@ -59,7 +59,7 @@ Returns structured results with:
 - **Company/person research** with citations
 - **Fact-checking** with evidence-based outputs
 - **Complex queries** that need multi-hop reasoning
-- Better accuracy than Brave Search for research tasks
+- Higher accuracy than traditional search for research tasks
 
 ## API Reference
 
