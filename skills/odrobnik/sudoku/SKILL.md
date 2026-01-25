@@ -15,6 +15,19 @@ metadata:
 
 Fetch, render, and reveal Sudoku puzzles. Use `sudoku.py` to get new puzzles from `sudokuonline.io`, generate printable PDFs or images, and reveal solutions.
 
+For details on the saved JSON format, see [DATA_FORMAT.md](references/DATA_FORMAT.md).
+
+## Available Puzzle Types
+
+*   `kids4n`: Kids 4x4
+*   `kids4l`: Kids 4x4 with Letters
+*   `kids6`: Kids 6x6
+*   `kids6l`: Kids 6x6 with Letters
+*   `easy9`: Classic 9x9 (Easy)
+*   `medium9`: Classic 9x9 (Medium)
+*   `hard9`: Classic 9x9 (Hard)
+*   `evil9`: Classic 9x9 (Evil)
+
 ## Get a Puzzle
 
 Fetches a new puzzle and stores it as JSON. Output is JSON by default (use `--text` for human-readable output).
@@ -50,11 +63,16 @@ Render a puzzle as an image or PDF.
 
 ## Reveal Solution
 
-Reveal the solution for the latest or specific puzzle.
+Reveal the solution for the latest or specific puzzle. Use `--id <short_id>` (e.g., `a09f3680`) to target a specific puzzle.
 
 **Reveal full solution as printable PDF:**
 ```bash
 ./scripts/sudoku.py reveal --pdf
+```
+
+**Reveal full solution for a specific ID:**
+```bash
+./scripts/sudoku.py reveal --id a09f3680 --image
 ```
 
 **Reveal full solution as PNG image:**
@@ -74,11 +92,16 @@ Reveal the solution for the latest or specific puzzle.
 
 ## Share Link
 
-Generate a share link for a stored puzzle.
+Generate a share link for a stored puzzle. Targets the latest puzzle by default; use `--id <short_id>` for a specific one.
 
 **Generate a SudokuPad share link (default):**
 ```bash
 ./scripts/sudoku.py share
+```
+
+**Generate link for specific ID:**
+```bash
+./scripts/sudoku.py share --id a09f3680
 ```
 
 **Generate an SCL share link:**
