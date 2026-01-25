@@ -3,9 +3,15 @@
   "slug": "skillcraft",
   "displayName": "Skillcraft",
   "latest": {
-    "version": "0.9.0",
-    "publishedAt": 1769161034953,
-    "commit": "https://github.com/clawdbot/skills/commit/79fcb55a6ec6eda4c99eb248c6a617c5ac0c3e2d"
+    "version": "0.9.1",
+    "publishedAt": 1769321134990,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "0.9.0",
+      "publishedAt": 1769161034953,
+      "commit": "https://github.com/clawdbot/skills/commit/79fcb55a6ec6eda4c99eb248c6a617c5ac0c3e2d"
+    }
+  ]
 }

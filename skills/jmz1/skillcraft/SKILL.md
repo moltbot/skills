@@ -1,6 +1,6 @@
 ---
 name: skillcraft
-description: Opinionated design guide for creating Clawdbot skills. Use when building new skills, extracting existing ad-hoc functionality (scripts, TOOLS.md sections, repeated patterns) into proper skills, or asking "how do I make a skill?". Covers skill design, packaging, clawdbot-specific integration patterns (cron, memory, message routing, channels).
+description: Create, design, and package Clawdbot skills. Use when asked to "make/build/craft a skill for X", or when extracting ad-hoc functionality ("turn my script/agent instructions/library into a skill"). Applies Clawdbot-specific integration concerns (tool calling, memory, message routing etc.) to build reusable skills that compose.
 metadata: {"clawdbot":{"emoji":"🧶"}}
 ---
 
@@ -13,13 +13,15 @@ An opinionated, AI-native design guide for Clawdbot skills. Focuses on **clawdbo
 ## Prerequisites
 
 **Load the `clawddocs` (or equivalent) skill first.** This skill relies on Clawdbot documentation for authoritative feature details. The clawddocs skill provides:
+
 - Documentation category navigation (see categories below)
 - Search scripts for finding specific docs
 - Config snippets for common patterns
 
 **Documentation categories** (via clawddocs):
+
 | Category | Path | Use for |
-|----------|------|---------|
+| -------- | ---- | ------- |
 | Gateway & Config | `/gateway/` | Configuration, security, health |
 | Tools | `/tools/` | Skills, browser, bash, subagents |
 | Automation | `/automation/` | Cron jobs, webhooks, polling |
@@ -30,11 +32,9 @@ When this skill says "consult documentation," use clawddocs to fetch the relevan
 
 ## Core Philosophy
 
-**Skills are how Clawdbot extends itself.** They survive context limits, compose cleanly, and share via ClawdHub. The alternative — ad-hoc scripts and buried instructions — is fragile and doesn't scale.
+**Skills are how Clawdbot extends itself.** They survive context limits, compose cleanly, and share via ClawdHub. 
 
-**This skill guides the design process.** The intelligence is in the conversation, not brittle rules. Patterns emerge from understanding the problem, not from a checklist.
-
-**Minimize hard-coding.** When in doubt, use clawddocs. Features evolve; references to documentation categories age better than frozen assumptions.
+**Most good skills start as scattered notes before anyone formalizes them.** This skill is a protocol for that formalization — turning "remember to do X" into something that composes and shares.
 
 ---
 
@@ -43,6 +43,7 @@ When this skill says "consult documentation," use clawddocs to fetch the relevan
 Follow these stages in order. Each produces artifacts that feed the next.
 
 **Two entry modes:**
+
 - **New skill:** Start at Stage 1
 - **Extracting existing functionality:** Start at Stage 0
 
@@ -53,6 +54,7 @@ Follow these stages in order. Each produces artifacts that feed the next.
 **Skip this stage if building a new skill from scratch.**
 
 Use this when functionality already exists but isn't packaged as a skill. Common sources:
+
 - Scripts in `<workspace>/scripts/` that aren't part of any skill
 - Instructions buried in TOOLS.md or AGENTS.md
 - Patterns repeated across conversations
@@ -61,12 +63,14 @@ Use this when functionality already exists but isn't packaged as a skill. Common
 **Gather the artifacts:**
 
 Ask:
+
 - **Where does it live?** (scripts, TOOLS.md section, memory notes, conversation patterns)
 - **What does it do?** (describe the capability)
 - **How is it currently triggered?** (manual request, heartbeat check, ad-hoc)
 - **What Clawdbot features does it use?** (exec, cron, message, memory, etc.)
 
 Example inventory:
+
 ```
 - scripts/mail/check.py — fetches and processes emails
 - TOOLS.md ## Mail Rules — documents the mail command syntax  
@@ -75,6 +79,7 @@ Example inventory:
 ```
 
 **Assess current state:**
+
 - **What's working well?** (keep it)
 - **What's fragile or unclear?** (improve it)
 - **What's missing?** (add it)
@@ -86,23 +91,22 @@ Example inventory:
 
 ### Stage 1: Problem Understanding
 
-**Goal:** Concrete clarity on what the skill does and how it's used.
+**Goal:** Concrete clarity on what the skill does and when it's needed.
 
-Ask and answer:
+Work through these questions with the user:
 
 1. **What does this skill do?** (one sentence)
-2. **Give 3-5 concrete example invocations.** What would a user say or do that should trigger this skill?
-3. **What does success look like?** For each example, what's the expected outcome?
-4. **What triggers this skill? (Multiple entrypoints considered)**
-   - Human request (conversational)
-   - Heartbeat (periodic proactive)
-   - Cron job (scheduled)
-   - Sub-agent spawn (delegated task)
-   - Another skill (composition)
 
-*If extracting:* Derive these from existing behavior rather than imagining them. How has it actually been used?
+2. **When should this skill be loaded?**
+   - What would a user say? (3-5 example phrases)
+   - What mid-task needs might lead here? (e.g., "need weather data", "need to send a message")
+   - Any scheduled/periodic triggers? (heartbeat, cron)
 
-**Output:** Problem statement with concrete examples and success criteria.
+3. **What does success look like?** For each example, what's the outcome?
+
+*If extracting:* Derive from actual usage, not just hypotheticals. It's ok to generalise the problem if that's what the user wants.
+
+**Output:** Problem statement with trigger examples and success criteria.
 
 ---
 
@@ -140,6 +144,8 @@ When building for a particular setup, leverage existing workspace capabilities:
    - State or configuration that might be shared
    - Opportunities for composition or delegation
 
+Prioritise skills which have their dependencies fulfilled and are in active use.
+
 **Example:** Building a "daily briefing" skill? Scan for: calendar skills (event data), weather skills (forecast), mail skills (unread count), location skills (context-aware content). Read each to understand how to compose them.
 
 **Output from this step:** List of synergistic skills with brief notes on how each might integrate.
@@ -171,6 +177,7 @@ Clawdbot has powerful built-in features with deep semantics and rich configurabi
 | Image analysis | `/tools/` | `image` tool |
 
 **Verify feature usage against documentation.** Don't assume — features evolve and have nuances. Use clawddocs to check:
+
 - Tool parameters and capabilities (fetch the relevant `/tools/` doc)
 - Channel-specific constraints (check `/providers/` for the target channel)
 - Configuration requirements and defaults (`/gateway/configuration`)
@@ -180,7 +187,7 @@ Clawdbot has powerful built-in features with deep semantics and rich configurabi
 
 ---
 
-### Stage 3: Pattern Matching
+### Stage 3: Architecture
 
 **Goal:** Identify applicable design patterns and propose initial architecture.
 
@@ -199,6 +206,7 @@ Skills often combine multiple patterns. Load all that apply and synthesize.
 A critical design juncture: how should executable scripts be combined with agent instructions in SKILL.md?
 
 **Use scripts when:**
+
 - The operation is deterministic and repeatable
 - Complex logic that's error-prone to re-derive each time
 - Performance matters (script runs faster than AI reasoning)
@@ -206,6 +214,7 @@ A critical design juncture: how should executable scripts be combined with agent
 - State management with precise file formats
 
 **Use agent instructions when:**
+
 - Judgment is required (interpreting results, choosing approaches)
 - The task varies based on context
 - Natural language interaction is primary
@@ -288,11 +297,10 @@ Skills often combine multiple Clawdbot primitives in non-obvious ways. See **[pa
 6. Interactive Approval Workflow (message + cron + memory + gateway)
 7. Adaptive Learning Loop (image + memory + cron)
 
-**Output:** Pattern selection with rationale, initial architecture sketch.
+**Output:** Selection of Clawdbot system features with rationale (if any), initial architecture sketch.
 
----
 
-### Stage 4: Architecture Refinement
+### Stage 4: Design Specification
 
 **Goal:** User-reviewed specification ready for implementation.
 
@@ -303,6 +311,7 @@ Skills often combine multiple Clawdbot primitives in non-obvious ways. See **[pa
 - **Persistent-stateful:** Survives restarts (needs file-based state)
 
 If persistent state is needed, where should it live?
+
 - `<workspace>/memory/` — for context that's part of the user's memory
 - `<skill>/state.json` — for skill-internal state (lives with the skill)
 - `<workspace>/state/<skill>.json` — for skill-internal state (common workspace area)
@@ -317,7 +326,6 @@ Ask about the user's existing setup:
 - **Scripting language preference?** (Python, Bash, etc.)
 - **Coding style preferences?** (types, functional idioms, etc.)
 - **Existing shared environment?** (venv, uv, conda that scripts should use)
-- **Where do they keep secrets?** (env vars, keychain, config files, 1Password CLI)
 
 Check USER.md and TOOLS.md for documented coding preferences.
 
@@ -331,6 +339,7 @@ If the skill needs API keys or credentials:
 4. **Never hard-code secrets** — not in scripts, not in skill files
 
 Common patterns:
+
 - Environment variables (most portable)
 - macOS Keychain via `security` command
 - Config file in `~/.config/skillname/` (gitignored)
@@ -342,28 +351,30 @@ Present the proposed architecture:
 
 1. **Skill structure** — files and directories
 2. **SKILL.md outline** — sections and key content
-3. **Scripts** — what needs to be executable code vs. AI instructions
-4. **References** — what documentation to include
-5. **State management** — where and how state is persisted
-6. **Clawdbot integration points** — which features, how they interact
+3. **Software** — high level requirements for each software component (script, module, wrapper)
+4. **State management** — where and how state is persisted
+5. **Clawdbot integration points** — which features, how they interact
 
 *If extracting:* Include migration notes — what moves where, what workspace files need updating.
 
 **The specification is a review checkpoint.** Its purpose is letting the user verify:
+
 - Assumptions about Clawdbot integration are correct
 - The design fits their existing workflow
 - No conflicts with existing workspace files or tools
 - Generalisability matches their intent
 
 **Validate against requirements:**
+
 - Does it handle all the examples from Stage 1?
 - Are Clawdbot features used correctly? (verify via clawddocs)
 - Is the state approach appropriate for the access pattern?
 - Are there edge cases or failure modes to handle?
+- Has the proposed architecture revealed any contradictions in the Stage 1 requirements?
 
 **Iterate** until the user is satisfied. This is where design problems surface cheaply.
 
-**Output:** Architecture specification including state approach, user preferences, secret handling, and skill structure.
+**Output:** Design specification including state approach, user preferences, secret handling, and skill structure.
 
 ---
 
@@ -373,40 +384,31 @@ Present the proposed architecture:
 
 **Strong default: Same-session implementation.** Work through the spec with user review at each step. This keeps the user in the loop for integration decisions.
 
-**Coding-agent handoff is optional** and should be reserved for **complex script subcomponents only** — not entire skills. The SKILL.md and integration logic should stay in the main session where the user can review.
+**Coding-agent handoff is optional** and should be reserved for **complex software subcomponents only** — not entire skills. The SKILL.md and integration logic should stay in the main session where the user can review.
 
-#### Implementation Checklist
+#### Implementation Steps
 
-1. Create the skill directory
-2. Write SKILL.md (user reviews structure)
-3. Implement scripts (user reviews logic)
-4. Add references if needed
-5. Test against Stage 1 examples
+Work through in order, with user review at each checkpoint:
+
+1. **Create skill directory**
+2. **SKILL.md skeleton** — frontmatter + section headers
+   → *Review: is the structure right?*
+3. **Scripts** (if any) — get executable pieces working
+   → *Review: test each script*
+4. **SKILL.md body** — complete instructions
+5. **Test against Stage 1 examples**
+   → *Review: does it handle all examples?*
 
 *If extracting:*
 6. Update workspace files (remove migrated content, add skill references)
 7. Clean up old locations
-8. Verify the skill works as a standalone unit
-
-#### Checkpoints
-
-Review implementation at these points:
-1. **After SKILL.md draft** — is the structure right?
-2. **After each script** — does it work? test it
-3. **Final review** — does it handle all Stage 1 examples?
-
-#### Implementation Order
-
-1. SKILL.md skeleton — establishes structure
-2. Scripts (if any) — get executable pieces working
-3. SKILL.md body — complete the instructions
-4. References/assets (if any)
+8. Verify skill works standalone
 
 #### Crafting the Skill Frontmatter
 
-The SKILL.md frontmatter determines discoverability and provides structured metadata. The `description` field is critical — when the agent scans available skills, this determines whether the skill gets loaded. 
+The SKILL.md frontmatter determines discoverability and provides structured metadata. The `description` field is critical — when the agent scans available skills, this determines whether the skill gets loaded.
 
-See https://docs.clawd.bot/tools/skills for Clawdbot-specific metadata documentation.
+See <https://docs.clawd.bot/tools/skills> for Clawdbot-specific metadata documentation.
 
 **Frontmatter format:**
 
@@ -427,17 +429,20 @@ metadata: {"clawdbot": {"emoji": "🔧", "requires": {"bins": ["tool"], "env": [
 - **Trigger phrases** — natural language patterns that indicate relevance
 
 **Example (good):**
+
 ```yaml
 description: Download videos/audio from YouTube and other sites with interactive quality selection, learned preferences, and recent directory tracking. Use when user shares a video URL or asks to download video/audio.
 ```
 
 **Example (too sparse):**
+
 ```yaml
 description: YouTube downloader.
 ```
-**Metadata field** (optional but recommended for publishable skills) 
 
-Refer to the format specification at https://docs.clawd.bot/tools/skills.
+**Metadata field** (optional but recommended for publishable skills)
+
+Refer to the format specification at <https://docs.clawd.bot/tools/skills>.
 
 Simple example:
 
@@ -463,7 +468,7 @@ Simple example:
 }
 ```
 
-**Test the description:** Would the agent select this skill if the user said each of your Stage 1 example invocations? If not, add the missing keywords.
+**Test the description:** Would the agent select this skill if the user said each of your Stage 1 example phrases? If not, add the missing keywords.
 
 **Output:** Complete skill directory ready for use.
 
@@ -482,6 +487,7 @@ Skills must handle paths carefully, especially for portability and multi-agent c
 | (no prefix) | Skill-relative path | `scripts/helper.sh` |
 
 **Rules:**
+
 - **Workspace files:** Always use `<workspace>/` prefix
 - **Skill components:** Relative paths OK (refers to skill directory)
 - **Never hardcode** `~/clawd` or similar — workspaces are portable
@@ -510,6 +516,7 @@ Skills may interact with workspace structure:
 ## References
 
 Pattern references for common skill types:
+
 - `patterns/cli-wrapper.md` — wrapping CLI tools
 - `patterns/api-wrapper.md` — wrapping web APIs
 - `patterns/monitor.md` — watching conditions and notifying
