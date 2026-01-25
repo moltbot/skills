@@ -1,0 +1,9 @@
+{
+  "name": "perplexity-bash",
+  "version": "1.1.0",
+  "description": "Perplexity AI Search with config file support (bash-based)",
+  "main": "scripts/perplexity_search.sh",
+  "keywords": ["search", "perplexity", "ai", "web", "bash"],
+  "author": "Dron",
+  "license": "MIT"
+}
