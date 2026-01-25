@@ -1,0 +1,11 @@
+{
+  "owner": "mvanhorn",
+  "slug": "supabase-users",
+  "displayName": "Supabase Users",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769364221444,
+    "commit": null
+  },
+  "history": []
+}
