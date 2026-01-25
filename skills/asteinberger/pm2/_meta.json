@@ -1,0 +1,11 @@
+{
+  "owner": "asteinberger",
+  "slug": "pm2",
+  "displayName": "PM2 Process Manager",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769378517632,
+    "commit": null
+  },
+  "history": []
+}
