@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  wyoming-clawdbot:
+    build: .
+    container_name: wyoming-clawdbot
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      # Share Clawdbot config for gateway connection
+      - ${HOME}/.clawdbot:/root/.clawdbot
+    command: ["--host", "0.0.0.0", "--port", "10600", "--session-id", "voice-assistant"]
