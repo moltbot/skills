@@ -1,0 +1,11 @@
+{
+  "owner": "kcns008",
+  "slug": "kubernetes",
+  "displayName": "Kubernetes",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769436428875,
+    "commit": null
+  },
+  "history": []
+}
