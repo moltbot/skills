@@ -1,0 +1,11 @@
+{
+  "owner": "rohitg00",
+  "slug": "k8-autoscaling",
+  "displayName": "Kubernetes Skills",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769433364488,
+    "commit": null
+  },
+  "history": []
+}
