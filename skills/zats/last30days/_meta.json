@@ -1,0 +1,11 @@
+{
+  "owner": "zats",
+  "slug": "last30days",
+  "displayName": "Last 30 Days",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769401190039,
+    "commit": null
+  },
+  "history": []
+}
