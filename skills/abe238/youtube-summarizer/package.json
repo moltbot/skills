@@ -1,0 +1,36 @@
+{
+  "name": "youtube-summarizer",
+  "version": "1.0.0",
+  "description": "Automatically fetch YouTube video transcripts, generate structured summaries, and deliver full transcripts to messaging platforms",
+  "author": "abe238",
+  "license": "MIT",
+  "keywords": [
+    "youtube",
+    "transcript",
+    "summarization",
+    "video",
+    "telegram",
+    "clawdbot",
+    "ai-agent"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abe238/youtube-summarizer"
+  },
+  "clawdbot": {
+    "skill": true,
+    "requires": {
+      "node": ">=18.0.0"
+    },
+    "dependencies": {
+      "external": [
+        {
+          "name": "mcp-server-youtube-transcript",
+          "url": "https://github.com/kimtaeyoon83/mcp-server-youtube-transcript",
+          "path": "/root/clawd/mcp-server-youtube-transcript",
+          "install": "git clone https://github.com/kimtaeyoon83/mcp-server-youtube-transcript.git /root/clawd/mcp-server-youtube-transcript && cd /root/clawd/mcp-server-youtube-transcript && npm install && npm run build"
+        }
+      ]
+    }
+  }
+}
