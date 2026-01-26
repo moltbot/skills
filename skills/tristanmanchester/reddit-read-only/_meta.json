@@ -1,0 +1,11 @@
+{
+  "owner": "tristanmanchester",
+  "slug": "reddit-read-only",
+  "displayName": "Reddit (read only - no auth)",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769403873423,
+    "commit": null
+  },
+  "history": []
+}
