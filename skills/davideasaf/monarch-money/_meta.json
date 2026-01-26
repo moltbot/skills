@@ -3,9 +3,15 @@
   "slug": "monarch-money",
   "displayName": "Monarch Money",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769380269796,
-    "commit": "https://github.com/clawdbot/skills/commit/95229e91334196c958e2d6398767e1f911cee842"
+    "version": "1.0.1",
+    "publishedAt": 1769381505198,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769380269796,
+      "commit": "https://github.com/clawdbot/skills/commit/95229e91334196c958e2d6398767e1f911cee842"
+    }
+  ]
 }
