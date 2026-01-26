@@ -1,0 +1,11 @@
+{
+  "owner": "dru-ca",
+  "slug": "robo-rock",
+  "displayName": "Roborock Vacuum Control",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769460488248,
+    "commit": null
+  },
+  "history": []
+}
