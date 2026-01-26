@@ -1,11 +1,17 @@
 {
   "owner": "madmantim",
   "slug": "paperless-ngx-tools",
-  "displayName": "Paperless-ngx Tools",
+  "displayName": "paperless-ngx-tools",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769401410327,
-    "commit": "https://github.com/clawdbot/skills/commit/3677e2cfb1bed70c883c0b815d759c634824e7d3"
+    "version": "1.0.2",
+    "publishedAt": 1769402099552,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769401410327,
+      "commit": "https://github.com/clawdbot/skills/commit/3677e2cfb1bed70c883c0b815d759c634824e7d3"
+    }
+  ]
 }
