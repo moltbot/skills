@@ -1,0 +1,11 @@
+{
+  "owner": "tobiasbischoff",
+  "slug": "bahn",
+  "displayName": "Deutsche Bahn CLI",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769404815120,
+    "commit": null
+  },
+  "history": []
+}
