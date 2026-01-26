@@ -1,0 +1,14 @@
+{
+  "name": "tcm-video-factory",
+  "version": "1.0.0",
+  "description": "Automate health video production planning using Perplexity API based on TCM workflow",
+  "main": "index.mjs",
+  "type": "module",
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2",
+    "dotenv": "^16.4.5"
+  }
+}
