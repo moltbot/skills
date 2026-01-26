@@ -3,9 +3,15 @@
   "slug": "plaud-unofficial",
   "displayName": "Plaud Unofficial Skill",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769415350496,
-    "commit": "https://github.com/clawdbot/skills/commit/214cbbc2cd1c1c17f2f15239e4b7756cbf2e7af9"
+    "version": "1.0.1",
+    "publishedAt": 1769416448262,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769415350496,
+      "commit": "https://github.com/clawdbot/skills/commit/214cbbc2cd1c1c17f2f15239e4b7756cbf2e7af9"
+    }
+  ]
 }
