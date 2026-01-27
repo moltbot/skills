@@ -43,7 +43,8 @@ def api_request(method, endpoint, params=None, data=None):
         "x-api-key": api_key,
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "Cache-Control": "no-cache"
+        "Cache-Control": "no-cache",
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     }
     
     body = json.dumps(data).encode('utf-8') if data else None
@@ -228,6 +229,43 @@ def cmd_company(args):
         print(format_company(org))
 
 
+def should_exclude_competitor(person, exclude_competitors):
+    """Check if person should be excluded based on competitor employment."""
+    if not exclude_competitors:
+        return False
+    
+    # List of competitor companies to exclude
+    COMPETITOR_DOMAINS = {
+        'hathora.dev',
+        'hathora.com',
+        'edgegap.com',
+        'heroiclabs.com',  # Nakama
+        'nakama.dev'
+    }
+    
+    COMPETITOR_NAMES = {
+        'hathora',
+        'edgegap',
+        'heroic labs',
+        'nakama'
+    }
+    
+    org = person.get('organization') or {}
+    
+    # Check domain
+    org_domain = org.get('primary_domain', '').lower()
+    if org_domain in COMPETITOR_DOMAINS:
+        return True
+    
+    # Check company name
+    org_name = (org.get('name') or '').lower()
+    for competitor in COMPETITOR_NAMES:
+        if competitor in org_name:
+            return True
+    
+    return False
+
+
 def cmd_search(args):
     """Search for people."""
     data = {
@@ -246,10 +284,19 @@ def cmd_search(args):
     
     result = api_request("POST", "/mixed_people/search", data=data)
     
+    # Filter out competitor employees if requested
+    people = result.get('people', [])
+    if args.exclude_competitors:
+        original_count = len(people)
+        people = [p for p in people if not should_exclude_competitor(p, True)]
+        filtered_count = original_count - len(people)
+        if filtered_count > 0:
+            print(f"Filtered out {filtered_count} competitor employees (Hathora/Edgegap/Nakama)\n", file=sys.stderr)
+    
     if args.json:
+        result['people'] = people  # Update result with filtered list
         print(json.dumps(result, indent=2))
     else:
-        people = result.get('people', [])
         total = result.get('pagination', {}).get('total_entries', len(people))
         print(f"Found {total} results (showing {len(people)}):\n")
         for person in people:
@@ -267,6 +314,7 @@ Examples:
   apollo.py enrich --name "John Smith" --domain acme.com
   apollo.py company --domain stripe.com
   apollo.py search --titles "CEO,CTO" --domain acme.com
+  apollo.py search --titles "CTO" --exclude-competitors
   apollo.py bulk-enrich --file contacts.json
         """
     )
@@ -303,6 +351,7 @@ Examples:
     search.add_argument("--locations", "-l", help="Locations (comma-separated)")
     search.add_argument("--keywords", "-k", help="Keywords")
     search.add_argument("--limit", type=int, default=25, help="Max results (default: 25)")
+    search.add_argument("--exclude-competitors", "-x", action="store_true", help="Filter out Hathora/Edgegap/Nakama employees")
     search.add_argument("--json", action="store_true", help="JSON output")
     
     args = parser.parse_args()

@@ -1,11 +1,17 @@
 {
   "owner": "andrewdmwalker",
   "slug": "apollo-enrichment",
-  "displayName": "Apollo Enrichment",
+  "displayName": "Apollo.io Enrichment",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769464958765,
-    "commit": "https://github.com/clawdbot/skills/commit/324a5c5d8056647a0edd54a907778ba2a144ddf1"
+    "version": "1.3.0",
+    "publishedAt": 1769554312458,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769464958765,
+      "commit": "https://github.com/clawdbot/skills/commit/324a5c5d8056647a0edd54a907778ba2a144ddf1"
+    }
+  ]
 }

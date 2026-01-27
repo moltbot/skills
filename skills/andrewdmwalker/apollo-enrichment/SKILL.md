@@ -1,7 +1,7 @@
 ---
 name: apollo
 description: Apollo.io contact and company enrichment API. Enrich people with email, phone, title, company data. Enrich organizations with industry, revenue, employee count, funding. Search for prospects. Use when the user needs to enrich contacts, find emails, lookup company info, or search for leads.
-version: 1.0.0
+version: 1.3.0
 author: captmarbles
 ---
 
@@ -77,7 +77,13 @@ python3 apollo.py search --titles "VP Sales" --locations "San Francisco"
 
 # Limit results
 python3 apollo.py search --titles "Engineer" --domain "google.com" --limit 10
+
+# Exclude competitors (Hathora/Edgegap/Nakama)
+python3 apollo.py search --titles "CTO" --exclude-competitors
 ```
+
+**Filtering Options:**
+- `--exclude-competitors` or `-x` — Automatically filters out employees from Hathora, Edgegap, and Nakama (Heroic Labs)
 
 ## Example Prompts
 
