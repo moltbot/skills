@@ -145,4 +145,4 @@ class BaseCommerceClient:
 
     def list_orders(self):
         # 兼容性处理：Lafeitu 目前 orders 在 /api/orders
-        return self.request("GET", "/orders" if "/v1" not in self.base_url else "/../../orders")
+        return self.request("GET", "/orders" if "/v1" not in self.base_url else "/../orders")
