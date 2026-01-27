@@ -1,0 +1,11 @@
+{
+  "owner": "clockworksquirrel",
+  "slug": "searxng-metasearch",
+  "displayName": "SearXNG Metasearch",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769481360070,
+    "commit": null
+  },
+  "history": []
+}
