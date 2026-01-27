@@ -1,0 +1,11 @@
+{
+  "owner": "pb3975",
+  "slug": "fitbit-health",
+  "displayName": "Fitbit Health Skill",
+  "latest": {
+    "version": "0.1.1",
+    "publishedAt": 1769481244805,
+    "commit": null
+  },
+  "history": []
+}
