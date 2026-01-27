@@ -2,7 +2,7 @@
 name: geo-optimization
 description: "Generative Engine Optimization (GEO) for AI search visibility. Optimize content to appear in ChatGPT, Perplexity, Claude, and Google AI Overviews. Use when optimizing websites, pages, or content for LLM discoverability and citation."
 metadata:
-  version: 1.0.0
+  version: 1.1.0
   tags: ["geo", "seo", "llm", "ai-search", "perplexity", "chatgpt", "content"]
 ---
 
@@ -457,6 +457,95 @@ For any page you want to optimize for GEO:
 6. [ ] Implement FAQ schema markup
 7. [ ] Ensure H1→H2→H3 hierarchy
 8. [ ] Test on Perplexity: does your content appear?
+
+---
+
+## Automated GEO Monitoring
+
+Track your citation rate over time with the included monitoring scripts!
+
+### Quick Start
+
+**Test current visibility:**
+```bash
+python3 scripts/geo-monitor.py --test
+```
+
+**Single query test:**
+```bash
+python3 scripts/geo-monitor.py --query "best game server orchestration platform"
+```
+
+**Generate daily report:**
+```bash
+python3 scripts/geo-daily-report.py
+```
+
+### Setup Automated Monitoring
+
+**1. Create your test queries file** (`scripts/geo-test-queries.json`):
+```json
+{
+  "queries": [
+    {
+      "query": "your target query here",
+      "category": "brand|product|comparison|problem|competitor"
+    }
+  ]
+}
+```
+
+**2. Run daily monitoring:**
+```bash
+# Add to cron for daily 9am checks
+0 9 * * * cd /path/to/skill && bash scripts/geo-daily-monitor.sh
+```
+
+### Understanding the Reports
+
+**Citation Rate:** Percentage of queries where you appear in AI responses
+- 0-20%: Early stage, needs work
+- 20-40%: Building visibility
+- 40-60%: Strong presence
+- 60%+: Dominant authority
+
+**Categories tracked:**
+- Brand queries (you should own these!)
+- Product/feature queries
+- Comparison queries (vs competitors)
+- Problem/pain point queries
+- Competitor comparison queries
+
+### Monitoring Best Practices
+
+1. **Start with 15-20 strategic queries** across all categories
+2. **Test daily** during optimization period (first 2 weeks)
+3. **Weekly checks** once you hit target citation rate
+4. **Track changes** after content updates (expect 3-7 day lag)
+5. **Focus on gaps** - queries with 0% citation are your opportunities
+
+### What to Track
+
+**Current state:**
+- Total citation rate
+- Citations by category
+- Position when cited (#1, #2, etc.)
+- Critical gaps (0% coverage)
+
+**Over time:**
+- Citation rate trend (weekly/monthly)
+- New citations gained
+- Lost citations (content freshness!)
+- Category improvements
+
+### Files Included
+
+- `scripts/geo-monitor.py` - Main testing script (uses Perplexity API)
+- `scripts/geo-daily-report.py` - Formatted report generator
+- `scripts/geo-daily-monitor.sh` - Cron-friendly wrapper
+- `scripts/geo-test-queries.json` - Example query file
+
+**Requirements:** Perplexity API key (configure via web_search in Clawdbot)
 
 ---
 

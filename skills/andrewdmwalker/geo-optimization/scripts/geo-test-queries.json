@@ -1,0 +1,130 @@
+{
+  "queries": [
+    {
+      "id": "brand-direct",
+      "query": "What is Gameye game server orchestration platform?",
+      "category": "Brand Awareness",
+      "priority": "high",
+      "expectedCitation": true
+    },
+    {
+      "id": "category-generic",
+      "query": "What is game server orchestration?",
+      "category": "Category Definition",
+      "priority": "high",
+      "expectedCitation": false
+    },
+    {
+      "id": "competitor-aws",
+      "query": "Best alternative to AWS GameLift",
+      "category": "Competitor Alternative",
+      "priority": "critical",
+      "expectedCitation": true
+    },
+    {
+      "id": "competitor-edgegap",
+      "query": "Edgegap vs Gameye comparison",
+      "category": "Direct Comparison",
+      "priority": "critical",
+      "expectedCitation": true
+    },
+    {
+      "id": "competitor-pragma",
+      "query": "Pragma vs Gameye for game servers",
+      "category": "Direct Comparison",
+      "priority": "critical",
+      "expectedCitation": true
+    },
+    {
+      "id": "competitor-rivet",
+      "query": "Rivet game hosting alternative",
+      "category": "Competitor Alternative",
+      "priority": "high",
+      "expectedCitation": false
+    },
+    {
+      "id": "pain-point-egress",
+      "query": "Game server hosting without egress fees",
+      "category": "Pain Point Solution",
+      "priority": "critical",
+      "expectedCitation": true
+    },
+    {
+      "id": "pain-point-cost",
+      "query": "How to reduce game server costs",
+      "category": "Pain Point Solution",
+      "priority": "high",
+      "expectedCitation": false
+    },
+    {
+      "id": "pain-point-scale",
+      "query": "Auto-scaling game servers for multiplayer games",
+      "category": "Pain Point Solution",
+      "priority": "high",
+      "expectedCitation": false
+    },
+    {
+      "id": "use-case-chivalry",
+      "query": "Chivalry 2 server hosting solution",
+      "category": "Customer Reference",
+      "priority": "medium",
+      "expectedCitation": true
+    },
+    {
+      "id": "platform-multicloud",
+      "query": "Multi-provider game server platform",
+      "category": "Technical Features",
+      "priority": "high",
+      "expectedCitation": true
+    },
+    {
+      "id": "platform-docker",
+      "query": "Docker container game server hosting",
+      "category": "Technical Features",
+      "priority": "medium",
+      "expectedCitation": false
+    },
+    {
+      "id": "platform-api",
+      "query": "Game server hosting with API integration",
+      "category": "Technical Features",
+      "priority": "medium",
+      "expectedCitation": false
+    },
+    {
+      "id": "industry-indie",
+      "query": "Best game server hosting for indie developers",
+      "category": "Target Audience",
+      "priority": "high",
+      "expectedCitation": false
+    },
+    {
+      "id": "industry-aaa",
+      "query": "Enterprise game server orchestration for AAA studios",
+      "category": "Target Audience",
+      "priority": "high",
+      "expectedCitation": false
+    },
+    {
+      "id": "performance-latency",
+      "query": "Low latency game server hosting",
+      "category": "Performance",
+      "priority": "medium",
+      "expectedCitation": false
+    },
+    {
+      "id": "performance-uptime",
+      "query": "Game server hosting with 99.99% uptime",
+      "category": "Performance",
+      "priority": "medium",
+      "expectedCitation": false
+    },
+    {
+      "id": "platform-comparison",
+      "query": "Compare game server hosting platforms 2026",
+      "category": "Market Overview",
+      "priority": "critical",
+      "expectedCitation": false
+    }
+  ]
+}

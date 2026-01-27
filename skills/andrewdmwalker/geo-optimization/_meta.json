@@ -3,9 +3,15 @@
   "slug": "geo-optimization",
   "displayName": "GEO Optimization",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769471078659,
-    "commit": "https://github.com/clawdbot/skills/commit/27f949e65b01ca5e94ceb25da5308f888d965fb3"
+    "version": "1.1.0",
+    "publishedAt": 1769554474692,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769471078659,
+      "commit": "https://github.com/clawdbot/skills/commit/27f949e65b01ca5e94ceb25da5308f888d965fb3"
+    }
+  ]
 }
