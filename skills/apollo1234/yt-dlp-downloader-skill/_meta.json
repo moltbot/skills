@@ -1,0 +1,11 @@
+{
+  "owner": "apollo1234",
+  "slug": "yt-dlp-downloader-skill",
+  "displayName": "Yt Dlp Downloader",
+  "latest": {
+    "version": "0.1.0",
+    "publishedAt": 1769515135889,
+    "commit": null
+  },
+  "history": []
+}
