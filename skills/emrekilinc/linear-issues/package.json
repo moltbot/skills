@@ -1,0 +1,24 @@
+{
+  "name": "clawdbot-skill-linear",
+  "version": "1.0.0",
+  "description": "A [Clawdbot](https://github.com/clawdbot/clawdbot) skill for managing Linear issues directly from your AI assistant.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrklnc/clawdbot-skill-linear.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mrklnc/clawdbot-skill-linear/issues"
+  },
+  "homepage": "https://github.com/mrklnc/clawdbot-skill-linear#readme",
+  "dependencies": {
+    "clawdhub": "^0.3.0",
+    "undici": "^7.19.1"
+  }
+}
