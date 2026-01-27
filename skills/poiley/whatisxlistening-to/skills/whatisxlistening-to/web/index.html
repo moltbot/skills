@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>now playing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0a0a0a;
+            --bg-surface: #141414;
+            --text-primary: #fafafa;
+            --text-secondary: #888;
+            --text-muted: #555;
+            --accent: #ff6b35;
+            --groove: #222;
+            --error: #ff6b6b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; overflow: hidden; }
+        body {
+            font-family: 'Space Mono', monospace;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            width: 85%;
+            max-width: 1400px;
+            padding: 2rem;
+        }
+        header { text-align: center; }
+        header h1 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(2rem, 5vw, 5rem);
+            font-weight: 400;
+            font-style: italic;
+            letter-spacing: -0.02em;
+        }
+        header h1 span { color: var(--accent); }
+        header p { color: var(--text-muted); font-size: clamp(0.6rem, 1vw, 1rem); text-transform: uppercase; letter-spacing: 0.2em; margin-top: 0.5rem; }
+        .now-playing { display: flex; align-items: center; gap: 5rem; width: 100%; }
+        .vinyl-container { position: relative; width: clamp(150px, 25vw, 400px); height: clamp(150px, 25vw, 400px); flex-shrink: 0; }
+        .album-art { width: 100%; height: 100%; border-radius: 6px; object-fit: cover; box-shadow: 0 10px 40px rgba(0,0,0,0.5); position: relative; z-index: 2; }
+        .album-art.playing { animation: pulse-glow 2s ease-in-out infinite; }
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 10px 40px rgba(0,0,0,0.5); } 50% { box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 30px rgba(255,107,53,0.2); } }
+        .vinyl-disc { position: absolute; width: 85%; height: 85%; background: repeating-radial-gradient(circle at center, var(--groove) 0px, var(--groove) 1px, #0d0d0d 1px, #0d0d0d 3px); border-radius: 50%; top: 7.5%; left: 50%; z-index: 1; }
+        .vinyl-disc.spinning { animation: spin 2s linear infinite; left: 65%; }
+        @keyframes spin { from { transform: translateX(-50%) rotate(0deg); } to { transform: translateX(-50%) rotate(360deg); } }
+        .track-info { flex: 1; min-width: 0; position: relative; z-index: 10; }
+        .track-name { font-family: 'Instrument Serif', serif; font-size: clamp(1.2rem, 3vw, 3rem); font-weight: 400; line-height: 1.2; margin-bottom: 0.3rem; }
+        .artist-name { font-size: clamp(0.9rem, 2vw, 2rem); color: var(--text-secondary); }
+        .album-name { font-size: clamp(0.75rem, 1.5vw, 1.5rem); color: var(--text-muted); font-style: italic; }
+        .status-badge { display: inline-flex; align-items: center; gap: 1.5rem; background: var(--bg-surface); padding: clamp(0.4rem, 1vw, 1rem) clamp(0.8rem, 2vw, 2rem); border-radius: 100px; font-size: clamp(0.6rem, 1vw, 1rem); text-transform: uppercase; letter-spacing: 0.15em; margin-top: 1rem; border: 1px solid var(--groove); }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); }
+        .status-dot.live { background: var(--accent); animation: blink 1.5s ease-in-out infinite; }
+        .status-dot.error { background: var(--error); }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--groove); border: 1px solid var(--groove); width: 100%; }
+        .stat { background: var(--bg-surface); padding: clamp(0.75rem, 2vw, 2rem); text-align: center; }
+        .stat-value { font-family: 'Instrument Serif', serif; font-size: clamp(1.5rem, 4vw, 4rem); color: var(--text-primary); }
+        .stat-label { font-size: clamp(0.5rem, 1vw, 1rem); text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-muted); margin-top: 0.2rem; }
+        footer { text-align: center; }
+        footer a { font-size: clamp(0.65rem, 1.2vw, 1.2rem); color: var(--text-muted); text-decoration: none; letter-spacing: 0.1em; }
+        footer a:hover { color: var(--accent); }
+        .not-playing .vinyl-container { opacity: 0.6; filter: grayscale(0.5); }
+        .error-state .vinyl-container { opacity: 0.3; filter: grayscale(1); }
+        .error-message { color: var(--error); font-size: 0.7rem; margin-top: 0.5rem; opacity: 0.8; }
+        
+        /* Responsive layout adjustments */
+        @media (max-width: 800px) {
+            .now-playing { flex-direction: column; text-align: center; gap: 2rem; }
+            .track-info { width: 100%; }
+            .stats { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        @media (max-width: 500px) {
+            .container { padding: 1rem; gap: 1.5rem; }
+        }
+        
+        /* Allow scrolling if needed */
+        @media (max-height: 700px) {
+            html, body { height: auto; min-height: 100%; overflow-y: auto; }
+            body { justify-content: flex-start; padding: 2rem 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>what is <span id="username">...</span> listening to?</h1>
+            <p>live from last.fm</p>
+        </header>
+        <section class="now-playing" id="now-playing">
+            <div class="vinyl-container">
+                <div class="vinyl-disc" id="vinyl"></div>
+                <img class="album-art" id="album-art" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Crect fill='%23222' width='180' height='180'/%3E%3C/svg%3E" alt="Album Art">
+            </div>
+            <div class="track-info">
+                <div class="track-name" id="track-name">Loading...</div>
+                <div class="artist-name" id="artist-name"></div>
+                <div class="album-name" id="album-name"></div>
+                <div class="status-badge">
+                    <span class="status-dot" id="status-dot"></span>
+                    <span id="status-text">checking...</span>
+                </div>
+                <div class="error-message" id="error-message" style="display: none;"></div>
+            </div>
+        </section>
+        <section class="stats" id="stats">
+            <div class="stat"><div class="stat-value" id="stat-total">—</div><div class="stat-label">Tracks played</div></div>
+            <div class="stat"><div class="stat-value" id="stat-artists">—</div><div class="stat-label">Artists found</div></div>
+            <div class="stat"><div class="stat-value" id="stat-today">—</div><div class="stat-label">Tracks played today</div></div>
+            <div class="stat"><div class="stat-value" id="stat-streak">—</div><div class="stat-label">Streak</div></div>
+        </section>
+        <footer><a href="/history">explore listening history →</a></footer>
+    </div>
+    <script>
+        const API = '/api';
+        let nowError = false;
+        let statsError = false;
+
+        fetch(`${API}/config`).then(r => r.json()).then(c => {
+            document.getElementById('username').textContent = c.display_name || c.username || '...';
+            document.title = `what is ${c.display_name || c.username} listening to?`;
+        }).catch(() => {});
+        
+        function showNowError(message) {
+            const section = document.getElementById('now-playing');
+            const dot = document.getElementById('status-dot');
+            const status = document.getElementById('status-text');
+            const errorMsg = document.getElementById('error-message');
+            const track = document.getElementById('track-name');
+            
+            section.classList.add('error-state');
+            section.classList.remove('not-playing');
+            dot.classList.remove('live');
+            dot.classList.add('error');
+            status.textContent = 'connection issue';
+            track.textContent = 'Last.fm unavailable';
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+            nowError = true;
+        }
+
+        function clearNowError() {
+            const section = document.getElementById('now-playing');
+            const dot = document.getElementById('status-dot');
+            const errorMsg = document.getElementById('error-message');
+            
+            section.classList.remove('error-state');
+            dot.classList.remove('error');
+            errorMsg.style.display = 'none';
+            nowError = false;
+        }
+        
+        async function fetchNow() {
+            try {
+                const r = await fetch(`${API}/now`);
+                if (!r.ok) {
+                    const err = await r.json().catch(() => ({}));
+                    showNowError(err.error || 'Last.fm communication issue');
+                    return;
+                }
+                const d = await r.json();
+                if (d.error) {
+                    showNowError(d.error);
+                    return;
+                }
+                
+                clearNowError();
+                
+                const section = document.getElementById('now-playing');
+                const vinyl = document.getElementById('vinyl');
+                const art = document.getElementById('album-art');
+                const track = document.getElementById('track-name');
+                const artist = document.getElementById('artist-name');
+                const album = document.getElementById('album-name');
+                const dot = document.getElementById('status-dot');
+                const status = document.getElementById('status-text');
+                
+                if (d.playing) {
+                    section.classList.remove('not-playing');
+                    vinyl.classList.add('spinning');
+                    art.classList.add('playing');
+                    dot.classList.add('live');
+                    status.textContent = 'listening now';
+                } else {
+                    section.classList.add('not-playing');
+                    vinyl.classList.remove('spinning');
+                    art.classList.remove('playing');
+                    dot.classList.remove('live');
+                    status.textContent = 'last played';
+                }
+                const t = d.playing ? d : (d.last || d);
+                track.textContent = t.track || 'Nothing playing';
+                artist.textContent = t.artist || '';
+                album.textContent = t.album || '';
+                if (t.image) art.src = t.image;
+            } catch (e) {
+                showNowError('Last.fm communication issue');
+                console.error(e);
+            }
+        }
+        
+        async function fetchStats() {
+            try {
+                const r = await fetch(`${API}/stats`);
+                if (!r.ok) {
+                    statsError = true;
+                    return;
+                }
+                const d = await r.json();
+                if (d.error) {
+                    statsError = true;
+                    return;
+                }
+                statsError = false;
+                document.getElementById('stat-total').textContent = d.total?.toLocaleString() || '—';
+                document.getElementById('stat-artists').textContent = d.artists?.toLocaleString() || '—';
+                document.getElementById('stat-today').textContent = d.today || '0';
+                document.getElementById('stat-streak').textContent = d.streak || 'No';
+            } catch (e) {
+                statsError = true;
+                console.error(e);
+            }
+        }
+        
+        fetchNow(); fetchStats();
+        setInterval(fetchNow, 5000);  // Poll every 5 seconds
+    </script>
+</body>
+</html>

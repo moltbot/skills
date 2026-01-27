@@ -1,0 +1,9 @@
+[project]
+name = "listening-dashboard"
+version = "1.0.0"
+description = "Last.fm Now Playing Dashboard"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=server --cov-report=term-missing"

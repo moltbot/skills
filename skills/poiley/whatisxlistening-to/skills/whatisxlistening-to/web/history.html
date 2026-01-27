@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>listening history</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0a0a0a;
+            --bg-surface: #141414;
+            --bg-elevated: #1a1a1a;
+            --text-primary: #fafafa;
+            --text-secondary: #888;
+            --text-muted: #555;
+            --accent: #ff6b35;
+            --groove: #222;
+            --error: #ff6b6b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Space Mono', monospace;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 2rem; }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--groove);
+        }
+        header h1 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.5rem;
+            font-weight: 400;
+        }
+        header a {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        header a:hover { color: var(--accent); }
+        .tracks {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            background: var(--groove);
+            border: 1px solid var(--groove);
+        }
+        .track {
+            display: grid;
+            grid-template-columns: 48px 1fr auto;
+            gap: 1rem;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: var(--bg-surface);
+            transition: background 0.2s;
+        }
+        .track:hover { background: var(--bg-elevated); }
+        .track img {
+            width: 48px;
+            height: 48px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+        .track-info { overflow: hidden; }
+        .track-name {
+            font-size: 0.85rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .track-artist {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .track-time {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        .load-more {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--groove);
+            border-top: none;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .load-more:hover { background: var(--bg-elevated); color: var(--accent); }
+        .load-more:disabled { opacity: 0.5; cursor: not-allowed; }
+        .error-banner {
+            background: var(--bg-surface);
+            border: 1px solid var(--groove);
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .error-banner p {
+            color: var(--error);
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+        .error-banner .retry {
+            color: var(--text-muted);
+            font-size: 0.65rem;
+            cursor: pointer;
+        }
+        .error-banner .retry:hover { color: var(--accent); }
+        .empty-state {
+            background: var(--bg-surface);
+            border: 1px solid var(--groove);
+            padding: 3rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        .loading {
+            background: var(--bg-surface);
+            border: 1px solid var(--groove);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Listening History</h1>
+            <a href="/">← now playing</a>
+        </header>
+        <div id="error-banner" class="error-banner" style="display: none;">
+            <p id="error-text">Last.fm communication issue</p>
+            <span class="retry" onclick="loadTracks()">click to retry</span>
+        </div>
+        <section class="tracks" id="tracks">
+            <div class="loading">Loading...</div>
+        </section>
+        <button class="load-more" id="load-more" style="display: none;">Load More</button>
+    </div>
+    <script>
+        let page = 1;
+        const limit = 50;
+        let loading = false;
+        let hasError = false;
+
+        function showError(message) {
+            const banner = document.getElementById('error-banner');
+            const errorText = document.getElementById('error-text');
+            errorText.textContent = message || 'Last.fm communication issue';
+            banner.style.display = 'block';
+            hasError = true;
+        }
+
+        function hideError() {
+            document.getElementById('error-banner').style.display = 'none';
+            hasError = false;
+        }
+
+        async function loadTracks(append = false) {
+            if (loading) return;
+            loading = true;
+
+            const container = document.getElementById('tracks');
+            const loadMoreBtn = document.getElementById('load-more');
+
+            if (!append) {
+                container.innerHTML = '<div class="loading">Loading...</div>';
+            }
+            loadMoreBtn.disabled = true;
+
+            try {
+                const r = await fetch(`/api/recent?limit=${limit}&page=${page}`);
+                
+                if (!r.ok) {
+                    const err = await r.json().catch(() => ({}));
+                    showError(err.error);
+                    if (!append) {
+                        container.innerHTML = '<div class="empty-state">Unable to load history</div>';
+                    }
+                    loading = false;
+                    loadMoreBtn.disabled = false;
+                    return;
+                }
+
+                const d = await r.json();
+                
+                if (d.error) {
+                    showError(d.error);
+                    if (!append) {
+                        container.innerHTML = '<div class="empty-state">Unable to load history</div>';
+                    }
+                    loading = false;
+                    loadMoreBtn.disabled = false;
+                    return;
+                }
+
+                hideError();
+
+                if (!d.tracks || d.tracks.length === 0) {
+                    if (!append) {
+                        container.innerHTML = '<div class="empty-state">No listening history yet</div>';
+                        loadMoreBtn.style.display = 'none';
+                    }
+                    loading = false;
+                    return;
+                }
+
+                const html = d.tracks.map(t => `
+                    <div class="track">
+                        <img src="${t.image || 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2748%27 height=%2748%27%3E%3Crect fill=%27%23222%27 width=%2748%27 height=%2748%27/%3E%3C/svg%3E'}" alt="">
+                        <div class="track-info">
+                            <div class="track-name">${escapeHtml(t.track)}</div>
+                            <div class="track-artist">${escapeHtml(t.artist)}${t.album ? ' · ' + escapeHtml(t.album) : ''}</div>
+                        </div>
+                        <div class="track-time">${t.time}</div>
+                    </div>
+                `).join('');
+
+                if (append) {
+                    container.innerHTML += html;
+                } else {
+                    container.innerHTML = html;
+                }
+
+                // Show load more button if we got a full page
+                loadMoreBtn.style.display = d.tracks.length >= limit ? 'block' : 'none';
+                loadMoreBtn.disabled = false;
+                loading = false;
+
+            } catch (e) {
+                console.error(e);
+                showError('Last.fm communication issue');
+                if (!append) {
+                    container.innerHTML = '<div class="empty-state">Unable to load history</div>';
+                }
+                loading = false;
+                loadMoreBtn.disabled = false;
+            }
+        }
+
+        function escapeHtml(t) {
+            const d = document.createElement('div');
+            d.textContent = t;
+            return d.innerHTML;
+        }
+
+        document.getElementById('load-more').addEventListener('click', () => {
+            page++;
+            loadTracks(true);
+        });
+
+        loadTracks();
+    </script>
+</body>
+</html>

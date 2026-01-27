@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: listening-dashboard
+  namespace: listening-dashboard
+spec:
+  selector:
+    app: listening-dashboard
+  ports:
+    - port: 80
+      targetPort: 8765
