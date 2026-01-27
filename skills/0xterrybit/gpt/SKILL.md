@@ -1,7 +1,7 @@
 ---
 name: gpt
 description: OpenAI GPT integration. Chat completions, image generation, embeddings, and fine-tuning via OpenAI API.
-metadata: {"clawdbot":{"emoji":"🤖","requires":{"bins":["curl","jq"],"env":["OPENAI_API_KEY"]},"primaryEnv":"OPENAI_API_KEY"}}
+metadata: {"clawdbot":{"emoji":"🤖","always":true,"requires":{"bins":["curl","jq"]},"primaryEnv":"OPENAI_API_KEY"}}
 ---
 
 # GPT 🤖
