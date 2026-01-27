@@ -3,9 +3,15 @@
   "slug": "claude-code-wingman",
   "displayName": "Claude Code Wingman",
   "latest": {
-    "version": "0.2.0",
-    "publishedAt": 1769459811565,
-    "commit": "https://github.com/clawdbot/skills/commit/f549d5d2850a152ca390256aa9a36c358228fca9"
+    "version": "0.3.0",
+    "publishedAt": 1769551049532,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "0.2.0",
+      "publishedAt": 1769459811565,
+      "commit": "https://github.com/clawdbot/skills/commit/f549d5d2850a152ca390256aa9a36c358228fca9"
+    }
+  ]
 }
