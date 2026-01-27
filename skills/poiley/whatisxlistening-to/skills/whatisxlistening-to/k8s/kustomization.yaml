@@ -1,0 +1,35 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: listening-dashboard
+
+resources:
+  - namespace.yaml
+  - deployment.yaml
+  - service.yaml
+  - ingress.yaml
+  # Note: secret.yaml excluded - create manually or via external-secrets
+
+# Override these values in your overlay or via `kustomize edit set image`
+images:
+  - name: listening-dashboard
+    newName: ghcr.io/your-username/listening-dashboard
+    newTag: latest
+
+# Configure via overlay patches or configMapGenerator
+# Example overlay: overlays/prod/kustomization.yaml
+
+# To deploy:
+# 1. Create secret:
+#    kubectl create secret generic lastfm-credentials \
+#      --namespace=listening-dashboard \
+#      --from-literal=api_key=YOUR_API_KEY \
+#      --from-literal=username=YOUR_LASTFM_USERNAME
+#
+# 2. Set image:
+#    cd k8s && kustomize edit set image listening-dashboard=ghcr.io/your-username/listening-dashboard:v1.0.0
+#
+# 3. Create overlay for your domain (see overlays/example/)
+#
+# 4. Apply:
+#    kustomize build overlays/prod | kubectl apply -f -

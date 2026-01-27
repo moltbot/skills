@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Reference the base configuration
+resources:
+  - ../../
+
+# Set your container image
+images:
+  - name: listening-dashboard
+    newName: ghcr.io/your-username/listening-dashboard
+    newTag: v1.0.0
+
+# Patch the ingress with your domain
+patches:
+  - target:
+      kind: Ingress
+      name: listening-dashboard
+    patch: |
+      - op: replace
+        path: /spec/rules/0/host
+        value: listening.your-domain.com
+      - op: replace
+        path: /spec/tls/0/hosts/0
+        value: listening.your-domain.com
+
+# Optional: Add display name to secret (create secret manually first)
+# secretGenerator:
+#   - name: lastfm-credentials
+#     behavior: merge
+#     literals:
+#       - display_name=Your Name
