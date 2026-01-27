@@ -12,11 +12,31 @@ clawdhub install taskleef
 
 This skill requires the following to be installed:
 
-- `todo` CLI - The Taskleef command-line interface
-- `curl` - For making API requests
-- `jq` - For parsing JSON responses
+- `todo` CLI - The Taskleef command-line interface (auto-installed via skill installer)
+- `curl` - For making API requests (usually pre-installed)
+- `jq` - For parsing JSON responses (auto-installed via skill installer, or install via package manager for best compatibility)
 
-### Installing the todo CLI
+### Manual Installation (Optional)
+
+The skill includes auto-installers for `todo` and `jq`, but you can also install them manually:
+
+**jq (via package manager - recommended for architecture compatibility):**
+
+```bash
+# macOS
+brew install jq
+
+# Ubuntu/Debian
+sudo apt-get install jq
+
+# CentOS/RHEL
+sudo yum install jq
+
+# Alpine
+apk add jq
+```
+
+**todo CLI:**
 
 ```bash
 # Clone the repository

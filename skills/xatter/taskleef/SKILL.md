@@ -1,7 +1,7 @@
 ---
 name: taskleef
 description: Use when managing todos, tasks, projects, or kanban boards via Taskleef.com. Supports adding, listing, completing, deleting todos, organizing with projects, and managing kanban boards. Use when the user wants to track tasks, manage their todo list, organize work by projects, or use kanban workflows.
-metadata: {"clawdbot":{"emoji":"✅","requires":{"bins":["todo","curl","jq"],"env":["TASKLEEF_API_KEY"]},"primaryEnv":"TASKLEEF_API_KEY","homepage":"https://taskleef.com"}}
+metadata: {"clawdbot":{"emoji":"✅","requires":{"bins":["todo","curl","jq"],"env":["TASKLEEF_API_KEY"]},"primaryEnv":"TASKLEEF_API_KEY","homepage":"https://taskleef.com","install":[{"id":"todo-cli","kind":"download","url":"https://raw.githubusercontent.com/Xatter/taskleef/main/taskleef-cli/todo","bins":["todo"],"label":"Install Taskleef CLI (todo)"},{"id":"jq-brew","kind":"brew","formula":"jq","bins":["jq"],"label":"Install jq via Homebrew","os":["darwin"]},{"id":"jq-linux-amd64","kind":"download","url":"https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux-amd64","bins":["jq"],"label":"Install jq (Linux x86_64)","os":["linux"]},{"id":"jq-linux-arm64","kind":"download","url":"https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux-arm64","bins":["jq"],"label":"Install jq (Linux ARM64)","os":["linux"]}]}}
 ---
 
 # Taskleef
