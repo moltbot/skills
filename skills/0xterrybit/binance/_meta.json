@@ -1,0 +1,11 @@
+{
+  "owner": "0xterrybit",
+  "slug": "binance",
+  "displayName": "Binance",
+  "latest": {
+    "version": "1.1.0",
+    "publishedAt": 1769539949297,
+    "commit": null
+  },
+  "history": []
+}
