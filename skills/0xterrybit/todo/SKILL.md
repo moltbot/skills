@@ -1,7 +1,7 @@
 ---
 name: todo
 description: Task and todo list management. Create, organize, and track tasks with priorities and due dates.
-metadata: {"clawdbot":{"emoji":"✅","requires":{"bins":["curl","jq"]}}}
+metadata: {"clawdbot":{"emoji":"✅","always":true,"requires":{"bins":["curl","jq"]}}}
 ---
 
 # Todo ✅
