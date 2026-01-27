@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Alert Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .header .icon {
+            width: 48px;
+            height: 48px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .usage-section {
+            margin-bottom: 30px;
+        }
+
+        .usage-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-container {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 40px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 16px;
+            font-weight: 700;
+            color: white;
+            font-size: 16px;
+        }
+
+        .progress-fill.green {
+            background: linear-gradient(90deg, #4CAF50, #66BB6A);
+        }
+
+        .progress-fill.yellow {
+            background: linear-gradient(90deg, #FFEB3B, #FFC107);
+        }
+
+        .progress-fill.orange {
+            background: linear-gradient(90deg, #FF9800, #FB8C00);
+        }
+
+        .progress-fill.red-orange {
+            background: linear-gradient(90deg, #FF5722, #F4511E);
+        }
+
+        .progress-fill.red {
+            background: linear-gradient(90deg, #F44336, #E53935);
+        }
+
+        .progress-fill.magenta {
+            background: linear-gradient(90deg, #E91E63, #D81B60);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            25%, 75% { opacity: 0.7; }
+        }
+
+        .tokens-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .detail-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .detail-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 20px 0;
+        }
+
+        .status-badge.ok { background: #4CAF50; color: white; }
+        .status-badge.low { background: #FFEB3B; color: #333; }
+        .status-badge.medium { background: #FF9800; color: white; }
+        .status-badge.high { background: #FF5722; color: white; }
+        .status-badge.critical { background: #F44336; color: white; }
+        .status-badge.emergency { background: #E91E63; color: white; }
+
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #F44336 0%, #E91E63 100%);
+            color: white;
+        }
+
+        .recommendation {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .recommendation.warning {
+            background: #f8d7da;
+            border-left-color: #F44336;
+        }
+
+        .recommendation.danger {
+            background: #fce4ec;
+            border-left-color: #E91E63;
+        }
+
+        .recommendation-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .recommendation-list {
+            list-style: none;
+            padding-left: 24px;
+        }
+
+        .recommendation-list li {
+            margin: 4px 0;
+        }
+
+        .recommendation-list li::before {
+            content: "✅";
+            margin-right: 8px;
+        }
+
+        .recommendation.warning li::before {
+            content: "⚡";
+        }
+
+        .recommendation.danger li::before {
+            content: "🔴";
+        }
+
+        .provider-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 20px 30px 0;
+            background: white;
+            overflow-x: auto;
+        }
+
+        .provider-tab {
+            padding: 12px 20px;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 12px 12px 0 0;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .provider-tab:hover {
+            background: #e0e0e0;
+        }
+
+        .provider-tab.active {
+            background: white;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .provider-tab img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .provider-tab.add-provider {
+            background: transparent;
+            border: 2px dashed #ccc;
+            color: #999;
+        }
+
+        .provider-tab.add-provider:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .model-name {
+            font-size: 13px;
+            color: #999;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>
+                <img src="../assets/icons/dashboard.svg" class="icon" alt="Token Dashboard" id="dashboardIcon">
+                Token Alert Dashboard
+            </h1>
+        </div>
+
+        <div class="provider-tabs" id="providerTabs">
+            <button class="provider-tab active" data-provider="anthropic" onclick="switchProvider('anthropic')">
+                <img src="../assets/icons/anthropic.svg" alt="Anthropic">
+                Claude
+            </button>
+            <button class="provider-tab" data-provider="openai" onclick="switchProvider('openai')">
+                <img src="../assets/icons/openai.svg" alt="OpenAI">
+                OpenAI
+            </button>
+            <button class="provider-tab" data-provider="gemini" onclick="switchProvider('gemini')">
+                <img src="../assets/icons/gemini.svg" alt="Gemini">
+                Gemini
+            </button>
+            <button class="provider-tab add-provider" onclick="addProvider()">
+                <span>+</span> Provider
+            </button>
+        </div>
+
+        <div class="content">
+            <div class="usage-section">
+                <div class="usage-label">Current Usage</div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill green" id="progressFill" style="width: 0%">
+                            <span id="percentText">0%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="tokens-info">
+                    <span id="usedTokens">0 Tokens verwendet</span>
+                    <span id="totalTokens">/ 200,000</span>
+                </div>
+            </div>
+
+            <div class="status-badge ok" id="statusBadge">Alles im grünen Bereich!</div>
+
+            <div class="details-grid">
+                <div class="detail-card">
+                    <div class="detail-icon">🤖</div>
+                    <div class="detail-label">Model</div>
+                    <div class="detail-value" id="modelName" style="font-size: 14px;">Claude Sonnet 4.5</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-icon">💡</div>
+                    <div class="detail-label">Verbleibend</div>
+                    <div class="detail-value" id="remainingTokens">~200k</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-icon">⏰</div>
+                    <div class="detail-label">Sessions</div>
+                    <div class="detail-value" id="sessionEstimate">~3-4</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-icon">📈</div>
+                    <div class="detail-label">Trend</div>
+                    <div class="detail-value" id="trendValue">Normal</div>
+                </div>
+            </div>
+
+            <div id="recommendationBox"></div>
+
+            <div class="actions">
+                <button class="btn btn-primary" onclick="newSession()">
+                    <span>🔄</span> Neue Session
+                </button>
+                <button class="btn btn-secondary" onclick="summarize()">
+                    <span>📝</span> Zusammenfassen
+                </button>
+                <button class="btn btn-secondary" onclick="exportMemory()">
+                    <span>💾</span> Memory Export
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Demo: Simulate token usage (replace with real API call)
+        const DEMO_PERCENT = 78; // Change this to test different levels
+        
+        // Provider data with full model names
+        const PROVIDERS = {
+            anthropic: {
+                name: 'Anthropic',
+                model: 'Claude Sonnet 4.5',
+                icon: '../assets/icons/anthropic.svg',
+                usage: 78,
+                limit: 200000
+            },
+            openai: {
+                name: 'OpenAI',
+                model: 'GPT-4 Turbo',
+                icon: '../assets/icons/openai.svg',
+                usage: 45,
+                limit: 150000
+            },
+            gemini: {
+                name: 'Google Gemini',
+                model: 'Gemini Pro 1.5',
+                icon: '../assets/icons/gemini.svg',
+                usage: 23,
+                limit: 100000
+            }
+        };
+        
+        let currentProvider = 'anthropic';
+        
+        function switchProvider(providerId) {
+            currentProvider = providerId;
+            
+            // Update active tab
+            document.querySelectorAll('.provider-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-provider="${providerId}"]`).classList.add('active');
+            
+            // Update dashboard with provider data
+            const provider = PROVIDERS[providerId];
+            updateDashboard(provider.usage, provider.limit, provider.model);
+        }
+        
+        function addProvider() {
+            alert('Provider hinzufügen:\n\n1. API Key eingeben\n2. Model auswählen\n3. Limits konfigurieren\n\n(Feature in Entwicklung)');
+        }
+
+        function updateDashboard(percent, limit = 200000, modelName = 'Claude Sonnet 4.5') {
+            const used = Math.floor((percent / 100) * limit);
+            const remaining = limit - used;
+            const remainingK = Math.floor(remaining / 1000);
+            
+            // Update progress bar
+            const progressFill = document.getElementById('progressFill');
+            const percentText = document.getElementById('percentText');
+            const statusEmoji = document.getElementById('statusEmoji');
+            const statusBadge = document.getElementById('statusBadge');
+            
+            setTimeout(() => {
+                progressFill.style.width = percent + '%';
+                percentText.textContent = percent.toFixed(1) + '%';
+            }, 100);
+            
+            // Update tokens
+            document.getElementById('usedTokens').textContent = used.toLocaleString() + ' Tokens verwendet';
+            document.getElementById('totalTokens').textContent = '/ ' + limit.toLocaleString();
+            document.getElementById('remainingTokens').textContent = '~' + remainingK + 'k';
+            
+            // Update model name display
+            document.getElementById('modelName').textContent = modelName;
+            document.getElementById('dashboardIcon').alt = modelName;
+            
+            // Determine level and update UI
+            let level, emoji, colorClass, statusText, sessions, recommendation;
+            
+            if (percent >= 95) {
+                level = 'emergency';
+                emoji = '🚨';
+                colorClass = 'magenta';
+                statusText = 'EMERGENCY (Magenta Zone)';
+                sessions = 'KEINE';
+                recommendation = {
+                    type: 'danger',
+                    title: '🆘 LETZTE WARNUNG',
+                    items: [
+                        'Jede weitere Message = Risiko!',
+                        'Context wird bald abgeschnitten!',
+                        'SOFORT NEUE SESSION STARTEN!!!'
+                    ]
+                };
+            } else if (percent >= 90) {
+                level = 'critical';
+                emoji = '🔴';
+                colorClass = 'red';
+                statusText = 'CRITICAL (Rote Zone)';
+                sessions = 'KEINE';
+                recommendation = {
+                    type: 'warning',
+                    title: '🔥 SOFORT HANDELN',
+                    items: [
+                        'Memory sichern (JETZT!)',
+                        'Session zusammenfassen',
+                        'NEUE SESSION STARTEN!'
+                    ]
+                };
+            } else if (percent >= 75) {
+                level = 'high';
+                emoji = '🔶';
+                colorClass = 'red-orange';
+                statusText = 'High Warning (Rot-Orange Zone)';
+                sessions = '<1 Session';
+                recommendation = {
+                    type: 'warning',
+                    title: '🔧 Empfehlung',
+                    items: [
+                        'Wichtige Entscheidungen jetzt treffen',
+                        'Neue Session vorbereiten',
+                        'Token-sparend arbeiten'
+                    ]
+                };
+            } else if (percent >= 50) {
+                level = 'medium';
+                emoji = '🟠';
+                colorClass = 'orange';
+                statusText = 'Medium Warning (Orange Zone)';
+                sessions = '~1 weitere';
+                recommendation = {
+                    type: '',
+                    title: '🔧 Empfehlung',
+                    items: [
+                        'Token-sparend arbeiten',
+                        'Kürzere Antworten bevorzugen'
+                    ]
+                };
+            } else if (percent >= 25) {
+                level = 'low';
+                emoji = '🟡';
+                colorClass = 'yellow';
+                statusText = 'Low Warning (Gelbe Zone)';
+                sessions = '~2 weitere';
+                recommendation = null;
+            } else {
+                level = 'ok';
+                emoji = '🟢';
+                colorClass = 'green';
+                statusText = 'Alles im grünen Bereich!';
+                sessions = '~3-4 weitere';
+                recommendation = null;
+            }
+            
+            // Update UI
+            statusEmoji.textContent = emoji;
+            progressFill.className = 'progress-fill ' + colorClass;
+            statusBadge.className = 'status-badge ' + level;
+            statusBadge.textContent = statusText;
+            document.getElementById('sessionEstimate').textContent = sessions;
+            
+            // Update recommendation box
+            const recBox = document.getElementById('recommendationBox');
+            if (recommendation) {
+                recBox.innerHTML = `
+                    <div class="recommendation ${recommendation.type}">
+                        <div class="recommendation-title">${recommendation.title}</div>
+                        <ul class="recommendation-list">
+                            ${recommendation.items.map(item => '<li>' + item + '</li>').join('')}
+                        </ul>
+                    </div>
+                `;
+            } else {
+                recBox.innerHTML = '';
+            }
+        }
+        
+        // Action handlers
+        function newSession() {
+            alert('Starting new session...');
+            // In real implementation: trigger new session via Clawdbot
+        }
+        
+        function summarize() {
+            alert('Creating session summary...');
+            // In real implementation: trigger summary via Clawdbot
+        }
+        
+        function exportMemory() {
+            alert('Exporting memory...');
+            // In real implementation: export memory files
+        }
+        
+        // Initialize with demo data
+        const provider = PROVIDERS[currentProvider];
+        updateDashboard(provider.usage, provider.limit, provider.model);
+    </script>
+</body>
+</html>

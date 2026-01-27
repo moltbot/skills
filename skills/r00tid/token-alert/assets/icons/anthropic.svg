@@ -1,0 +1,11 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="anthropicGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D4835C;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8B4513;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Anthropic "A" design -->
+  <path d="M 32 8 L 56 56 L 48 56 L 42 42 L 22 42 L 16 56 L 8 56 L 32 8 Z" fill="url(#anthropicGradient)"/>
+  <rect x="24" y="35" width="16" height="4" fill="#1a1a1a"/>
+</svg>

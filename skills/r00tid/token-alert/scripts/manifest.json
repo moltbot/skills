@@ -1,0 +1,41 @@
+{
+  "name": "Token Alert Dashboard",
+  "short_name": "Token Alert",
+  "description": "Real-time Clawdbot token usage monitoring with smart alerts",
+  "start_url": "/dashboard-v3.html",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#667eea",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "shortcuts": [
+    {
+      "name": "Refresh Stats",
+      "short_name": "Refresh",
+      "description": "Update token usage statistics",
+      "url": "/dashboard-v3.html?action=refresh",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Export Session",
+      "short_name": "Export",
+      "description": "Export current session",
+      "url": "/dashboard-v3.html?action=export",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

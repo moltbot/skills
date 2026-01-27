@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Alert</title>
+    <style>
+        :root[data-theme="light"] {
+            --bg-gradient-start: #667eea;
+            --bg-gradient-end: #764ba2;
+            --card-bg: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --border-color: #e0e0e0;
+            --progress-bg: #f0f0f0;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --header-text: #ffffff;
+        }
+
+        :root[data-theme="dark"] {
+            --bg-gradient-start: #1e1e1e;
+            --bg-gradient-end: #2d2d30;
+            --card-bg: #252526;
+            --text-primary: #cccccc;
+            --text-secondary: #858585;
+            --border-color: #3e3e42;
+            --progress-bg: #3e3e42;
+            --shadow: rgba(0, 0, 0, 0.6);
+            --header-text: #cccccc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            transition: background 0.3s ease;
+        }
+
+        .dashboard {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px var(--shadow);
+            width: 100%;
+            max-width: 420px;
+            max-height: 90vh;
+            overflow-y: auto;
+            overflow-x: hidden; /* No horizontal scroll */
+            animation: slideIn 0.5s ease-out;
+            transition: background 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            color: var(--header-text);
+            padding: 18px 20px;
+            text-align: center;
+            position: relative;
+            transition: background 0.3s ease;
+        }
+
+        .theme-toggle, .settings-btn {
+            position: absolute;
+            top: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle {
+            right: 20px;
+        }
+        
+        .settings-btn {
+            left: 20px;
+        }
+
+        .theme-toggle:hover, .settings-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            filter: brightness(1.15);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .theme-toggle:active, .settings-btn:active {
+            transform: translateY(0px);
+            filter: brightness(0.95);
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .emoji {
+            font-size: 24px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .content {
+            padding: 18px 20px;
+        }
+
+        .provider-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: hidden; /* No horizontal scroll */
+            padding-bottom: 8px;
+            flex-wrap: wrap; /* Allow wrapping if needed */
+        }
+
+        .provider-tab {
+            padding: 10px 16px;
+            border-radius: 12px;
+            border: none;
+            background: var(--progress-bg);
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            position: relative;
+            flex: 1; /* Equal width distribution */
+            text-align: center;
+        }
+
+        .provider-tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px var(--shadow);
+            filter: brightness(1.15);
+            background: var(--border-color);
+        }
+
+        .provider-tab:active {
+            transform: translateY(0px);
+            filter: brightness(0.95);
+        }
+
+        .provider-tab.active {
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            color: white;
+            font-weight: 700;
+            border: 1px solid rgba(192, 192, 192, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px var(--shadow), 
+                        0 0 6px rgba(192, 192, 192, 0.2);
+        }
+        
+        .provider-tab.active:hover {
+            filter: brightness(1.15);
+            box-shadow: 0 8px 16px var(--shadow), 
+                        0 0 10px rgba(192, 192, 192, 0.4);
+        }
+        
+        .provider-tab.active:active {
+            transform: translateY(0px);
+            filter: brightness(0.95);
+        }
+        
+        .provider-tab.active::after {
+            content: ' ✓';
+            margin-left: 4px;
+            font-size: 16px;
+        }
+
+        .provider-content {
+            display: none;
+        }
+
+        .provider-content.active {
+            display: block;
+        }
+
+        .usage-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 32px;
+            background: var(--progress-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        
+        .progress-bar::after {
+            content: attr(data-percent);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: 700;
+            font-size: 14px;
+            color: white;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        :root[data-theme="light"] .progress-bar::after {
+            color: #1a1a1a;
+            text-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+        }
+
+        .progress-fill.green, .session-progress-fill.green { 
+            background: linear-gradient(90deg, #4CAF50, #66BB6A); 
+        }
+        .progress-fill.yellow, .session-progress-fill.yellow { 
+            background: linear-gradient(90deg, #FFEB3B, #FFC107); 
+        }
+        .progress-fill.orange, .session-progress-fill.orange { 
+            background: linear-gradient(90deg, #D89050, #C67C3E); 
+        }
+        .progress-fill.red-orange, .session-progress-fill.red-orange { 
+            background: linear-gradient(90deg, #D86C50, #C65840); 
+        }
+        .progress-fill.red, .session-progress-fill.red { 
+            background: linear-gradient(90deg, #D85050, #C04040); 
+        }
+        .progress-fill.magenta, .session-progress-fill.magenta { 
+            background: linear-gradient(90deg, #C05070, #A84060); 
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            25%, 75% { opacity: 0.7; }
+        }
+
+        .tokens-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            margin: 12px 0;
+        }
+
+        .status-badge.ok { background: #4CAF50; color: white; }
+        .status-badge.low { background: #FFEB3B; color: #333; }
+        .status-badge.medium { background: #D89050; color: white; }
+        .status-badge.high { background: #D86C50; color: white; }
+        .status-badge.critical { background: #D85050; color: white; }
+        .status-badge.emergency { background: #C05070; color: white; }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .detail-card {
+            background: var(--progress-bg);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            transition: background 0.3s ease;
+        }
+
+        .detail-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .detail-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: none; /* No uppercase */
+            letter-spacing: 0.3px;
+            margin-bottom: 3px;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .recommendation {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 14px;
+            border-radius: 8px;
+            margin-top: 16px;
+            color: #333;
+        }
+
+        :root[data-theme="dark"] .recommendation {
+            background: #3e3e42;
+            border-left-color: #FFEB3B;
+            color: var(--text-primary);
+        }
+
+        .recommendation.warning {
+            background: #f8d7da;
+            border-left-color: #F44336;
+        }
+
+        :root[data-theme="dark"] .recommendation.warning {
+            background: #3e3e42;
+            border-left-color: #D86C50;
+            color: var(--text-primary);
+        }
+
+        .recommendation.danger {
+            background: #fce4ec;
+            border-left-color: #E91E63;
+        }
+
+        :root[data-theme="dark"] .recommendation.danger {
+            background: #3e3e42;
+            border-left-color: #C05070;
+            color: var(--text-primary);
+        }
+
+        .recommendation-title {
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+        }
+
+        .recommendation-list {
+            list-style: none;
+            padding-left: 20px;
+            font-size: 12px;
+        }
+
+        .recommendation-list li {
+            margin: 3px 0;
+        }
+
+        .recommendation-list li::before {
+            content: "✅";
+            margin-right: 6px;
+        }
+
+        .recommendation.warning li::before { content: "⚡"; }
+        .recommendation.danger li::before { content: "🔴"; }
+
+        /* Multi-Session Tracking */
+        .session-item {
+            background: var(--progress-bg);
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .session-item:hover {
+            background: var(--border-color);
+            transform: translateX(2px);
+        }
+
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .session-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .session-percent {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .session-progress {
+            height: 4px;
+            background: var(--border-color);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .session-progress-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .session-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .btn {
+            background: var(--progress-bg);
+            color: var(--text-primary);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px var(--shadow);
+            filter: brightness(1.15);
+            background: var(--border-color);
+        }
+
+        .btn:active {
+            transform: translateY(0px);
+            filter: brightness(0.95);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <button class="settings-btn" onclick="openSettings()" title="Settings">
+                <span>⚙️</span>
+            </button>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                <span id="themeIcon">🌙</span>
+            </button>
+            <h1>
+                <span class="emoji" id="statusEmoji">🟢</span>
+                Token Alert
+            </h1>
+        </div>
+
+        <div class="content">
+            <!-- Provider Tabs -->
+            <div class="provider-tabs">
+                <button class="provider-tab active" onclick="switchProvider('anthropic')">
+                    🤖 Anthropic
+                </button>
+                <button class="provider-tab" onclick="switchProvider('openai')">
+                    🧠 OpenAI
+                </button>
+                <button class="provider-tab" onclick="switchProvider('gemini')">
+                    ✨ Gemini
+                </button>
+            </div>
+
+            <!-- Provider Contents -->
+            <div id="provider-anthropic" class="provider-content active">
+                <div class="usage-label">Current Usage</div>
+                <div class="progress-bar" id="progressBar" data-percent="0%">
+                    <div class="progress-fill green" id="progressFill" style="width: 0%"></div>
+                </div>
+                <div class="tokens-info">
+                    <span id="usedTokens">0 Tokens verwendet</span>
+                    <span id="totalTokens">/ 200,000</span>
+                </div>
+
+                <div class="status-badge ok" id="statusBadge">Alles im grünen Bereich!</div>
+
+                <div class="details-grid">
+                    <div class="detail-card">
+                        <div class="detail-icon">💡</div>
+                        <div class="detail-label" id="remainingLabel">Verbleibend (5h)</div>
+                        <div class="detail-value" id="remainingTokens">~200k</div>
+                    </div>
+                    <div class="detail-card">
+                        <div class="detail-icon">⏰</div>
+                        <div class="detail-label">Sessions möglich</div>
+                        <div class="detail-value" id="sessionEstimate">~3-4</div>
+                    </div>
+                    <div class="detail-card">
+                        <div class="detail-icon">📈</div>
+                        <div class="detail-label">Modell</div>
+                        <div class="detail-value" id="modelName">Sonnet 4.5</div>
+                    </div>
+                </div>
+
+                <div id="recommendationBox"></div>
+
+                <!-- Multi-Session Tracking -->
+                <div class="sessions-section" id="sessionsSection" style="margin-top: 24px; display: none;">
+                    <h3 style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
+                        🧵 Active Sessions
+                    </h3>
+                    <div id="sessionsList"></div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn" onclick="newSession()">
+                        <span>🔄</span> Neu
+                    </button>
+                    <button class="btn" onclick="summarize()">
+                        <span>📝</span> Summary
+                    </button>
+                    <button class="btn" onclick="exportMemory()">
+                        <span>💾</span> Export
+                    </button>
+                </div>
+            </div>
+
+            <!-- Placeholder for other providers -->
+            <div id="provider-openai" class="provider-content">
+                <p style="text-align: center; color: var(--text-secondary); padding: 40px;">
+                    OpenAI provider coming soon...
+                </p>
+            </div>
+
+            <div id="provider-gemini" class="provider-content">
+                <p style="text-align: center; color: var(--text-secondary); padding: 40px;">
+                    Gemini provider coming soon...
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Management
+        function getSystemTheme() {
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+
+        function getSavedTheme() {
+            return localStorage.getItem('token-alert-theme') || 'auto';
+        }
+
+        function getEffectiveTheme() {
+            const saved = getSavedTheme();
+            if (saved === 'auto') {
+                return getSystemTheme();
+            }
+            return saved;
+        }
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            const icon = document.getElementById('themeIcon');
+            icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+
+        function toggleTheme() {
+            const current = getEffectiveTheme();
+            const next = current === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('token-alert-theme', next);
+            applyTheme(next);
+        }
+
+        // Initialize theme on load
+        applyTheme(getEffectiveTheme());
+
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (getSavedTheme() === 'auto') {
+                applyTheme(e.matches ? 'dark' : 'light');
+            }
+        });
+
+        // Provider switching
+        function switchProvider(provider) {
+            // Update tabs
+            document.querySelectorAll('.provider-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update content
+            document.querySelectorAll('.provider-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById('provider-' + provider).classList.add('active');
+        }
+
+        // ==========================================
+        // LIVE GATEWAY INTEGRATION
+        // ==========================================
+        
+        const GATEWAY_URL = '/api'; // Proxy server routes /api/* to Gateway
+        const GATEWAY_TOKEN = 'd91a7a91e0d6bda8b6e3182467fda1f0bebd34c830263a4f';
+        const REFRESH_INTERVAL = 30000; // 30 seconds
+        const USE_MOCK_DATA = false; // Real Gateway data (no mock)
+        
+        let currentSessionPercent = 40; // fallback (real: 60% left = 40% used)
+        let weeklyPercent = 34; // fallback (real: 66% left = 34% used)
+        
+        // ==========================================
+        // RESET TRACKING
+        // ==========================================
+        
+        function loadHistory() {
+            const history = localStorage.getItem('tokenHistory');
+            return history ? JSON.parse(history) : {
+                session5h: [],
+                weekly: [],
+                resets: []
+            };
+        }
+        
+        function saveHistory(history) {
+            localStorage.setItem('tokenHistory', JSON.stringify(history));
+        }
+        
+        function detectReset(currentValue, lastValue, type) {
+            // Reset detected if current < last (usage went down)
+            if (lastValue && currentValue < lastValue - 5) { // -5% threshold to avoid noise
+                const reset = {
+                    type: type, // '5h' or 'weekly'
+                    timestamp: Date.now(),
+                    before: lastValue,
+                    after: currentValue
+                };
+                
+                console.log(`🔄 RESET DETECTED (${type}):`, reset);
+                
+                const history = loadHistory();
+                history.resets.push(reset);
+                
+                // Keep last 100 resets
+                if (history.resets.length > 100) {
+                    history.resets = history.resets.slice(-100);
+                }
+                
+                saveHistory(history);
+                
+                // Show notification
+                showNotification(`🔄 ${type === '5h' ? '5-Hour' : 'Weekly'} Reset detected!`, 'info');
+                
+                return true;
+            }
+            return false;
+        }
+        
+        function recordUsage(session5h, weekly) {
+            const history = loadHistory();
+            const now = Date.now();
+            
+            // Get last values
+            const lastSession = history.session5h.length > 0 
+                ? history.session5h[history.session5h.length - 1].value 
+                : null;
+            const lastWeekly = history.weekly.length > 0 
+                ? history.weekly[history.weekly.length - 1].value 
+                : null;
+            
+            // Detect resets
+            detectReset(session5h, lastSession, '5h');
+            detectReset(weekly, lastWeekly, 'weekly');
+            
+            // Record new values
+            history.session5h.push({ timestamp: now, value: session5h });
+            history.weekly.push({ timestamp: now, value: weekly });
+            
+            // Keep last 1000 entries per type (~ 8h at 30s intervals)
+            if (history.session5h.length > 1000) {
+                history.session5h = history.session5h.slice(-1000);
+            }
+            if (history.weekly.length > 1000) {
+                history.weekly = history.weekly.slice(-1000);
+            }
+            
+            saveHistory(history);
+        }
+        
+        function getRecentResets(hoursBack = 24) {
+            const history = loadHistory();
+            const cutoff = Date.now() - (hoursBack * 60 * 60 * 1000);
+            return history.resets.filter(r => r.timestamp > cutoff);
+        }
+        
+        async function fetchGatewayStats() {
+            // Mock data for testing (until CORS is fixed)
+            if (USE_MOCK_DATA) {
+                console.log('📊 Using MOCK data (CORS bypass)');
+                return { 
+                    current: 40, // 60% left = 40% used
+                    weekly: 34,  // 66% left = 34% used
+                    timeLeft: '4h 14m' // Mock time
+                };
+            }
+            
+            try {
+                const response = await fetch(`${GATEWAY_URL}/tools/invoke`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${GATEWAY_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tool: 'session_status',
+                        args: {}
+                    })
+                });
+                
+                if (!response.ok) {
+                    console.error('Gateway API error:', response.status);
+                    return null;
+                }
+                
+                const data = await response.json();
+                const statusText = data.result?.details?.statusText || '';
+                
+                console.log('📊 Raw Gateway Response:', statusText);
+                
+                // Parse: "📊 Usage: 5h 68% left ⏱43m · Week 67% left ⏱5d 18h"
+                // More flexible regex: catch any time format (5h, 12h, 1d etc.)
+                const usageMatch = statusText.match(/Usage:\s*\S+\s*(\d+)%\s*left\s*⏱([^\s·]+).*Week\s*(\d+)%\s*left/);
+                
+                if (usageMatch) {
+                    const fiveHourLeft = parseInt(usageMatch[1]);
+                    const timeLeft = usageMatch[2]; // e.g. "4h14m" or "43m"
+                    const weeklyLeft = parseInt(usageMatch[3]);
+                    
+                    currentSessionPercent = 100 - fiveHourLeft; // Convert "left" to "used"
+                    weeklyPercent = 100 - weeklyLeft;
+                    
+                    console.log('✅ Gateway Stats Parsed:', {
+                        raw5h: fiveHourLeft + '% left',
+                        timeLeft: timeLeft,
+                        rawWeek: weeklyLeft + '% left',
+                        current: currentSessionPercent + '% used',
+                        weekly: weeklyPercent + '% used'
+                    });
+                    
+                    return { 
+                        current: currentSessionPercent, 
+                        weekly: weeklyPercent,
+                        timeLeft: timeLeft 
+                    };
+                } else {
+                    console.error('❌ Failed to parse usage from:', statusText);
+                }
+                
+                return null;
+                
+            } catch (error) {
+                console.error('Failed to fetch gateway stats:', error);
+                return null;
+            }
+        }
+        
+        // ==========================================
+        // BROWSER NOTIFICATIONS
+        // ==========================================
+        
+        let lastNotificationLevel = 0; // Track to avoid spam
+        
+        // Request notification permission on load
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+        
+        function sendBrowserNotification(level, percent) {
+            if (!notificationsEnabled || !('Notification' in window) || Notification.permission !== 'granted') {
+                return;
+            }
+            
+            // Don't spam - only notify when crossing new thresholds
+            if (level <= lastNotificationLevel) {
+                return;
+            }
+            
+            lastNotificationLevel = level;
+            
+            let title, body, icon, requireInteraction;
+            
+            if (percent >= 95) {
+                title = '🚨 TOKEN EMERGENCY!';
+                body = `${percent}% verwendet - SOFORT NEUE SESSION STARTEN!`;
+                icon = '🚨';
+                requireInteraction = true;
+                playAlertSound('emergency');
+            } else if (percent >= 90) {
+                title = '🔴 CRITICAL Warning!';
+                body = `${percent}% verwendet - Jetzt Session beenden!`;
+                icon = '🔴';
+                requireInteraction = true;
+                playAlertSound('critical');
+            } else if (percent >= 75) {
+                title = '🔶 High Warning';
+                body = `${percent}% verwendet - Session bald voll`;
+                icon = '🔶';
+                requireInteraction = false;
+                playAlertSound('warning');
+            }
+            
+            const notification = new Notification(title, {
+                body: body,
+                icon: icon,
+                tag: 'token-alert', // Replace previous notifications
+                requireInteraction: requireInteraction,
+                silent: false
+            });
+            
+            notification.onclick = () => {
+                window.focus();
+                notification.close();
+            };
+            
+            // Auto-close after 10 seconds (except critical)
+            if (!requireInteraction) {
+                setTimeout(() => notification.close(), 10000);
+            }
+        }
+        
+        function playAlertSound(level) {
+            if (!soundEnabled) return;
+            
+            // Create audio context for beep sound
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Different frequencies for different urgency levels
+            const frequencies = {
+                warning: 440,  // A4
+                critical: 880, // A5
+                emergency: 1320 // E6
+            };
+            
+            oscillator.frequency.value = frequencies[level] || 440;
+            gainNode.gain.value = 0.3; // Volume
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.2); // Short beep
+            
+            // For critical/emergency, play multiple beeps
+            if (level === 'critical' || level === 'emergency') {
+                setTimeout(() => {
+                    const osc2 = audioContext.createOscillator();
+                    const gain2 = audioContext.createGain();
+                    osc2.connect(gain2);
+                    gain2.connect(audioContext.destination);
+                    osc2.frequency.value = frequencies[level];
+                    gain2.gain.value = 0.3;
+                    osc2.start();
+                    osc2.stop(audioContext.currentTime + 0.2);
+                }, 300);
+            }
+        }
+        
+        async function updateFromGateway() {
+            const stats = await fetchGatewayStats();
+            if (stats) {
+                // Record usage & detect resets
+                recordUsage(stats.current, stats.weekly);
+                
+                updateDashboard(stats.current, stats.timeLeft);
+                
+                // Trigger notifications based on threshold
+                if (stats.current >= 75) {
+                    let level = 0;
+                    if (stats.current >= 95) level = 4;
+                    else if (stats.current >= 90) level = 3;
+                    else if (stats.current >= 75) level = 2;
+                    
+                    sendBrowserNotification(level, stats.current);
+                }
+                
+                // Update weekly display (if we add it later)
+                const weeklyEl = document.getElementById('weeklyUsage');
+                if (weeklyEl) weeklyEl.textContent = stats.weekly + '%';
+            } else {
+                // Fallback to last known values
+                updateDashboard(currentSessionPercent);
+            }
+        }
+        
+        // ==========================================
+        // MULTI-SESSION TRACKING
+        // ==========================================
+        
+        async function fetchSessions() {
+            // Mock data for testing (until CORS is fixed)
+            if (USE_MOCK_DATA) {
+                return [
+                    {
+                        key: 'agent:main:telegram:dm:123456789',
+                        label: '', // Empty to test fallback
+                        channel: 'telegram',
+                        totalTokens: 58000,
+                        contextTokens: 1000000,
+                        updatedAt: Date.now() - 600000 // 10 min ago
+                    },
+                    {
+                        key: 'agent:main:subagent:dashboard-integration-research',
+                        label: '', // Empty to test parsing
+                        channel: 'webchat',
+                        totalTokens: 36000,
+                        contextTokens: 1000000,
+                        updatedAt: Date.now() - 180000 // 3 min ago
+                    },
+                    {
+                        key: 'agent:main:main',
+                        label: '', // Should show "Main Session"
+                        channel: 'webchat',
+                        totalTokens: 57000,
+                        contextTokens: 1000000,
+                        updatedAt: Date.now() - 300000 // 5 min ago
+                    }
+                ];
+            }
+            
+            try {
+                const response = await fetch(`${GATEWAY_URL}/tools/invoke`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${GATEWAY_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tool: 'sessions_list',
+                        args: { limit: 20 }
+                    })
+                });
+                
+                if (!response.ok) return null;
+                
+                const data = await response.json();
+                return data.result?.details?.sessions || [];
+                
+            } catch (error) {
+                console.error('Failed to fetch sessions:', error);
+                return null;
+            }
+        }
+        
+        function renderSessions(sessions) {
+            const container = document.getElementById('sessionsList');
+            const section = document.getElementById('sessionsSection');
+            
+            if (!sessions || sessions.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+            
+            // Filter out empty sessions
+            const activeSessions = sessions.filter(s => s.totalTokens > 0 && s.contextTokens > 0);
+            
+            if (activeSessions.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+            
+            section.style.display = 'block';
+            container.innerHTML = '';
+            
+            // Track duplicate names to add differentiators
+            const nameCount = {};
+            const nameIndex = {};
+            
+            // First pass: count duplicates
+            activeSessions.forEach(session => {
+                let baseName = session.label || '';
+                
+                if (!baseName) {
+                    const keyParts = session.key.split(':');
+                    const subagentIndex = keyParts.indexOf('subagent');
+                    if (subagentIndex >= 0 && keyParts.length > subagentIndex + 1) {
+                        baseName = keyParts[subagentIndex + 1];
+                    } else if (keyParts.includes('main')) {
+                        baseName = 'Main Session';
+                    } else {
+                        const lastPart = keyParts[keyParts.length - 1];
+                        if (lastPart.length > 20 && lastPart.includes('-')) {
+                            baseName = (session.channel || 'Unknown') + ' Chat';
+                        } else {
+                            baseName = lastPart;
+                        }
+                    }
+                }
+                
+                baseName = baseName.charAt(0).toUpperCase() + baseName.slice(1);
+                nameCount[baseName] = (nameCount[baseName] || 0) + 1;
+                nameIndex[baseName] = 0;
+            });
+            
+            activeSessions.forEach(session => {
+                const percent = ((session.totalTokens / session.contextTokens) * 100).toFixed(1);
+                const tokensK = Math.floor(session.totalTokens / 1000);
+                
+                // Get color based on percentage
+                let colorClass = 'green';
+                if (percent >= 90) colorClass = 'red';
+                else if (percent >= 75) colorClass = 'red-orange';
+                else if (percent >= 50) colorClass = 'orange';
+                else if (percent >= 25) colorClass = 'yellow';
+                
+                // Format session name (better fallbacks)
+                let name = session.label || '';
+                
+                if (!name) {
+                    // Parse session key intelligently
+                    const keyParts = session.key.split(':');
+                    
+                    // Check if it's a subagent (has "subagent" in key)
+                    const subagentIndex = keyParts.indexOf('subagent');
+                    if (subagentIndex >= 0 && keyParts.length > subagentIndex + 1) {
+                        name = keyParts[subagentIndex + 1]; // Take name after "subagent"
+                    } else if (keyParts.includes('main')) {
+                        name = 'Main Session';
+                    } else {
+                        // Fallback: Take last meaningful part (not UUIDs)
+                        const lastPart = keyParts[keyParts.length - 1];
+                        if (lastPart.length > 20 && lastPart.includes('-')) {
+                            // Looks like UUID, use channel + "Chat" instead
+                            name = (session.channel || 'Unknown') + ' Chat';
+                        } else {
+                            name = lastPart;
+                        }
+                    }
+                }
+                
+                // Capitalize first letter
+                name = name.charAt(0).toUpperCase() + name.slice(1);
+                
+                // Add differentiator for duplicates (with channel info for clarity)
+                if (nameCount[name] > 1) {
+                    nameIndex[name]++;
+                    // Add channel info to help distinguish
+                    const channelNames = {
+                        telegram: 'TG',
+                        webchat: 'Web',
+                        slack: 'Slack',
+                        discord: 'Discord'
+                    };
+                    const channelLabel = channelNames[session.channel] || session.channel || '';
+                    name = `${name} (${channelLabel})`;
+                } else if (nameCount[name] === 1 && name === 'Main Session') {
+                    // Even single main sessions: show channel for clarity
+                    const channelNames = {
+                        telegram: 'Telegram',
+                        webchat: 'Web',
+                        slack: 'Slack',
+                        discord: 'Discord'
+                    };
+                    const channelLabel = channelNames[session.channel] || '';
+                    if (channelLabel) {
+                        name = `${name} (${channelLabel})`;
+                    }
+                }
+                
+                // Truncate if too long
+                if (name.length > 30) name = name.substring(0, 27) + '...';
+                
+                // Channel icon
+                const channelIcons = {
+                    telegram: '💬',
+                    webchat: '🌐',
+                    slack: '💼',
+                    discord: '🎮'
+                };
+                const icon = channelIcons[session.channel] || '📱';
+                
+                // Time ago
+                const updatedAgo = formatTimeAgo(session.updatedAt);
+                
+                const item = document.createElement('div');
+                item.className = 'session-item';
+                item.onclick = () => switchToSession(session.key);
+                
+                item.innerHTML = `
+                    <div class="session-header">
+                        <div class="session-name">
+                            <span>${icon}</span>
+                            <span>${name}</span>
+                        </div>
+                        <div class="session-percent">${percent}%</div>
+                    </div>
+                    <div class="session-progress">
+                        <div class="session-progress-fill ${colorClass}" style="width: ${percent}%"></div>
+                    </div>
+                    <div class="session-meta">
+                        <span>${tokensK}k tokens</span>
+                        <span>${updatedAgo}</span>
+                    </div>
+                `;
+                
+                container.appendChild(item);
+            });
+        }
+        
+        function formatTimeAgo(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+            
+            if (days > 0) return `${days}d ago`;
+            if (hours > 0) return `${hours}h ago`;
+            if (minutes > 0) return `${minutes}m ago`;
+            return 'just now';
+        }
+        
+        function switchToSession(sessionKey) {
+            // TODO: Implement session switching
+            showNotification(`Session wechseln zu: ${sessionKey}`, 'info');
+        }
+        
+        async function updateMultiSessions() {
+            const sessions = await fetchSessions();
+            if (sessions) {
+                renderSessions(sessions);
+            }
+        }
+        
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            updateFromGateway();
+            updateMultiSessions();
+        }, REFRESH_INTERVAL);
+        
+        // Initial load
+        updateFromGateway();
+        updateMultiSessions();
+
+        function updateDashboard(percent, timeLeft = null) {
+            const used = Math.floor((percent / 100) * 200000);
+            const remaining = 200000 - used;
+            const remainingK = Math.floor(remaining / 1000);
+            
+            const progressFill = document.getElementById('progressFill');
+            const progressBar = document.getElementById('progressBar');
+            const statusEmoji = document.getElementById('statusEmoji');
+            const statusBadge = document.getElementById('statusBadge');
+            const remainingLabel = document.getElementById('remainingLabel');
+            
+            setTimeout(() => {
+                progressFill.style.width = percent + '%';
+                progressBar.setAttribute('data-percent', percent.toFixed(1) + '%');
+            }, 100);
+            
+            document.getElementById('usedTokens').textContent = used.toLocaleString() + ' Tokens verwendet';
+            document.getElementById('remainingTokens').textContent = '~' + remainingK + 'k';
+            
+            // Update label with dynamic time
+            if (timeLeft && remainingLabel) {
+                // Format time nicely: "4h14m" → "4h 14m" or just show as is
+                const formattedTime = timeLeft.replace(/(\d+)([hm])/g, '$1$2 ').trim();
+                remainingLabel.textContent = `⏱ ${formattedTime} übrig`;
+            }
+            
+            let level, emoji, colorClass, statusText, sessions, recommendation;
+            
+            if (percent >= 95) {
+                level = 'emergency';
+                emoji = '🚨';
+                colorClass = 'magenta';
+                statusText = 'EMERGENCY (Magenta Zone)';
+                sessions = 'KEINE';
+                recommendation = {
+                    type: 'danger',
+                    title: '🆘 LETZTE WARNUNG',
+                    items: [
+                        'Jede weitere Message = Risiko!',
+                        'Context wird bald abgeschnitten!',
+                        'SOFORT NEUE SESSION STARTEN!!!'
+                    ]
+                };
+            } else if (percent >= 90) {
+                level = 'critical';
+                emoji = '🔴';
+                colorClass = 'red';
+                statusText = 'CRITICAL (Rote Zone)';
+                sessions = 'KEINE';
+                recommendation = {
+                    type: 'warning',
+                    title: '🔥 SOFORT HANDELN',
+                    items: [
+                        'Memory sichern (JETZT!)',
+                        'Session zusammenfassen',
+                        'NEUE SESSION STARTEN!'
+                    ]
+                };
+            } else if (percent >= 75) {
+                level = 'high';
+                emoji = '🔶';
+                colorClass = 'red-orange';
+                statusText = 'High Warning (Rot-Orange Zone)';
+                sessions = '<1 Session';
+                recommendation = {
+                    type: 'warning',
+                    title: '🔧 Empfehlung',
+                    items: [
+                        'Wichtige Entscheidungen jetzt treffen',
+                        'Neue Session vorbereiten',
+                        'Token-sparend arbeiten'
+                    ]
+                };
+            } else if (percent >= 50) {
+                level = 'medium';
+                emoji = '🟠';
+                colorClass = 'orange';
+                statusText = 'Medium Warning (Orange Zone)';
+                sessions = '~1 weitere';
+                recommendation = {
+                    type: '',
+                    title: '🔧 Empfehlung',
+                    items: [
+                        'Token-sparend arbeiten',
+                        'Kürzere Antworten bevorzugen'
+                    ]
+                };
+            } else if (percent >= 25) {
+                level = 'low';
+                emoji = '🟡';
+                colorClass = 'yellow';
+                statusText = 'Low Warning (Gelbe Zone)';
+                sessions = '~2 weitere';
+                recommendation = null;
+            } else {
+                level = 'ok';
+                emoji = '🟢';
+                colorClass = 'green';
+                statusText = 'Alles im grünen Bereich!';
+                sessions = '~3-4 weitere';
+                recommendation = null;
+            }
+            
+            statusEmoji.textContent = emoji;
+            progressFill.className = 'progress-fill ' + colorClass;
+            statusBadge.className = 'status-badge ' + level;
+            statusBadge.textContent = statusText;
+            document.getElementById('sessionEstimate').textContent = sessions;
+            
+            const recBox = document.getElementById('recommendationBox');
+            if (recommendation) {
+                recBox.innerHTML = `
+                    <div class="recommendation ${recommendation.type}">
+                        <div class="recommendation-title">${recommendation.title}</div>
+                        <ul class="recommendation-list">
+                            ${recommendation.items.map(item => '<li>' + item + '</li>').join('')}
+                        </ul>
+                    </div>
+                `;
+            } else {
+                recBox.innerHTML = '';
+            }
+        }
+        
+        // ==========================================
+        // QUICK ACTIONS
+        // ==========================================
+        
+        function newSession() {
+            // Open new webchat session in new tab
+            const webchatUrl = 'http://localhost:18789/chat?session=new';
+            window.open(webchatUrl, '_blank');
+            
+            // Show success message
+            showNotification('✅ Neue Session geöffnet!', 'success');
+        }
+        
+        async function summarize() {
+            showNotification('📝 Erstelle Zusammenfassung...', 'info');
+            
+            // Mock action for testing (until CORS is fixed)
+            if (USE_MOCK_DATA) {
+                setTimeout(() => {
+                    showNotification('✅ Zusammenfassung angefordert! (Mock)', 'success');
+                }, 1000);
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${GATEWAY_URL}/tools/invoke`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${GATEWAY_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tool: 'sessions_send',
+                        args: {
+                            message: 'Erstelle eine kompakte Zusammenfassung dieser Session mit den wichtigsten Entscheidungen, offenen Tasks und nächsten Schritten. Speichere sie dann in memory/.'
+                        }
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Summary response:', result);
+                    showNotification('✅ Zusammenfassung angefordert!', 'success');
+                } else {
+                    const errorText = await response.text();
+                    console.error('Summary failed:', response.status, errorText);
+                    showNotification(`❌ Fehler ${response.status}`, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Summarize error:', error);
+                showNotification(`❌ Fehler: ${error.message}`, 'error');
+            }
+        }
+        
+        async function exportMemory() {
+            showNotification('📦 Exportiere Session...', 'info');
+            
+            // Mock action for testing (until CORS is fixed)
+            if (USE_MOCK_DATA) {
+                const markdown = `# Session Export (MOCK DATA)\n\n**Date:** ${new Date().toLocaleString('de-DE')}\n\n---\n\n## 👤 User\n\nTest message 1\n\n---\n\n## 🤖 Assistant\n\nTest response 1\n\n---\n\n## 👤 User\n\nTest message 2\n\n---\n\n## 🤖 Assistant\n\nTest response 2\n`;
+                
+                const blob = new Blob([markdown], { type: 'text/markdown' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `session-export-mock-${Date.now()}.md`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                showNotification('✅ Session exportiert! (Mock)', 'success');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${GATEWAY_URL}/tools/invoke`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${GATEWAY_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tool: 'sessions_history',
+                        args: {
+                            sessionKey: 'agent:main:main',
+                            limit: 1000
+                        }
+                    })
+                });
+                
+                if (!response.ok) {
+                    showNotification('❌ Export fehlgeschlagen', 'error');
+                    return;
+                }
+                
+                const data = await response.json();
+                const messages = data.result?.messages || [];
+                
+                // Convert to markdown
+                let markdown = `# Session Export\n\n**Date:** ${new Date().toLocaleString('de-DE')}\n\n---\n\n`;
+                
+                messages.forEach((msg, i) => {
+                    const role = msg.role === 'user' ? '👤 User' : '🤖 Assistant';
+                    const content = typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content);
+                    markdown += `## ${role}\n\n${content}\n\n---\n\n`;
+                });
+                
+                // Download as file
+                const blob = new Blob([markdown], { type: 'text/markdown' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `session-export-${Date.now()}.md`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                showNotification('✅ Session exportiert!', 'success');
+                
+            } catch (error) {
+                console.error('Export error:', error);
+                showNotification('❌ Export fehlgeschlagen', 'error');
+            }
+        }
+        
+        // Notification helper
+        function showNotification(message, type = 'info') {
+            const colors = {
+                info: '#3b82f6',
+                success: '#10b981',
+                error: '#ef4444'
+            };
+            
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${colors[type]};
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 10000;
+                animation: slideIn 0.3s ease-out;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // ==========================================
+        // CONFIG UI
+        // ==========================================
+        
+        let soundEnabled = true;
+        let notificationsEnabled = true;
+        
+        function openSettings() {
+            document.getElementById('settingsModal').style.display = 'flex';
+            loadSettings();
+            renderResetHistory();
+        }
+        
+        function renderResetHistory() {
+            const container = document.getElementById('resetHistory');
+            const resets = getRecentResets(24); // Last 24h
+            
+            if (resets.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary); font-size: 13px; text-align: center; padding: 20px;">No resets in the last 24 hours</p>';
+                return;
+            }
+            
+            let html = '';
+            resets.reverse().forEach(reset => {
+                const time = new Date(reset.timestamp).toLocaleString('de-DE', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                const icon = reset.type === '5h' ? '⏱️' : '📅';
+                const label = reset.type === '5h' ? '5-Hour' : 'Weekly';
+                
+                html += `
+                    <div style="background: var(--progress-bg); border-radius: 8px; padding: 10px; margin-bottom: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <span style="font-weight: 600; font-size: 13px; color: var(--text-primary);">${icon} ${label} Reset</span>
+                            <span style="font-size: 11px; color: var(--text-secondary);">${time}</span>
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-secondary);">
+                            ${reset.before.toFixed(1)}% → ${reset.after.toFixed(1)}%
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        function closeSettings() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+        
+        function saveAndClose() {
+            const btn = document.getElementById('saveSettingsBtn');
+            
+            // Save all settings
+            saveConfig();
+            
+            // Visual feedback
+            btn.innerHTML = '✅ Saved!';
+            btn.style.background = '#10b981';
+            
+            // Close after short delay
+            setTimeout(() => {
+                closeSettings();
+                // Reset button
+                btn.innerHTML = '💾 Save & Close';
+                btn.style.background = 'linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end))';
+            }, 800);
+        }
+        
+        function loadSettings() {
+            const config = JSON.parse(localStorage.getItem('tokenAlertConfig') || '{}');
+            
+            soundEnabled = config.soundEnabled !== false;
+            notificationsEnabled = config.notificationsEnabled !== false;
+            
+            // Only update DOM if elements exist (Settings modal is open)
+            const soundEl = document.getElementById('soundEnabled');
+            const notifEl = document.getElementById('notificationsEnabled');
+            const intervalEl = document.getElementById('refreshInterval');
+            const tokenEl = document.getElementById('gatewayToken');
+            
+            if (soundEl) soundEl.checked = soundEnabled;
+            if (notifEl) notifEl.checked = notificationsEnabled;
+            if (intervalEl) intervalEl.value = config.refreshInterval || REFRESH_INTERVAL;
+            if (tokenEl && config.gatewayToken) tokenEl.value = config.gatewayToken;
+        }
+        
+        function saveSoundSetting() {
+            soundEnabled = document.getElementById('soundEnabled').checked;
+            saveConfig();
+            showNotification(soundEnabled ? '🔊 Sound enabled' : '🔇 Sound disabled', 'success');
+        }
+        
+        function saveNotificationSetting() {
+            notificationsEnabled = document.getElementById('notificationsEnabled').checked;
+            saveConfig();
+            
+            if (notificationsEnabled && 'Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+            
+            showNotification(notificationsEnabled ? '🔔 Notifications enabled' : '🔕 Notifications disabled', 'success');
+        }
+        
+        function saveRefreshInterval() {
+            const interval = parseInt(document.getElementById('refreshInterval').value);
+            saveConfig();
+            showNotification(`⏱️ Refresh: ${interval/1000}s`, 'success');
+            
+            // TODO: Restart interval with new value
+        }
+        
+        function saveGatewayToken() {
+            saveConfig();
+            showNotification('🔑 Token saved', 'success');
+        }
+        
+        function saveConfig() {
+            const config = {
+                soundEnabled: document.getElementById('soundEnabled').checked,
+                notificationsEnabled: document.getElementById('notificationsEnabled').checked,
+                refreshInterval: parseInt(document.getElementById('refreshInterval').value),
+                gatewayToken: document.getElementById('gatewayToken').value
+            };
+            
+            localStorage.setItem('tokenAlertConfig', JSON.stringify(config));
+        }
+        
+        // Load config from localStorage on startup (settings values only, no DOM update yet)
+        function initConfig() {
+            const config = JSON.parse(localStorage.getItem('tokenAlertConfig') || '{}');
+            soundEnabled = config.soundEnabled !== false;
+            notificationsEnabled = config.notificationsEnabled !== false;
+        }
+        
+        initConfig();
+        
+        // Initialize (updateFromGateway() is called automatically above)
+    </script>
+    <!-- Settings Modal -->
+    <div id="settingsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
+        <div style="background: var(--card-bg); border-radius: 16px; padding: 24px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; font-size: 20px; color: var(--text-primary);">⚙️ Settings</h2>
+                <button onclick="closeSettings()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-secondary);">×</button>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 14px; color: var(--text-primary); margin-bottom: 12px; font-weight: 600;">
+                    🔊 Sound Alerts
+                </label>
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" id="soundEnabled" checked onchange="saveSoundSetting()">
+                    <span style="color: var(--text-secondary); font-size: 13px;">Enable sound notifications at 75%, 90%, 95%</span>
+                </label>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 14px; color: var(--text-primary); margin-bottom: 12px; font-weight: 600;">
+                    🔔 Browser Notifications
+                </label>
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" id="notificationsEnabled" checked onchange="saveNotificationSetting()">
+                    <span style="color: var(--text-secondary); font-size: 13px;">Enable desktop notifications</span>
+                </label>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 14px; color: var(--text-primary); margin-bottom: 12px; font-weight: 600;">
+                    ⏱️ Refresh Interval
+                </label>
+                <select id="refreshInterval" onchange="saveRefreshInterval()" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                    <option value="10000">10 seconds</option>
+                    <option value="30000" selected>30 seconds</option>
+                    <option value="60000">60 seconds</option>
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 14px; color: var(--text-primary); margin-bottom: 8px; font-weight: 600;">
+                    🔑 Gateway Token
+                </label>
+                <input type="password" id="gatewayToken" value="d91a7a91e0d6bda8b6e3182467fda1f0bebd34c830263a4f" onchange="saveGatewayToken()" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-family: monospace; font-size: 12px;">
+                <small style="color: var(--text-secondary); font-size: 11px;">From ~/.clawdbot/clawdbot.json → gateway.auth.token</small>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 14px; color: var(--text-primary); margin-bottom: 12px; font-weight: 600;">
+                    🔄 Reset History (Last 24h)
+                </label>
+                <div id="resetHistory"></div>
+            </div>
+            
+            <button id="saveSettingsBtn" onclick="saveAndClose()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end)); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px;">
+                💾 Save & Close
+            </button>
+        </div>
+    </div>
+</body>
+</html>

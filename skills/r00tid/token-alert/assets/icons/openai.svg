@@ -1,0 +1,15 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="openaiGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10A37F;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0D8A6B;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- OpenAI circular logo design -->
+  <circle cx="32" cy="32" r="28" fill="url(#openaiGradient)"/>
+  <!-- Inner design elements -->
+  <path d="M 32 12 L 32 28 M 32 36 L 32 52" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 12 32 L 28 32 M 36 32 L 52 32" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="32" cy="32" r="8" fill="#ffffff"/>
+  <circle cx="32" cy="32" r="4" fill="url(#openaiGradient)"/>
+</svg>

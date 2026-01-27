@@ -1,0 +1,17 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="tokenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B35;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F7931A;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Outer circle (token border) -->
+  <circle cx="32" cy="32" r="30" stroke="url(#tokenGradient)" stroke-width="3" fill="none"/>
+  <!-- Inner gauge background -->
+  <circle cx="32" cy="32" r="24" fill="#1a1a1a" opacity="0.3"/>
+  <!-- Gauge fill (75% example) -->
+  <path d="M 32 8 A 24 24 0 1 1 8 32" fill="none" stroke="url(#tokenGradient)" stroke-width="6" stroke-linecap="round" transform="rotate(-90 32 32)"/>
+  <!-- Center token symbol -->
+  <circle cx="32" cy="32" r="12" fill="url(#tokenGradient)"/>
+  <text x="32" y="37" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle">T</text>
+</svg>
