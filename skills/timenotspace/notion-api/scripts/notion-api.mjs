@@ -5,6 +5,7 @@
  *  - search
  *  - query data_sources
  *  - create page
+ *  - retrieve blocks + list/append block children (for simple page editing)
  *
  * Auth:
  *  - NOTION_KEY env var, or ~/.config/notion/api_key
@@ -122,6 +123,46 @@ async function cmdCreatePage(args) {
   console.log(JSON.stringify(out, null, 2));
 }
 
+async function cmdRetrieveBlock(args) {
+  const block_id = args['block-id'] || args['block_id'] || args._[0];
+  if (!block_id) die('usage: retrieve-block --block-id <BLOCK_ID>');
+  const out = await notionFetch(`https://api.notion.com/v1/blocks/${block_id}`);
+  console.log(JSON.stringify(out, null, 2));
+}
+
+async function cmdBlockChildren(args) {
+  const block_id = args['block-id'] || args['block_id'] || args._[0];
+  if (!block_id) die('usage: block-children --block-id <BLOCK_ID> [--page-size N] [--start-cursor CURSOR]');
+  const page_size = args['page-size'] ? Number(args['page-size']) : 100;
+  const start_cursor = args['start-cursor'] || args['start_cursor'];
+  const qs = new URLSearchParams();
+  if (page_size) qs.set('page_size', String(page_size));
+  if (start_cursor) qs.set('start_cursor', String(start_cursor));
+  const url = `https://api.notion.com/v1/blocks/${block_id}/children${qs.toString() ? `?${qs}` : ''}`;
+  const out = await notionFetch(url);
+  console.log(JSON.stringify(out, null, 2));
+}
+
+async function cmdAppendBlocks(args) {
+  const block_id = args['block-id'] || args['block_id'] || args._[0];
+  if (!block_id) die('usage: append-blocks --block-id <BLOCK_ID> --body "{...}"');
+  if (!args.body) die('usage: append-blocks --block-id <BLOCK_ID> --body "{...}"');
+  let body;
+  try { body = JSON.parse(args.body); } catch { die('Invalid JSON for --body'); }
+  const out = await notionFetch(`https://api.notion.com/v1/blocks/${block_id}/children`, { method: 'PATCH', body });
+  console.log(JSON.stringify(out, null, 2));
+}
+
+async function cmdUpdateBlock(args) {
+  const block_id = args['block-id'] || args['block_id'] || args._[0];
+  if (!block_id) die('usage: update-block --block-id <BLOCK_ID> --body "{...}"');
+  if (!args.body) die('usage: update-block --block-id <BLOCK_ID> --body "{...}"');
+  let body;
+  try { body = JSON.parse(args.body); } catch { die('Invalid JSON for --body'); }
+  const out = await notionFetch(`https://api.notion.com/v1/blocks/${block_id}`, { method: 'PATCH', body });
+  console.log(JSON.stringify(out, null, 2));
+}
+
 async function main() {
   const argv = process.argv.slice(2);
   const [command, ...rest] = argv;
@@ -132,6 +173,10 @@ Commands:
   search <query> [--page-size N]
   query --data-source-id <ID> [--page-size N] [--body JSON]
   create-page --database-id <ID> --title "Title" [--title-prop Name]
+  retrieve-block --block-id <BLOCK_ID>
+  block-children --block-id <BLOCK_ID> [--page-size N] [--start-cursor CURSOR]
+  append-blocks --block-id <BLOCK_ID> --body '{"children": [...]}'
+  update-block --block-id <BLOCK_ID> --body '{...}'
 
 Auth:
   NOTION_KEY env var, or ~/.config/notion/api_key
@@ -149,6 +194,18 @@ Auth:
       break;
     case 'create-page':
       await cmdCreatePage(args);
+      break;
+    case 'retrieve-block':
+      await cmdRetrieveBlock(args);
+      break;
+    case 'block-children':
+      await cmdBlockChildren(args);
+      break;
+    case 'append-blocks':
+      await cmdAppendBlocks(args);
+      break;
+    case 'update-block':
+      await cmdUpdateBlock(args);
       break;
     default:
       die(`Unknown command: ${command}`, 2);

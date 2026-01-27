@@ -3,9 +3,15 @@
   "slug": "notion-api",
   "displayName": "Notion API Tools",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769455872686,
-    "commit": "https://github.com/clawdbot/skills/commit/514c1521667c52453c6c5cf8c9c8863a9d4ef591"
+    "version": "1.1.0",
+    "publishedAt": 1769548782805,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769455872686,
+      "commit": "https://github.com/clawdbot/skills/commit/514c1521667c52453c6c5cf8c9c8863a9d4ef591"
+    }
+  ]
 }
