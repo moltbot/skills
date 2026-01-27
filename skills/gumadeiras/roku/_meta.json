@@ -1,11 +1,17 @@
 {
   "owner": "gumadeiras",
   "slug": "roku",
-  "displayName": "Roku CLI",
+  "displayName": "roku",
   "latest": {
-    "version": "1.0.2",
-    "publishedAt": 1768540914460,
-    "commit": "https://github.com/clawdbot/skills/commit/f033b444fd8029518ce0b1f06ea58f3e90cff796"
+    "version": "2.0.0",
+    "publishedAt": 1769457746095,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.2",
+      "publishedAt": 1768540914460,
+      "commit": "https://github.com/clawdbot/skills/commit/f033b444fd8029518ce0b1f06ea58f3e90cff796"
+    }
+  ]
 }
