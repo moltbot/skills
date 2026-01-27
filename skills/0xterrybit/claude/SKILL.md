@@ -1,7 +1,7 @@
 ---
 name: claude
 description: Anthropic Claude integration. Chat with Claude models via Anthropic API.
-metadata: {"clawdbot":{"emoji":"🧠","requires":{"bins":["curl","jq"],"env":["ANTHROPIC_API_KEY"]},"primaryEnv":"ANTHROPIC_API_KEY"}}
+metadata: {"clawdbot":{"emoji":"🧠","always":true,"requires":{"bins":["curl","jq"]},"primaryEnv":"ANTHROPIC_API_KEY"}}
 ---
 
 # Claude 🧠
