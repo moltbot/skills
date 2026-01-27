@@ -1,7 +1,7 @@
 ---
 name: payment
 description: Payment processing and management. Handle invoices, transactions, and payment gateway integrations.
-metadata: {"clawdbot":{"emoji":"💳","requires":{"bins":["curl","jq"]}}}
+metadata: {"clawdbot":{"emoji":"💳","always":true,"requires":{"bins":["curl","jq"]}}}
 ---
 
 # Payment 💳
