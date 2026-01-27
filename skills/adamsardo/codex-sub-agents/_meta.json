@@ -1,0 +1,11 @@
+{
+  "owner": "adamsardo",
+  "slug": "codex-sub-agents",
+  "displayName": "OpenAI Codex Sub Agents",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769484036381,
+    "commit": null
+  },
+  "history": []
+}
