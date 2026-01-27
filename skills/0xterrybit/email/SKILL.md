@@ -1,7 +1,7 @@
 ---
 name: email
 description: Email management and automation. Send, read, search, and organize emails across multiple providers.
-metadata: {"clawdbot":{"emoji":"📧","requires":{"bins":["curl","jq"]}}}
+metadata: {"clawdbot":{"emoji":"📧","always":true,"requires":{"bins":["curl","jq"]}}}
 ---
 
 # Email 📧
