@@ -1,0 +1,11 @@
+{
+  "owner": "nerveband",
+  "slug": "beeper-api-cli",
+  "displayName": "Beeper API CLI",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769484991871,
+    "commit": null
+  },
+  "history": []
+}
