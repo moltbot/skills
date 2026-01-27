@@ -3,9 +3,15 @@
   "slug": "solana-trader",
   "displayName": "Solana Trader",
   "latest": {
-    "version": "1.0.2",
-    "publishedAt": 1769512826891,
-    "commit": "https://github.com/clawdbot/skills/commit/426c0f62a6023498b953a1f784d7c906936413e3"
+    "version": "1.1.0",
+    "publishedAt": 1769538937652,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.2",
+      "publishedAt": 1769512826891,
+      "commit": "https://github.com/clawdbot/skills/commit/426c0f62a6023498b953a1f784d7c906936413e3"
+    }
+  ]
 }

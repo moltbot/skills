@@ -1,7 +1,7 @@
 ---
 name: solana-trader
 description: Solana wallet management and token trading via Jupiter aggregator. Check balances, view transaction history, swap tokens, and manage your Solana portfolio.
-metadata: {"clawdbot":{"emoji":"🚀","requires":{"bins":["solana","spl-token","curl","jq"],"env":["SOLANA_KEYPAIR_PATH"]}}}
+metadata: {"clawdbot":{"emoji":"🚀","always":true,"requires":{"bins":["curl","jq"]}}}
 ---
 
 # Solana Trader 🚀
