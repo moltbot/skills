@@ -3,9 +3,15 @@
   "slug": "tootbot",
   "displayName": "Tootbot",
   "latest": {
-    "version": "0.4.1",
-    "publishedAt": 1769480603514,
-    "commit": "https://github.com/clawdbot/skills/commit/8cab8836608006004bb52580987218b7d2370139"
+    "version": "0.5.0",
+    "publishedAt": 1769504284945,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "0.4.1",
+      "publishedAt": 1769480603514,
+      "commit": "https://github.com/clawdbot/skills/commit/8cab8836608006004bb52580987218b7d2370139"
+    }
+  ]
 }
