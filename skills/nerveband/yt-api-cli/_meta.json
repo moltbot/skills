@@ -1,0 +1,11 @@
+{
+  "owner": "nerveband",
+  "slug": "yt-api-cli",
+  "displayName": "YouTube API CLI",
+  "latest": {
+    "version": "1.0.2",
+    "publishedAt": 1769484803621,
+    "commit": null
+  },
+  "history": []
+}
