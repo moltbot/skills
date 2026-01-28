@@ -1,0 +1,49 @@
+{
+  "name": "lead-inbox-automator",
+  "version": "1.0.0",
+  "description": "Central Lead Inbox with auto-reply automation. Capture leads, track status, send automated responses via Make.com integration.",
+  "runtime": "node18",
+  "entry": "src/api.ts",
+  "config": {
+    "schema": {
+      "supabaseUrl": {
+        "type": "string",
+        "description": "Supabase Project URL (e.g., https://xyz.supabase.co)",
+        "required": true,
+        "format": "url"
+      },
+      "supabaseKey": {
+        "type": "string",
+        "description": "Supabase Service Role Key (NOT the anon key!)",
+        "required": true,
+        "secret": true
+      },
+      "orgId": {
+        "type": "string",
+        "description": "Organization UUID for multi-tenancy isolation",
+        "required": true,
+        "format": "uuid"
+      },
+      "defaultPriority": {
+        "type": "string",
+        "enum": ["low", "medium", "high", "urgent"],
+        "default": "medium",
+        "description": "Default priority for new leads",
+        "required": false
+      }
+    }
+  },
+  "capabilities": [
+    "lead.create",
+    "lead.read",
+    "lead.update",
+    "lead.list",
+    "lead.delete",
+    "conversation.add",
+    "automation.status"
+  ],
+  "hooks": {
+    "postInstall": "echo 'Configure SUPABASE_URL, SUPABASE_KEY, and ORG_ID in your environment'",
+    "preUninstall": "echo 'Cleaning up lead-inbox connections'"
+  }
+}

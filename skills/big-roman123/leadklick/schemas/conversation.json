@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Conversation",
+  "type": "object",
+  "required": ["lead_id", "org_id", "content", "direction"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Auto-generated message UUID"
+    },
+    "lead_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Reference to parent lead"
+    },
+    "org_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Organization UUID for RLS"
+    },
+    "direction": {
+      "type": "string",
+      "enum": ["inbound", "outbound", "automated"],
+      "description": "Message flow direction - automated = system generated"
+    },
+    "channel": {
+      "type": "string",
+      "enum": ["email", "web", "api", "phone", "chat"],
+      "default": "api",
+      "description": "Communication channel"
+    },
+    "subject": {
+      "type": ["string", "null"],
+      "description": "Message subject line"
+    },
+    "content": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Message body text"
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When message was sent"
+    },
+    "opened_at": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "When email was opened (tracking)"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional data (automation_id, template_used, etc.)",
+      "additionalProperties": true
+    }
+  }
+}

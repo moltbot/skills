@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Lead",
+  "type": "object",
+  "required": ["email", "org_id"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Auto-generated UUID by Supabase"
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "description": "Primary contact email - used for auto-reply"
+    },
+    "name": {
+      "type": ["string", "null"],
+      "description": "Contact person full name"
+    },
+    "phone": {
+      "type": ["string", "null"],
+      "description": "Optional phone number"
+    },
+    "source": {
+      "type": "string",
+      "enum": ["web", "api", "phone", "manual", "clawd_agent", "chatbot", "landing_page"],
+      "default": "clawd_agent",
+      "description": "Lead origin channel"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["new", "replied", "qualified", "lost", "won"],
+      "default": "new",
+      "description": "Lead lifecycle status - automation triggers on 'new'"
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "urgent"],
+      "default": "medium",
+      "description": "Processing priority"
+    },
+    "org_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Organization UUID - data isolation boundary"
+    },
+    "custom_fields": {
+      "type": "object",
+      "description": "Flexible JSON storage for agent-specific data",
+      "additionalProperties": true
+    },
+    "metadata": {
+      "type": "object",
+      "description": "System metadata (IP, user agent, etc.)",
+      "additionalProperties": true
+    },
+    "first_reply_sent_at": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "Timestamp when automation sent first response"
+    },
+    "last_contact_at": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "Last interaction timestamp"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Record creation timestamp"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Record last update timestamp"
+    }
+  }
+}

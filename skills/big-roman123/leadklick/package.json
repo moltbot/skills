@@ -1,0 +1,25 @@
+{
+  "name": "lead-inbox-automator",
+  "version": "1.0.0",
+  "description": "Central Lead Inbox with auto-reply automation for Clawd agents",
+  "main": "src/api.ts",
+  "types": "src/api.ts",
+  "keywords": [
+    "clawd",
+    "clawdbot",
+    "lead",
+    "crm",
+    "automation",
+    "sales",
+    "supabase",
+    "make"
+  ],
+  "author": "big-roman123",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  }
+}
