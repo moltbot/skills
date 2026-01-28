@@ -1,0 +1,11 @@
+{
+  "owner": "lxgicstudios",
+  "slug": "vercel-config-gen",
+  "displayName": "Vercel Config Generator",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769627730149,
+    "commit": null
+  },
+  "history": []
+}
