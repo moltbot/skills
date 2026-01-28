@@ -3,9 +3,15 @@
   "slug": "tinyfish-web-agent",
   "displayName": "TinyFish Web Agent",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769541342386,
-    "commit": "https://github.com/clawdbot/skills/commit/1e170d48ad5524f5387e2179045fb238c6b1a6d1"
+    "version": "1.0.1",
+    "publishedAt": 1769560154253,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769541342386,
+      "commit": "https://github.com/clawdbot/skills/commit/1e170d48ad5524f5387e2179045fb238c6b1a6d1"
+    }
+  ]
 }

@@ -5,10 +5,12 @@ TinyFish web extract/scrape helper
 Usage:
     extract.py <url> <goal> [--stealth] [--proxy US]
 
+Best practice: Specify the JSON format you want in the goal for better results.
+
 Examples:
-    extract.py "https://example.com" "Extract product name and price"
-    extract.py "https://site.com" "Get all links" --stealth
-    extract.py "https://site.com" "Extract data" --stealth --proxy US
+    extract.py "https://example.com" "Extract product as JSON: {\"name\": str, \"price\": str}"
+    extract.py "https://site.com" "Get all links as JSON: [{\"text\": str, \"url\": str}]" --stealth
+    extract.py "https://site.com" "Extract items as JSON: [{\"title\": str, \"price\": str}]" --stealth --proxy US
 """
 
 import os
