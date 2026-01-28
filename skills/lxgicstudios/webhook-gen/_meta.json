@@ -1,0 +1,11 @@
+{
+  "owner": "lxgicstudios",
+  "slug": "webhook-gen",
+  "displayName": "Webhook Generator",
+  "latest": {
+    "version": "1.0.1",
+    "publishedAt": 1769626675369,
+    "commit": null
+  },
+  "history": []
+}
