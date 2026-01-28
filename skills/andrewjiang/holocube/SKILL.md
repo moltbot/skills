@@ -142,25 +142,23 @@ Features:
 Track daily water consumption with a cute water drop icon in the top-left corner:
 
 ```bash
-cd ~/Bao/clawd
-
 # Show current count
-uv run --script water.py
+uv run --script {baseDir}/water.py
 
 # Add a glass (+1)
-uv run --script water.py add
+uv run --script {baseDir}/water.py add
 
 # Add multiple glasses
-uv run --script water.py add 2
+uv run --script {baseDir}/water.py add 2
 
 # Set to specific count
-uv run --script water.py set 5
+uv run --script {baseDir}/water.py set 5
 
 # Reset to 0
-uv run --script water.py reset
+uv run --script {baseDir}/water.py reset
 
 # Change daily goal
-uv run --script water.py goal 10
+uv run --script {baseDir}/water.py goal 10
 ```
 
 State persists to `~/.holocube_water.json` and auto-resets each day. The water tracker appears in the top-left corner during pomodoro sessions too.
