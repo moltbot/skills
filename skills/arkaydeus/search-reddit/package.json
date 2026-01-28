@@ -1,0 +1,14 @@
+{
+  "name": "clawdbot-skill-search-reddit",
+  "version": "1.0.0",
+  "description": "Real-time Reddit search for Clawdbot using OpenAI web_search",
+  "keywords": ["clawdbot-skill", "reddit", "search", "openai", "web_search"],
+  "author": "Lobster",
+  "license": "MIT",
+  "bin": {
+    "search-reddit": "./scripts/search.js"
+  },
+  "scripts": {
+    "search": "node scripts/search.js"
+  }
+}
