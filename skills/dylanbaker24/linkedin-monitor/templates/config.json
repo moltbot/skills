@@ -1,0 +1,20 @@
+{
+  "autonomyLevel": 1,
+  "alertChannel": "",
+  "alertTarget": "",
+  "calendarLink": "",
+  "communicationStyleFile": "USER.md",
+  "timezone": "America/New_York",
+  "schedule": "0 * * * *",
+  "morningDigest": {
+    "enabled": true,
+    "hour": 9,
+    "timezone": "America/New_York"
+  },
+  "safetyLimits": {
+    "maxMessagesPerDay": 50,
+    "escalationKeywords": ["angry", "legal", "refund", "lawsuit", "attorney"],
+    "dailyDigest": true
+  },
+  "browserProfile": "clawd"
+}

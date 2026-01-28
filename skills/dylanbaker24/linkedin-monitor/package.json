@@ -1,0 +1,35 @@
+{
+  "name": "linkedin-monitor",
+  "version": "1.0.0",
+  "description": "Bulletproof LinkedIn inbox monitoring with zero duplicate notifications",
+  "author": "Dylan Baker <dylan@lilagents.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dylanbaker/linkedin-monitor"
+  },
+  "keywords": [
+    "clawdbot",
+    "skill",
+    "linkedin",
+    "automation",
+    "inbox",
+    "monitoring",
+    "social-media"
+  ],
+  "clawdbot": {
+    "skillType": "automation",
+    "minVersion": "1.0.0",
+    "requires": {
+      "tools": ["browser", "cron", "message"],
+      "bins": ["jq"]
+    }
+  },
+  "files": [
+    "SKILL.md",
+    "README.md",
+    "scripts/",
+    "templates/",
+    "docs/"
+  ]
+}
