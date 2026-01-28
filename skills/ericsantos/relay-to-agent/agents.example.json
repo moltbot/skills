@@ -1,0 +1,11 @@
+{
+  "baseUrl": "https://api.example.com/v1",
+  "agents": [
+    {
+      "id": "my-agent",
+      "name": "My Agent",
+      "description": "Description of what this agent does",
+      "model": "model-id"
+    }
+  ]
+}
