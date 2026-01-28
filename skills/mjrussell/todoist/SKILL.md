@@ -17,7 +17,8 @@ CLI for Todoist task management, built on the official TypeScript SDK.
 ## Installation
 
 ```bash
-npm install -g todoist-ts-cli
+# Requires todoist-ts-cli >= 0.2.0 (for --top / --order)
+npm install -g todoist-ts-cli@^0.2.0
 ```
 
 ## Setup
@@ -50,6 +51,8 @@ todoist tasks --json
 todoist add "Buy groceries"
 todoist add "Meeting" --due "tomorrow 10am"
 todoist add "Review PR" --due "today" --priority 1 --project "Work"
+todoist add "Prep slides" --project "Work" --order 3  # add at a specific position (1-based)
+todoist add "Triage inbox" --project "Work" --order top  # add to top (alternative to --top)
 todoist add "Call mom" -d "sunday" -l "family"  # with label
 ```
 
@@ -133,3 +136,4 @@ Todoist supports powerful filter queries:
 - Task IDs are shown in task listings
 - Due dates support natural language ("tomorrow", "next monday", "jan 15")
 - Priority 1 is highest, 4 is lowest
+- Use `--order <n>` (1-based) or `--order top` to insert a task at a specific position within a project/section
