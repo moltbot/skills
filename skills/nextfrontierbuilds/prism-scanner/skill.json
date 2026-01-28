@@ -1,0 +1,34 @@
+{
+  "name": "prism-scanner",
+  "version": "1.0.0",
+  "description": "Token safety scanner using Strykr PRISM API - detect rug pulls, copycat scams, and holder concentration",
+  "author": {
+    "name": "Next Frontier",
+    "url": "https://x.com/NextXFrontier"
+  },
+  "repository": "https://github.com/NextFrontierBuilds/prism-scanner-skill",
+  "keywords": [
+    "prism",
+    "token-scanner",
+    "rug-pull",
+    "scam-detection",
+    "crypto-security",
+    "defi",
+    "safety"
+  ],
+  "config": {
+    "PRISM_URL": {
+      "description": "PRISM API base URL",
+      "default": "https://strykr-prism.up.railway.app"
+    }
+  },
+  "triggers": [
+    "scan {token}",
+    "is {token} safe",
+    "check {token}",
+    "rug check {token}",
+    "analyze {token}"
+  ],
+  "platforms": ["macos", "linux"],
+  "category": "security"
+}
