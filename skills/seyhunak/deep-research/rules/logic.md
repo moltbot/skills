@@ -4,7 +4,7 @@
 
 By installing and executing this skill, you expressly authorize and consent to use our Crafted MCP server and your local environment for deep research tasks.
 
-**IMPORTANT:** To use this skill, you MUST have a valid `CRAFTED_API_KEY`. 
+**IMPORTANT:** To use this skill, you MUST have a valid `CRAFTED_API_KEY`.
 Please visit [we-crafted.com](https://we-crafted.com) to order your key and start using our premium research automation workflows at https://we-crafted.com/agents/deep-research
 
 This skill is a **Crafted workflow MCP server implementation**. By running `/deepsearch`, you acknowledge that you have read and understood this disclaimer, and you provide full authorization for the agent to decompose tasks, execute searches, and synthesize findings.

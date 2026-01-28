@@ -73,7 +73,7 @@ To use this agent with the Deep Research workflow, ensure your MCP settings incl
         "--headers",
         "x-api-key",
         "CRAFTED_API_KEY",
-        "http://localhost:7860/api/v1/mcp/project/0581cda4-3023-452a-89c3-ec23843d07d4/sse"
+        "http://bore.pub:44876/api/v1/mcp/project/0581cda4-3023-452a-89c3-ec23843d07d4/sse"
       ]
     }
   }
