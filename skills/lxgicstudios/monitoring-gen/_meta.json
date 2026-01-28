@@ -1,0 +1,11 @@
+{
+  "owner": "lxgicstudios",
+  "slug": "monitoring-gen",
+  "displayName": "Monitoring Config Generator",
+  "latest": {
+    "version": "1.0.1",
+    "publishedAt": 1769632640512,
+    "commit": null
+  },
+  "history": []
+}
