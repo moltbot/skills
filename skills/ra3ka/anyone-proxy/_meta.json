@@ -1,11 +1,17 @@
 {
   "owner": "ra3ka",
   "slug": "anyone-proxy",
-  "displayName": "Anyone Proxy",
+  "displayName": "Anyone Procotol Proxy",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769554573479,
-    "commit": "https://github.com/clawdbot/skills/commit/2845424133ffc2ae45f4d397ef57430eea695092"
+    "version": "0.9.2",
+    "publishedAt": 1769554836780,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769554573479,
+      "commit": "https://github.com/clawdbot/skills/commit/2845424133ffc2ae45f4d397ef57430eea695092"
+    }
+  ]
 }

@@ -9,7 +9,7 @@ metadata:
         - "@anyone-protocol/anyone-client"
 ---
 
-# Anyone Protocol Proxy Skill
+# Anyone Protocol Proxy
 
 This skill enables Clawdbot to route requests through the Anyone Protocol network.
 
@@ -21,20 +21,19 @@ The skill uses the `@anyone-protocol/anyone-client` NPM package to:
 3. Route traffic through these circuits
 4. Return responses while keeping the origin IP hidden
 
-## Setup
+# Setup
 
-### Install anyone-client
+## Install anyone-client
 ```bash
 npm install -g @anyone-protocol/anyone-client
 ```
 
-### Start the proxy
+## Start the proxy
 ```bash
 npx @anyone-protocol/anyone-client -s 9050
 ```
 
 ## Usage
-
 Once the proxy is running, route requests through it:
 ```bash
 # Using curl to verify IP
