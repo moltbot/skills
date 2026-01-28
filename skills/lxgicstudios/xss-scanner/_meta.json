@@ -1,0 +1,11 @@
+{
+  "owner": "lxgicstudios",
+  "slug": "xss-scanner",
+  "displayName": "XSS Scanner",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769595702184,
+    "commit": null
+  },
+  "history": []
+}
