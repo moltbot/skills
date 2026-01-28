@@ -1,0 +1,11 @@
+{
+  "owner": "myakove",
+  "slug": "ccsinfo",
+  "displayName": "ccsinfo - Claude Code Session Inspector",
+  "latest": {
+    "version": "0.1.2",
+    "publishedAt": 1769632561250,
+    "commit": null
+  },
+  "history": []
+}
