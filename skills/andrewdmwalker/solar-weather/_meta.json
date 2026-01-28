@@ -1,0 +1,11 @@
+{
+  "owner": "andrewdmwalker",
+  "slug": "solar-weather",
+  "displayName": "Solar Weather Monitor",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769553913593,
+    "commit": null
+  },
+  "history": []
+}
