@@ -1,0 +1,11 @@
+{
+  "owner": "godsboy",
+  "slug": "garmin-connect-fixed",
+  "displayName": "Garmin Connect (Fixed)",
+  "latest": {
+    "version": "1.1.0",
+    "publishedAt": 1769586199022,
+    "commit": null
+  },
+  "history": []
+}
