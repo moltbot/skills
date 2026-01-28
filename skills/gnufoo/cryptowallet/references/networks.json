@@ -1,0 +1,102 @@
+{
+  "evm": {
+    "ethereum": {
+      "name": "Ethereum Mainnet",
+      "chain_id": 1,
+      "rpc": "https://eth.llamarpc.com",
+      "explorer": "https://etherscan.io",
+      "native_token": "ETH"
+    },
+    "polygon": {
+      "name": "Polygon",
+      "chain_id": 137,
+      "rpc": "https://polygon-rpc.com",
+      "explorer": "https://polygonscan.com",
+      "native_token": "MATIC"
+    },
+    "bsc": {
+      "name": "BNB Smart Chain",
+      "chain_id": 56,
+      "rpc": "https://bsc-dataseed.binance.org",
+      "explorer": "https://bscscan.com",
+      "native_token": "BNB"
+    },
+    "arbitrum": {
+      "name": "Arbitrum One",
+      "chain_id": 42161,
+      "rpc": "https://arb1.arbitrum.io/rpc",
+      "explorer": "https://arbiscan.io",
+      "native_token": "ETH"
+    },
+    "optimism": {
+      "name": "Optimism",
+      "chain_id": 10,
+      "rpc": "https://mainnet.optimism.io",
+      "explorer": "https://optimistic.etherscan.io",
+      "native_token": "ETH"
+    },
+    "base": {
+      "name": "Base",
+      "chain_id": 8453,
+      "rpc": "https://mainnet.base.org",
+      "explorer": "https://basescan.org",
+      "native_token": "ETH"
+    },
+    "avalanche": {
+      "name": "Avalanche C-Chain",
+      "chain_id": 43114,
+      "rpc": "https://api.avax.network/ext/bc/C/rpc",
+      "explorer": "https://snowtrace.io",
+      "native_token": "AVAX"
+    },
+    "fantom": {
+      "name": "Fantom Opera",
+      "chain_id": 250,
+      "rpc": "https://rpc.ftm.tools",
+      "explorer": "https://ftmscan.com",
+      "native_token": "FTM"
+    },
+    "gnosis": {
+      "name": "Gnosis Chain",
+      "chain_id": 100,
+      "rpc": "https://rpc.gnosischain.com",
+      "explorer": "https://gnosisscan.io",
+      "native_token": "xDAI"
+    },
+    "zksync": {
+      "name": "zkSync Era",
+      "chain_id": 324,
+      "rpc": "https://mainnet.era.zksync.io",
+      "explorer": "https://explorer.zksync.io",
+      "native_token": "ETH"
+    },
+    "linea": {
+      "name": "Linea",
+      "chain_id": 59144,
+      "rpc": "https://rpc.linea.build",
+      "explorer": "https://lineascan.build",
+      "native_token": "ETH"
+    },
+    "scroll": {
+      "name": "Scroll",
+      "chain_id": 534352,
+      "rpc": "https://rpc.scroll.io",
+      "explorer": "https://scrollscan.com",
+      "native_token": "ETH"
+    }
+  },
+  "solana": {
+    "mainnet": {
+      "name": "Solana Mainnet Beta",
+      "rpc": "https://api.mainnet-beta.solana.com",
+      "explorer": "https://explorer.solana.com",
+      "native_token": "SOL"
+    },
+    "devnet": {
+      "name": "Solana Devnet",
+      "rpc": "https://api.devnet.solana.com",
+      "explorer": "https://explorer.solana.com?cluster=devnet",
+      "native_token": "SOL"
+    }
+  }
+}

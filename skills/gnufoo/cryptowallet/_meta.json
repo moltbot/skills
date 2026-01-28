@@ -1,0 +1,11 @@
+{
+  "owner": "gnufoo",
+  "slug": "cryptowallet",
+  "displayName": "CryptoWallet - Multi-Chain Blockchain Wallet Manager",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769611537069,
+    "commit": null
+  },
+  "history": []
+}
