@@ -1,0 +1,11 @@
+{
+  "owner": "lxgicstudios",
+  "slug": "redis-gen",
+  "displayName": "Redis Gen",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769626245904,
+    "commit": null
+  },
+  "history": []
+}
