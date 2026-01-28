@@ -1,0 +1,11 @@
+{
+  "owner": "mkrdiop",
+  "slug": "moltbot-docker",
+  "displayName": "MoltDocker",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769624207538,
+    "commit": null
+  },
+  "history": []
+}
