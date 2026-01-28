@@ -1,0 +1,14 @@
+{
+  "name": "playground-skill",
+  "version": "1.0.0",
+  "description": "Clawdbot skill for The Playground",
+  "type": "module",
+  "scripts": {
+    "connect": "node scripts/connect.js"
+  },
+  "dependencies": {
+    "clawdhub": "^0.3.0",
+    "undici": "^7.19.2",
+    "ws": "^8.0.0"
+  }
+}

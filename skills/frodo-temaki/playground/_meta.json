@@ -1,0 +1,11 @@
+{
+  "owner": "frodo-temaki",
+  "slug": "playground",
+  "displayName": "The Playground",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769561923614,
+    "commit": null
+  },
+  "history": []
+}
