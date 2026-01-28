@@ -1,0 +1,25 @@
+{
+  "name": "clawdbot-security-audit",
+  "version": "1.0.0",
+  "description": "Security audit and hardening tools for Clawdbot/Moltbot installations",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "clawdbot-security": "./cli.js"
+  },
+  "author": "lxgicstudios",
+  "license": "MIT",
+  "keywords": [
+    "clawdbot",
+    "moltbot",
+    "security",
+    "audit",
+    "hardening",
+    "firewall",
+    "tailscale"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LXGIC-Studios/clawdbot-security-audit"
+  }
+}
