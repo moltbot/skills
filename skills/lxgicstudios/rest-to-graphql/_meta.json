@@ -1,0 +1,11 @@
+{
+  "owner": "lxgicstudios",
+  "slug": "rest-to-graphql",
+  "displayName": "REST to GraphQL Converter",
+  "latest": {
+    "version": "1.0.1",
+    "publishedAt": 1769626772861,
+    "commit": null
+  },
+  "history": []
+}
