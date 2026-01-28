@@ -3,9 +3,15 @@
   "slug": "gno",
   "displayName": "Gno",
   "latest": {
-    "version": "0.13.0",
-    "publishedAt": 1767655652781,
-    "commit": "https://github.com/clawdbot/skills/commit/71cdf4f7fb659ef67ff7a8c394777adda6375e84"
+    "version": "0.14.3",
+    "publishedAt": 1769607180297,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "0.13.0",
+      "publishedAt": 1767655652781,
+      "commit": "https://github.com/clawdbot/skills/commit/71cdf4f7fb659ef67ff7a8c394777adda6375e84"
+    }
+  ]
 }
