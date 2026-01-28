@@ -1,0 +1,11 @@
+{
+  "name": "lightning-skill",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lightning payments skill using LNI",
+  "scripts": {
+    "postinstall": "node scripts/download-binary.js",
+    "download": "node scripts/download-binary.js"
+  },
+  "dependencies": {}
+}
