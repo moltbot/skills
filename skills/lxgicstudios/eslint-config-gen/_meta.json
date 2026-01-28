@@ -1,0 +1,11 @@
+{
+  "owner": "lxgicstudios",
+  "slug": "eslint-config-gen",
+  "displayName": "ESLint Config Generator",
+  "latest": {
+    "version": "1.0.1",
+    "publishedAt": 1769632453174,
+    "commit": null
+  },
+  "history": []
+}
