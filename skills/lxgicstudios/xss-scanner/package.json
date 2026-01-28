@@ -1,0 +1,14 @@
+{
+  "name": "ai-xss-check",
+  "version": "1.0.0",
+  "description": "Detect XSS vulnerabilities in frontend code using AI",
+  "main": "dist/index.js",
+  "bin": { "ai-xss-check": "dist/cli.js" },
+  "scripts": { "build": "tsc" },
+  "keywords": ["xss","security","ai","cli","vulnerability-scanner"],
+  "license": "MIT",
+  "dependencies": { "commander": "^12.1.0", "openai": "^4.73.0", "ora": "^5.4.1", "glob": "^10.3.0" },
+  "devDependencies": { "typescript": "^5.6.0", "@types/node": "^22.0.0" },
+  "author": "LXGIC Studios",
+  "repository": { "type": "git", "url": "https://github.com/LXGIC-Studios/ai-xss-check" }
+}

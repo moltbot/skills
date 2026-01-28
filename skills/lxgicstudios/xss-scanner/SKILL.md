@@ -1,77 +1,48 @@
----
-name: xss-scanner
-description: Detect XSS vulnerabilities in your frontend code. Use when you need to find cross-site scripting risks before they ship.
----
-
 # XSS Scanner
 
-Cross-site scripting is still the most common web vulnerability. This tool scans your frontend code for XSS risks, dangerouslySetInnerHTML usage, unsanitized user inputs, and other injection vectors. It tells you exactly where the problems are and how to fix them.
-
-**One command. Zero config. Just works.**
+Detect cross-site scripting vulnerabilities in your frontend code before they ship.
 
 ## Quick Start
 
 ```bash
-npx ai-xss-check src/
+npx ai-xss-check
 ```
 
 ## What It Does
 
-- Scans JavaScript, TypeScript, and JSX files for XSS vulnerability patterns
-- Detects dangerouslySetInnerHTML, innerHTML assignments, and eval usage
-- Finds unsanitized user input flowing into DOM manipulation
-- Reports severity levels from info to critical
-- Provides specific fix suggestions with code examples
+- Scans JavaScript/TypeScript for XSS vulnerabilities
+- Detects unsafe innerHTML, eval, and DOM manipulation
+- Identifies unescaped user input in templates
+- Checks React dangerouslySetInnerHTML usage
+- Provides fix suggestions for each finding
 
-## Usage Examples
+## Usage
 
 ```bash
-# Scan your entire frontend
-npx ai-xss-check src/
+# Scan current directory
+npx ai-xss-check
 
-# Check a specific file
-npx ai-xss-check src/components/CommentBox.tsx
-
-# Scan all JavaScript files
-npx ai-xss-check "src/**/*.{js,jsx,ts,tsx}"
+# Scan specific files
+npx ai-xss-check ./src/components
 ```
 
-## Best Practices
+## When to Use
 
-- **Run on every PR** - XSS vulnerabilities sneak in through seemingly innocent changes
-- **Pay attention to user input flows** - Any data from users, URLs, or APIs that touches the DOM is a risk
-- **Don't just suppress warnings** - If the tool flags dangerouslySetInnerHTML, there's probably a safer way
-- **Combine with CSP headers** - This tool catches code issues. CSP is your runtime safety net.
-
-## When to Use This
-
-- Before a security audit to catch the easy stuff
-- After adding any feature that renders user generated content
-- When reviewing code from external contributors
-- As part of your CI pipeline for continuous security checks
+- Before security audits
+- Reviewing third-party code
+- Setting up CI security gates
+- Training junior devs on XSS prevention
 
 ## Part of the LXGIC Dev Toolkit
 
-This is one of 110+ free developer tools built by LXGIC Studios. No paywalls, no sign-ups, no API keys on free tiers. Just tools that work.
+One of 110+ free developer tools from LXGIC Studios. No paywalls, no sign-ups.
 
 **Find more:**
-- GitHub: https://github.com/LXGIC-Studios
+- GitHub: https://github.com/lxgic-studios
 - Twitter: https://x.com/lxgicstudios
 - Substack: https://lxgicstudios.substack.com
-- Website: https://lxgic.dev
-
-## Requirements
-
-No install needed. Just run with npx. Node.js 18+ recommended.
-
-```bash
-npx ai-xss-check --help
-```
-
-## How It Works
-
-The tool scans your source files using pattern matching and AST analysis to find common XSS vectors. It identifies dangerous DOM manipulation, unsanitized inputs, and risky API usage. Then an AI model analyzes the context of each finding to reduce false positives and generate targeted fix suggestions.
+- Website: https://lxgicstudios.com
 
 ## License
 
-MIT. Free forever. Use it however you want.
+MIT. Free forever.

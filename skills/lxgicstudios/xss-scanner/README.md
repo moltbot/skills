@@ -1,25 +1,26 @@
-# XSS Scanner
+# ai-xss-check
 
-Detect XSS vulnerabilities in your frontend code.
+Detect XSS vulnerabilities in your frontend code using AI.
 
-## Quick Start
+## Install
 
 ```bash
-npx ai-xss-check src/
+npm install -g ai-xss-check
 ```
 
-## What It Does
+## Usage
 
-- Detects dangerouslySetInnerHTML, innerHTML, eval usage
-- Finds unsanitized user input in DOM manipulation
-- Provides fix suggestions with code examples
+```bash
+npx ai-xss-check ./src/
+npx ai-xss-check ./frontend/components/
+```
 
-## Part of the LXGIC Dev Toolkit
+## Setup
 
-110+ free developer tools. No paywalls.
+```bash
+export OPENAI_API_KEY=sk-...
+```
 
-- GitHub: https://github.com/LXGIC-Studios
-- Twitter: https://x.com/lxgicstudios
-- Website: https://lxgic.dev
+## License
 
-MIT License.
+MIT

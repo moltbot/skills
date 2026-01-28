@@ -3,9 +3,15 @@
   "slug": "xss-scanner",
   "displayName": "XSS Scanner",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769595702184,
-    "commit": "https://github.com/clawdbot/skills/commit/b0ddabcd26f9c1dfe0d22b428c03440c209b7ac8"
+    "version": "1.0.1",
+    "publishedAt": 1769631712008,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769595702184,
+      "commit": "https://github.com/clawdbot/skills/commit/b0ddabcd26f9c1dfe0d22b428c03440c209b7ac8"
+    }
+  ]
 }
