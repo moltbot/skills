@@ -1,6 +1,6 @@
 ---
 name: web-search-plus
-version: 2.2.1
+version: 2.2.2
 description: Unified search skill with Intelligent Auto-Routing. Uses multi-signal analysis to automatically select between Serper (Google), Tavily (Research), and Exa (Neural) with confidence scoring.
 tags: [search, web-search, serper, tavily, exa, google, research, semantic-search, auto-routing, multi-provider, shopping, free-tier]
 ---
@@ -28,6 +28,11 @@ export EXA_API_KEY="your-key"      # https://exa.ai
 ```
 
 **Option B: config.json** (NEW in v2.2.1)
+```bash
+# Copy the example config
+cp config.example.json config.json
+```
+Then add your keys:
 ```json
 {
   "serper": { "api_key": "your-serper-key" },
@@ -35,6 +40,7 @@ export EXA_API_KEY="your-key"      # https://exa.ai
   "exa": { "api_key": "your-exa-key" }
 }
 ```
+⚠️ `config.json` is gitignored — your keys stay safe!
 
 Just run — keys load automatically:
 ```bash
