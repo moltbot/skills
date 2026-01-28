@@ -3,9 +3,15 @@
   "slug": "code-roaster",
   "displayName": "Code Roaster",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769589138223,
-    "commit": "https://github.com/clawdbot/skills/commit/0906c47c5a40500f532afc8791f0cbda642a06a5"
+    "version": "1.0.1",
+    "publishedAt": 1769589373064,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769589138223,
+      "commit": "https://github.com/clawdbot/skills/commit/0906c47c5a40500f532afc8791f0cbda642a06a5"
+    }
+  ]
 }
