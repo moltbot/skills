@@ -1,0 +1,14 @@
+{
+  "name": "ai-lazy-load",
+  "version": "1.0.0",
+  "description": "Identify components that should be lazy loaded using AI",
+  "main": "dist/index.js",
+  "bin": { "ai-lazy-load": "dist/cli.js" },
+  "scripts": { "build": "tsc" },
+  "keywords": ["lazy-loading","performance","ai","cli","react"],
+  "license": "MIT",
+  "dependencies": { "commander": "^12.1.0", "openai": "^4.73.0", "ora": "^5.4.1", "glob": "^10.3.0" },
+  "devDependencies": { "typescript": "^5.6.0", "@types/node": "^22.0.0" },
+  "author": "LXGIC Studios",
+  "repository": { "type": "git", "url": "https://github.com/LXGIC-Studios/ai-lazy-load" }
+}
