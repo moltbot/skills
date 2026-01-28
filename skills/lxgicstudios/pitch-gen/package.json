@@ -1,0 +1,14 @@
+{
+  "name": "ai-pitch",
+  "version": "1.0.0",
+  "description": "Generate startup pitch deck content with AI",
+  "main": "dist/index.js",
+  "bin": { "ai-pitch": "dist/cli.js" },
+  "scripts": { "build": "tsc" },
+  "keywords": ["pitch","startup","ai","cli","pitch-deck","investor"],
+  "license": "MIT",
+  "dependencies": { "commander": "^12.1.0", "openai": "^4.73.0", "ora": "^5.4.1" },
+  "devDependencies": { "typescript": "^5.6.0", "@types/node": "^22.0.0" },
+  "author": "LXGIC Studios",
+  "repository": { "type": "git", "url": "https://github.com/LXGIC-Studios/ai-pitch" }
+}
