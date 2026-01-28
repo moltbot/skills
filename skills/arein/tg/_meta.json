@@ -1,0 +1,11 @@
+{
+  "owner": "arein",
+  "slug": "tg",
+  "displayName": "Telegram CLI",
+  "latest": {
+    "version": "0.1.0",
+    "publishedAt": 1769589070226,
+    "commit": null
+  },
+  "history": []
+}
