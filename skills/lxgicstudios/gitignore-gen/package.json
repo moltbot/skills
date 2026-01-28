@@ -1,0 +1,33 @@
+{
+  "name": "ai-gitignore",
+  "version": "1.0.0",
+  "description": "Scans your project and generates the perfect .gitignore",
+  "main": "dist/index.js",
+  "bin": {
+    "ai-gitignore": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [
+    "gitignore",
+    "ai",
+    "cli"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^12.1.0",
+    "glob": "^10.3.10",
+    "openai": "^4.52.0",
+    "ora": "^5.4.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "@types/node": "^20.14.0"
+  },
+  "author": "LXGIC Studios",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lxgicstudios/ai-gitignore"
+  }
+}
