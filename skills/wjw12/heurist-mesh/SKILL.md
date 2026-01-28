@@ -26,7 +26,7 @@ Add Heurist Mesh to `${HOME}/clawd/config/mcporter.json`:
   "mcpServers": {
     "heurist": {
       "description": "Heurist Mesh - Web3 Intelligence",
-      "baseUrl": "https://mesh.heurist.xyz/mcp/sse",
+      "baseUrl": "https://mesh.heurist.xyz/mcp/",
       "headers": {
         "X-HEURIST-API-KEY": "${HEURIST_API_KEY}"
       }
