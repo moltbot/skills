@@ -625,6 +625,7 @@ class QueryAnalyzer:
             return {
                 "provider": fallback,
                 "confidence": 0.0,
+                "confidence_level": "low",
                 "reason": "no_available_providers",
                 "scores": scores,
                 "top_signals": [],
@@ -770,6 +771,9 @@ def explain_routing(query: str, config: Dict[str, Any]) -> Dict[str, Any]:
 
 def make_request(url: str, headers: dict, body: dict, timeout: int = 30) -> dict:
     """Make HTTP POST request and return JSON response."""
+    # Ensure User-Agent is set (required by some APIs like Exa/Cloudflare)
+    if "User-Agent" not in headers:
+        headers["User-Agent"] = "ClawdBot-WebSearchPlus/2.1"
     data = json.dumps(body).encode("utf-8")
     req = Request(url, data=data, headers=headers, method="POST")
     

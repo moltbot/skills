@@ -1,6 +1,6 @@
 ---
 name: web-search-plus
-version: 2.1.5
+version: 2.1.7
 description: Unified search skill with Intelligent Auto-Routing. Uses multi-signal analysis to automatically select between Serper (Google), Tavily (Research), and Exa (Neural) with confidence scoring.
 tags: [search, web-search, serper, tavily, exa, google, research, semantic-search, auto-routing, multi-provider, shopping, free-tier]
 ---
@@ -34,7 +34,7 @@ export TAVILY_API_KEY="your-key"
 python3 scripts/search.py -q "your query"
 ```
 
-Core Clawdbot only supports `brave` or `perplexity` as built-in providers. This skill adds Serper, Tavily, and Exa as **additional** options via its own scripts.
+Core Clawdbot only supports `brave` as the built-in web search provider. This skill adds Serper, Tavily, and Exa as **additional** options via its own scripts.
 
 ---
 
@@ -270,9 +270,9 @@ export EXA_API_KEY="your-key"      # https://exa.ai
 > At minimum ONE key. You can use just Serper, just Tavily, or all three. Missing keys = that provider is skipped.
 
 **Q: Where do I get API keys?**
-> - Serper: https://serper.dev (100 free searches/month)
-> - Tavily: https://tavily.com (1000 free searches/month)
-> - Exa: https://exa.ai (limited free tier)
+> - Serper: https://serper.dev (2,500 free queries, no credit card)
+> - Tavily: https://tavily.com (1,000 free searches/month)
+> - Exa: https://exa.ai (1,000 free searches/month)
 
 **Q: How do I set API keys?**
 > Create `.env` in your workspace:
@@ -305,7 +305,7 @@ export EXA_API_KEY="your-key"      # https://exa.ai
 > 3. Some queries have no results (very niche topics)
 
 **Q: Rate limited?**
-> Each provider has limits. Spread queries across providers or wait. Serper: 100/month free, Tavily: 1000/month free.
+> Each provider has limits. Spread queries across providers or wait. Serper: 2,500 free total, Tavily: 1,000/month free.
 
 ### For Clawdbot Users
 

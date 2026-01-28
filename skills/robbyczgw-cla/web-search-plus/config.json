@@ -137,8 +137,8 @@
     }
   },
   "serper": {
-    "country": "at",
-    "language": "de",
+    "country": "us",
+    "language": "en",
     "type": "search",
     "autocorrect": true,
     "include_images": false
