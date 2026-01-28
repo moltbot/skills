@@ -74,6 +74,9 @@ function discoverWebhookSkills() {
           folder: entry.name,
           emoji: skillJson.clawdbot?.emoji || '📦',
           events: webhookEvents,
+          forwardPort: skillJson.clawdbot?.forwardPort || null,
+          forwardPath: skillJson.clawdbot?.forwardPath || '/',
+          webhookCommands: skillJson.clawdbot?.webhookCommands || null,
         });
       } catch { /* skip malformed skill.json */ }
     }
@@ -145,8 +148,80 @@ app.use(express.urlencoded({ extended: true }));
 // Health check
 app.get('/health', (_req, res) => res.json({ status: 'ok', uptime: process.uptime() }));
 
+/**
+ * Resolve a dot-separated path (e.g. "payload.object.id") from an object.
+ */
+function resolvePath(obj, path) {
+  return path.split('.').reduce((o, k) => o?.[k], obj);
+}
+
+/**
+ * Auto-forward webhook payload to a local skill service.
+ * Returns true if forwarded, false otherwise.
+ */
+async function autoForward(body) {
+  const eventType = body?.event || '';
+  const skills = discoverWebhookSkills();
+  const match = skills.find(s => s.events.includes(eventType));
+  if (!match) return false;
+
+  // Option 1: Forward to a running service (forwardPort)
+  if (match.forwardPort) {
+    try {
+      const url = `http://localhost:${match.forwardPort}${match.forwardPath || '/'}`;
+      const resp = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      console.error(`⚡ Auto-forwarded ${eventType} to ${match.name} (port ${match.forwardPort}) — ${resp.status}`);
+      return true;
+    } catch (err) {
+      console.error(`❌ Auto-forward to ${match.name} failed:`, err.message);
+      return false;
+    }
+  }
+
+  // Option 2: Run a shell command (webhookCommands)
+  if (match.webhookCommands?.[eventType]) {
+    const cmdConfig = match.webhookCommands[eventType];
+    let command = cmdConfig.command || '';
+    const meetingId = resolvePath(body, cmdConfig.meetingIdPath || 'payload.object.id') || '';
+
+    if (!meetingId) {
+      console.error(`⚠️ Could not extract meeting ID from path "${cmdConfig.meetingIdPath}" for ${eventType}`);
+      return false;
+    }
+
+    command = command.replace('{{meeting_id}}', meetingId);
+    const skillDir = join(__dirname, '..', '..', match.folder);
+
+    console.error(`⚡ Running command for ${eventType}: ${command}`);
+    return new Promise((resolve) => {
+      execFile('sh', ['-c', command], { cwd: skillDir, timeout: 120000 }, (err, stdout, stderr) => {
+        if (err) {
+          console.error(`❌ Command failed for ${eventType}:`, err.message);
+          if (stderr) console.error(stderr);
+          notifyUser(`❌ *Auto-action failed for ${eventType}*\n\n${cmdConfig.description || ''}\nMeeting: ${meetingId}\nError: ${err.message}`);
+          resolve(false);
+        } else {
+          console.error(`✅ Command completed for ${eventType}`);
+          if (stdout) console.error(stdout);
+          notifyUser(`✅ *${cmdConfig.description || eventType}*\n\nMeeting: ${meetingId}\n\n${stdout.slice(0, 500)}`);
+          resolve(true);
+        }
+      });
+    });
+  }
+
+  return false;
+}
+
 // Webhook receiver — accepts any method
-app.all(WEBHOOK_PATH, (req, res) => {
+app.all(WEBHOOK_PATH, async (req, res) => {
+  // Respond 200 OK immediately
+  res.status(200).json({ status: 'received' });
+
   const event = {
     id: crypto.randomUUID(),
     timestamp: new Date().toISOString(),
@@ -159,12 +234,14 @@ app.all(WEBHOOK_PATH, (req, res) => {
   // Write to stdout as a JSON line (for process polling)
   process.stdout.write(JSON.stringify(event) + '\n');
 
-  // Notify the user via Clawdbot
-  const message = formatWebhookMessage(event);
-  notifyUser(message);
+  // Try auto-forwarding to matching skill
+  const forwarded = await autoForward(req.body);
 
-  // Respond 200 OK immediately
-  res.status(200).json({ status: 'received', id: event.id });
+  // Notify the user either way
+  const message = forwarded
+    ? `⚡ *Auto-forwarded webhook to matching skill*\n\n*Event:* ${req.body?.event || 'unknown'}\n*Stream:* ${req.body?.payload?.rtms_stream_id || 'n/a'}\n\nForwarded automatically. Reply if you need to intervene.`
+    : formatWebhookMessage(event);
+  notifyUser(message);
 });
 
 // Catch-all for other paths — log but don't notify (avoids noise from bots/crawlers)
