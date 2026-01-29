@@ -3,9 +3,15 @@
   "slug": "websocket-gen",
   "displayName": "WebSocket Handler Generator",
   "latest": {
-    "version": "1.0.1",
-    "publishedAt": 1769632892251,
-    "commit": "https://github.com/clawdbot/skills/commit/ec666486e02bbe9df858d81e896c7e01e6bc3dfc"
+    "version": "1.0.2",
+    "publishedAt": 1769667371878,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.1",
+      "publishedAt": 1769632892251,
+      "commit": "https://github.com/clawdbot/skills/commit/ec666486e02bbe9df858d81e896c7e01e6bc3dfc"
+    }
+  ]
 }

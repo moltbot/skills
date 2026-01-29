@@ -74,3 +74,10 @@ Takes your feature description and generates Socket.io server handlers and clien
 ## License
 
 MIT. Free forever. Use it however you want.
+
+---
+
+**Built by LXGIC Studios**
+
+- GitHub: [github.com/lxgicstudios/websocket-gen](https://github.com/lxgicstudios/websocket-gen)
+- Twitter: [@lxgicstudios](https://x.com/lxgicstudios)
