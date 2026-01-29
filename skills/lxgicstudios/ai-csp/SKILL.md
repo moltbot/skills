@@ -47,3 +47,10 @@ Node.js 18+. OPENAI_API_KEY required.
 ## License
 
 MIT. Free forever.
+
+---
+
+**Built by LXGIC Studios**
+
+- GitHub: [github.com/lxgicstudios/ai-csp](https://github.com/lxgicstudios/ai-csp)
+- Twitter: [@lxgicstudios](https://x.com/lxgicstudios)

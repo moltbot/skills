@@ -1,11 +1,17 @@
 {
   "owner": "lxgicstudios",
   "slug": "ai-csp",
-  "displayName": "Ai Csp",
+  "displayName": "Content Security Policy Generator",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769657827391,
-    "commit": "https://github.com/clawdbot/skills/commit/b69718c93589c0416b0007772706ecc1a4f9d390"
+    "version": "1.0.1",
+    "publishedAt": 1769665840176,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769657827391,
+      "commit": "https://github.com/clawdbot/skills/commit/b69718c93589c0416b0007772706ecc1a4f9d390"
+    }
+  ]
 }
