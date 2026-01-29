@@ -1,0 +1,11 @@
+{
+  "owner": "lxgicstudios",
+  "slug": "deps-checker",
+  "displayName": "Deps Checker",
+  "latest": {
+    "version": "1.0.2",
+    "publishedAt": 1769633017863,
+    "commit": null
+  },
+  "history": []
+}
