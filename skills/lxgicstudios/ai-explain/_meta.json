@@ -1,11 +1,17 @@
 {
   "owner": "lxgicstudios",
   "slug": "ai-explain",
-  "displayName": "Ai Explain",
+  "displayName": "Code Explainer",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769657894800,
-    "commit": "https://github.com/clawdbot/skills/commit/31193effe661b68b82d0fc3c8eb7cc59c464a87b"
+    "version": "1.0.1",
+    "publishedAt": 1769666063389,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769657894800,
+      "commit": "https://github.com/clawdbot/skills/commit/31193effe661b68b82d0fc3c8eb7cc59c464a87b"
+    }
+  ]
 }
