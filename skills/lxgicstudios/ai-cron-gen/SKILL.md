@@ -50,3 +50,10 @@ Node.js 18+. OPENAI_API_KEY required.
 ## License
 
 MIT. Free forever.
+
+---
+
+**Built by LXGIC Studios**
+
+- GitHub: [github.com/lxgicstudios/ai-cron-gen](https://github.com/lxgicstudios/ai-cron-gen)
+- Twitter: [@lxgicstudios](https://x.com/lxgicstudios)

@@ -1,11 +1,17 @@
 {
   "owner": "lxgicstudios",
   "slug": "ai-cron-gen",
-  "displayName": "Ai Cron Gen",
+  "displayName": "Cron Expression Generator",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769657815209,
-    "commit": "https://github.com/clawdbot/skills/commit/3090a606d9f49b537188a2e3b208c48d5592a76a"
+    "version": "1.0.1",
+    "publishedAt": 1769665801106,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769657815209,
+      "commit": "https://github.com/clawdbot/skills/commit/3090a606d9f49b537188a2e3b208c48d5592a76a"
+    }
+  ]
 }
