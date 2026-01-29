@@ -1,0 +1,11 @@
+{
+  "owner": "lxgicstudios",
+  "slug": "prisma-schema-gen",
+  "displayName": "Prisma Schema Generator",
+  "latest": {
+    "version": "1.0.1",
+    "publishedAt": 1769632735241,
+    "commit": null
+  },
+  "history": []
+}

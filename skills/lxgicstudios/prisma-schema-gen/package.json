@@ -1,0 +1,24 @@
+{
+  "name": "ai-prisma-gen",
+  "version": "1.0.0",
+  "description": "Generate Prisma schema from a plain English description",
+  "main": "dist/index.js",
+  "bin": { "ai-prisma-gen": "dist/cli.js" },
+  "scripts": { "build": "tsc" },
+  "keywords": ["ai", "openai", "gpt", "prisma", "schema", "database", "orm", "generator", "postgresql", "mysql", "developer-tools", "cli", "automation", "typescript", "backend"],
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^12.1.0",
+    "openai": "^4.73.0",
+    "ora": "^5.4.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "@types/node": "^22.0.0"
+  },
+  "author": "LXGIC Studios",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LXGIC-Studios/ai-prisma-gen"
+  }
+}
