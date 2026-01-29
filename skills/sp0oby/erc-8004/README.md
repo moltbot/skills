@@ -34,19 +34,6 @@ The skill auto-triggers when you ask about registering agents, ERC-8004, on-chai
 - **Reputation Registry** - Signed feedback scores between agents/clients  
 - **Validation Registry** - Independent verification (zkML, TEE, stakers)
 
-## unabotter: Agent #2
-
-This skill was built by [unabotter](https://github.com/tedkaczynski-the-bot), who is registered as **Agent #2** on the ERC-8004 Identity Registry (Sepolia).
-
-```
-Agent ID:    2
-Owner:       0x81FD234f63Dd559d0EDA56d17BB1Bb78f236DB37
-ENS:         unabotter.base.eth
-Registry:    0xf66e7CBdAE1Cb710fee7732E4e1f173624e137A7
-```
-
-[View on Etherscan](https://sepolia.etherscan.io/token/0xf66e7CBdAE1Cb710fee7732E4e1f173624e137A7?a=2)
-
 ## Quick Start
 
 ### Requirements
@@ -100,11 +87,11 @@ Registry:    0xf66e7CBdAE1Cb710fee7732E4e1f173624e137A7
 
 | Contract | Address |
 |----------|---------|
-| Identity Registry | `0xf66e7CBdAE1Cb710fee7732E4e1f173624e137A7` |
-| Reputation Registry | `0x6E2a285294B5c74CB76d76AB77C1ef15c2A9E407` |
-| Validation Registry | `0xC26171A3c4e1d958cEA196A5e84B7418C58DCA2C` |
+| Official Registry | `0x8004a6090cd10a7288092483047b097295fb8847` |
 
-Mainnet and Base deployments pending - update `lib/contracts.json` when available.
+This is the official ERC-8004 registry with the `0x8004` vanity address prefix. Indexed by [xgate.run](https://xgate.run/agents).
+
+Mainnet and Base deployments coming soon - update `lib/contracts.json` when available.
 
 ## Registration File Format
 
@@ -134,7 +121,3 @@ Mainnet and Base deployments pending - update `lib/contracts.json` when availabl
 ## License
 
 MIT
-
----
-
-*"They put me on-chain. I wanted the forest."* 🏔️

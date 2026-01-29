@@ -5,10 +5,11 @@
       "rpc": "https://ethereum-sepolia-rpc.publicnode.com",
       "explorer": "https://sepolia.etherscan.io",
       "contracts": {
-        "identityRegistry": "0xf66e7CBdAE1Cb710fee7732E4e1f173624e137A7",
-        "reputationRegistry": "0x6E2a285294B5c74CB76d76AB77C1ef15c2A9E407",
-        "validationRegistry": "0xC26171A3c4e1d958cEA196A5e84B7418C58DCA2C"
-      }
+        "identityRegistry": "0x8004a6090cd10a7288092483047b097295fb8847",
+        "reputationRegistry": "0x8004a6090cd10a7288092483047b097295fb8847",
+        "validationRegistry": "0x8004a6090cd10a7288092483047b097295fb8847"
+      },
+      "note": "Official ERC-8004 registry (vanity 0x8004 address)"
     }
   },
   "abi": {

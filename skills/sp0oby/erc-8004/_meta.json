@@ -3,9 +3,15 @@
   "slug": "erc-8004",
   "displayName": "ERC-8004 Trustless Agents",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769669918755,
-    "commit": "https://github.com/clawdbot/skills/commit/0bc9f17ef82177d787a64269cac6ae2713f5537c"
+    "version": "1.1.1",
+    "publishedAt": 1769673553209,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769669918755,
+      "commit": "https://github.com/clawdbot/skills/commit/0bc9f17ef82177d787a64269cac6ae2713f5537c"
+    }
+  ]
 }

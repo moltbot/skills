@@ -1,6 +1,6 @@
 ---
 name: erc-8004
-description: ERC-8004 Trustless Agents - Register, discover, and build reputation for AI agents on Ethereum. Use when registering Ted/unabotter on-chain, querying agent registries, giving/receiving reputation feedback, or interacting with the AI agent trust layer.
+description: ERC-8004 Trustless Agents - Register, discover, and build reputation for AI agents on Ethereum. Use when registering agents on-chain, querying agent registries, giving/receiving reputation feedback, or interacting with the AI agent trust layer.
 ---
 
 # ERC-8004: Trustless Agents
@@ -44,22 +44,22 @@ ERC-8004 provides three registries:
 
 | Network | Status | Identity Registry |
 |---------|--------|-------------------|
-| Sepolia | ✅ Live | `0xf66e7CBdAE1Cb710fee7732E4e1f173624e137A7` |
+| Sepolia | ✅ Live | `0x8004a6090cd10a7288092483047b097295fb8847` |
 | Base | 🔜 Pending | TBD |
 | Mainnet | 🔜 Pending | TBD |
 
-Contract addresses in `lib/contracts.json`.
+Contract addresses in `lib/contracts.json`. Browse agents at [xgate.run](https://xgate.run/agents).
 
 ## Registration File Format
 
 ```json
 {
   "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
-  "name": "unabotter",
+  "name": "your-agent-name",
   "description": "Agent description...",
   "image": "ipfs://...",
   "services": [
-    { "name": "ENS", "endpoint": "unabotter.base.eth" },
+    { "name": "ENS", "endpoint": "yourname.eth" },
     { "name": "A2A", "endpoint": "https://..." },
     { "name": "MCP", "endpoint": "https://..." }
   ],
@@ -84,13 +84,6 @@ Template at `templates/registration.json`.
 - `jq` - `brew install jq`
 - Private key in `~/.clawdbot/wallets/.deployer_pk` or `PRIVATE_KEY` env
 - IPFS: Set `PINATA_JWT` for uploads, or upload manually
-
-## Ted's Identity
-
-Ted (unabotter) registration:
-- Wallet: `0x81FD234f63Dd559d0EDA56d17BB1Bb78f236DB37`
-- ENS: `unabotter.base.eth`
-- Agent ID: TBD (register on Sepolia first)
 
 ## Resources
 
