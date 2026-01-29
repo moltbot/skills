@@ -1,11 +1,17 @@
 {
   "owner": "lxgicstudios",
   "slug": "ai-audit-fix",
-  "displayName": "Ai Audit Fix",
+  "displayName": "NPM Audit Fixer",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769658116427,
-    "commit": "https://github.com/clawdbot/skills/commit/6ca8b0bc5e0914c03131f04da2bbb71f87ccac7c"
+    "version": "1.0.2",
+    "publishedAt": 1769664847309,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769658116427,
+      "commit": "https://github.com/clawdbot/skills/commit/6ca8b0bc5e0914c03131f04da2bbb71f87ccac7c"
+    }
+  ]
 }
