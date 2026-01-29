@@ -3,11 +3,16 @@
   "slug": "save-money",
   "displayName": "Save Money",
   "latest": {
-    "version": "2.2.1",
-    "publishedAt": 1769632234034,
-    "commit": "https://github.com/clawdbot/skills/commit/e9fafe42cd769de96924e2af405c9be9209e56b6"
+    "version": "3.0.0",
+    "publishedAt": 1769682015019,
+    "commit": null
   },
   "history": [
+    {
+      "version": "2.2.1",
+      "publishedAt": 1769632234034,
+      "commit": "https://github.com/clawdbot/skills/commit/e9fafe42cd769de96924e2af405c9be9209e56b6"
+    },
     {
       "version": "2.0.0",
       "publishedAt": 1769631136275,
