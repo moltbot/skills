@@ -1,0 +1,31 @@
+{
+  "name": "@clawdbot/skill-luma",
+  "version": "1.0.0",
+  "description": "Fetch upcoming events from Luma (lu.ma) for any city",
+  "author": "Clawd",
+  "license": "MIT",
+  "keywords": [
+    "clawdbot",
+    "skill",
+    "luma",
+    "events",
+    "meetups",
+    "conferences"
+  ],
+  "scripts": {
+    "fetch": "python3 scripts/fetch_events.py"
+  },
+  "clawd": {
+    "skill": true,
+    "type": "script",
+    "triggers": [
+      "events",
+      "meetups",
+      "luma",
+      "lu.ma",
+      "conferences",
+      "tech events",
+      "startup events"
+    ]
+  }
+}
