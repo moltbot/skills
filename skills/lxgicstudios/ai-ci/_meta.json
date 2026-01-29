@@ -1,11 +1,17 @@
 {
   "owner": "lxgicstudios",
   "slug": "ai-ci",
-  "displayName": "Ai Ci",
+  "displayName": "CI/CD Pipeline Generator",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769658187782,
-    "commit": "https://github.com/clawdbot/skills/commit/15d0fbcdcd5b10c629c5afd05352a6e0f19e4b5e"
+    "version": "1.0.1",
+    "publishedAt": 1769665253626,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769658187782,
+      "commit": "https://github.com/clawdbot/skills/commit/15d0fbcdcd5b10c629c5afd05352a6e0f19e4b5e"
+    }
+  ]
 }

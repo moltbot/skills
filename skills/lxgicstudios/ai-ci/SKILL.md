@@ -80,3 +80,10 @@ Analyzes your package.json, config files, and project structure to determine the
 ## License
 
 MIT. Free forever. Use it however you want.
+
+---
+
+**Built by LXGIC Studios**
+
+- GitHub: [github.com/lxgicstudios/ai-ci](https://github.com/lxgicstudios/ai-ci)
+- Twitter: [@lxgicstudios](https://x.com/lxgicstudios)
