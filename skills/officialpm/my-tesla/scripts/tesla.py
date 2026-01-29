@@ -30,6 +30,19 @@ def resolve_email(args, prompt: bool = True) -> str:
     return input("Tesla email: ").strip()
 
 
+def require_email(args) -> str:
+    """Require a Tesla email to be provided via --email or TESLA_EMAIL."""
+    email = resolve_email(args, prompt=False)
+    if not email:
+        print(
+            "❌ Missing Tesla email. Set TESLA_EMAIL or pass --email\n"
+            "   Example: TESLA_EMAIL=\"you@email.com\" python3 scripts/tesla.py list",
+            file=sys.stderr,
+        )
+        sys.exit(2)
+    return email
+
+
 def get_tesla(email: str):
     """Get authenticated Tesla instance."""
     import teslapy
@@ -121,11 +134,7 @@ def cmd_auth(args):
 
 def cmd_list(args):
     """List all vehicles."""
-    email = resolve_email(args, prompt=False)
-    if not email:
-        print("❌ Missing Tesla email. Set TESLA_EMAIL or pass --email", file=sys.stderr)
-        sys.exit(2)
-    tesla = get_tesla(email)
+    tesla = get_tesla(require_email(args))
     vehicles = tesla.vehicle_list()
 
     default_name = resolve_default_car_name()
@@ -195,6 +204,22 @@ def _fmt_temp_pair(c):
     return f"{c}°C ({f:.0f}°F)"
 
 
+def _fmt_minutes_hhmm(minutes):
+    """Format minutes-from-midnight as HH:MM.
+
+    Tesla endpoints commonly represent scheduled times as minutes after midnight.
+    """
+    try:
+        m = int(minutes)
+    except Exception:
+        return None
+    if m < 0:
+        return None
+    hh = (m // 60) % 24
+    mm = m % 60
+    return f"{hh:02d}:{mm:02d}"
+
+
 def _report(vehicle, data):
     """One-screen status report (safe for chat)."""
     charge = data.get('charge_state', {})
@@ -232,6 +257,21 @@ def _report(vehicle, data):
         suffix = f" ({', '.join(extra)})" if extra else ""
         lines.append(f"Charging: {charging_state}{suffix}")
 
+    sched_time = charge.get('scheduled_charging_start_time')
+    sched_mode = charge.get('scheduled_charging_mode')
+    sched_pending = charge.get('scheduled_charging_pending')
+    if sched_time is not None or sched_mode is not None or sched_pending is not None:
+        bits = []
+        if isinstance(sched_mode, str) and sched_mode.strip():
+            bits.append(sched_mode.strip())
+        elif sched_pending is not None:
+            bits.append('On' if sched_pending else 'Off')
+        hhmm = _fmt_minutes_hhmm(sched_time)
+        if hhmm:
+            bits.append(hhmm)
+        if bits:
+            lines.append(f"Scheduled charging: {' '.join(bits)}")
+
     inside = _fmt_temp_pair(climate.get('inside_temp'))
     outside = _fmt_temp_pair(climate.get('outside_temp'))
     if inside:
@@ -252,11 +292,7 @@ def _report(vehicle, data):
 
 def cmd_report(args):
     """One-screen status report."""
-    email = resolve_email(args, prompt=False)
-    if not email:
-        print("❌ Missing Tesla email. Set TESLA_EMAIL or pass --email", file=sys.stderr)
-        sys.exit(2)
-    tesla = get_tesla(email)
+    tesla = get_tesla(require_email(args))
     vehicle = get_vehicle(tesla, args.car)
     wake_vehicle(vehicle)
     data = vehicle.get_vehicle_data()
@@ -270,11 +306,7 @@ def cmd_report(args):
 
 def cmd_status(args):
     """Get vehicle status."""
-    email = resolve_email(args, prompt=False)
-    if not email:
-        print("❌ Missing Tesla email. Set TESLA_EMAIL or pass --email", file=sys.stderr)
-        sys.exit(2)
-    tesla = get_tesla(email)
+    tesla = get_tesla(require_email(args))
     vehicle = get_vehicle(tesla, args.car)
 
     wake_vehicle(vehicle)
@@ -332,11 +364,7 @@ def cmd_status(args):
 
 def cmd_lock(args):
     """Lock the vehicle."""
-    email = resolve_email(args, prompt=False)
-    if not email:
-        print("❌ Missing Tesla email. Set TESLA_EMAIL or pass --email", file=sys.stderr)
-        sys.exit(2)
-    tesla = get_tesla(email)
+    tesla = get_tesla(require_email(args))
     vehicle = get_vehicle(tesla, args.car)
     wake_vehicle(vehicle)
     vehicle.command('LOCK')
@@ -345,11 +373,8 @@ def cmd_lock(args):
 
 def cmd_unlock(args):
     """Unlock the vehicle."""
-    email = resolve_email(args, prompt=False)
-    if not email:
-        print("❌ Missing Tesla email. Set TESLA_EMAIL or pass --email", file=sys.stderr)
-        sys.exit(2)
-    tesla = get_tesla(email)
+    require_yes(args, 'unlock')
+    tesla = get_tesla(require_email(args))
     vehicle = get_vehicle(tesla, args.car)
     wake_vehicle(vehicle)
     vehicle.command('UNLOCK')
@@ -358,11 +383,7 @@ def cmd_unlock(args):
 
 def cmd_climate(args):
     """Control climate."""
-    email = resolve_email(args, prompt=False)
-    if not email:
-        print("❌ Missing Tesla email. Set TESLA_EMAIL or pass --email", file=sys.stderr)
-        sys.exit(2)
-    tesla = get_tesla(email)
+    tesla = get_tesla(require_email(args))
     vehicle = get_vehicle(tesla, args.car)
     wake_vehicle(vehicle)
     
@@ -374,10 +395,16 @@ def cmd_climate(args):
         print(f"🌡️ {vehicle['display_name']} climate turned off")
     elif args.action == 'temp':
         if args.value is None:
-            raise ValueError("Missing temperature value")
+            raise ValueError("Missing temperature value (e.g., climate temp 72 or climate temp 22 --celsius)")
 
         value = float(args.value)
-        in_f = not getattr(args, "celsius", False)  # default: Fahrenheit unless --celsius
+        # Default is Fahrenheit unless --celsius is provided.
+        in_f = True
+        if getattr(args, "celsius", False):
+            in_f = False
+        elif getattr(args, "fahrenheit", False):
+            in_f = True
+
         temp_c = (value - 32) * 5 / 9 if in_f else value
         vehicle.command('CHANGE_CLIMATE_TEMPERATURE_SETTING', driver_temp=temp_c, passenger_temp=temp_c)
         print(f"🌡️ {vehicle['display_name']} temperature set to {value:g}°{'F' if in_f else 'C'}")
@@ -385,11 +412,7 @@ def cmd_climate(args):
 
 def cmd_charge(args):
     """Control charging."""
-    email = resolve_email(args, prompt=False)
-    if not email:
-        print("❌ Missing Tesla email. Set TESLA_EMAIL or pass --email", file=sys.stderr)
-        sys.exit(2)
-    tesla = get_tesla(email)
+    tesla = get_tesla(require_email(args))
     vehicle = get_vehicle(tesla, args.car)
     wake_vehicle(vehicle)
     
@@ -404,24 +427,104 @@ def cmd_charge(args):
             print(f"   Time left: {charge['time_to_full_charge']:.1f} hrs")
             print(f"   Rate: {charge['charge_rate']} mph")
     elif args.action == 'start':
+        require_yes(args, 'charge start')
         vehicle.command('START_CHARGE')
         print(f"⚡ {vehicle['display_name']} charging started")
     elif args.action == 'stop':
+        require_yes(args, 'charge stop')
         vehicle.command('STOP_CHARGE')
         print(f"🛑 {vehicle['display_name']} charging stopped")
     elif args.action == 'limit':
-        vehicle.command('CHANGE_CHARGE_LIMIT', percent=int(args.value))
-        print(f"🎚️ {vehicle['display_name']} charge limit set to {int(args.value)}%")
+        if args.value is None:
+            raise ValueError("Missing charge limit percent (e.g., charge limit 80)")
+        pct = int(args.value)
+        if pct < 50 or pct > 100:
+            raise ValueError("Invalid charge limit percent. Expected 50–100")
+        vehicle.command('CHANGE_CHARGE_LIMIT', percent=pct)
+        print(f"🎚️ {vehicle['display_name']} charge limit set to {pct}%")
+
+
+def _parse_hhmm(value: str):
+    """Parse HH:MM into minutes after midnight."""
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError("Missing time. Expected HH:MM (e.g., 23:30)")
+    s = value.strip()
+    if ":" not in s:
+        raise ValueError("Invalid time. Expected HH:MM (e.g., 23:30)")
+    hh_s, mm_s = s.split(":", 1)
+    hh = int(hh_s)
+    mm = int(mm_s)
+    if hh < 0 or hh > 23 or mm < 0 or mm > 59:
+        raise ValueError("Invalid time. Expected HH:MM using 24-hour time")
+    return hh * 60 + mm
+
+
+def cmd_scheduled_charging(args):
+    """Get/set scheduled charging (requires --yes to change)."""
+    tesla = get_tesla(require_email(args))
+    vehicle = get_vehicle(tesla, args.car)
+    wake_vehicle(vehicle)
+
+    if args.action == 'status':
+        data = vehicle.get_vehicle_data()
+        charge = data.get('charge_state', {})
+        sched_time = charge.get('scheduled_charging_start_time')
+        sched_mode = charge.get('scheduled_charging_mode')
+        sched_pending = charge.get('scheduled_charging_pending')
+
+        if args.json:
+            print(json.dumps({'scheduled_charging_start_time': sched_time,
+                              'scheduled_charging_mode': sched_mode,
+                              'scheduled_charging_pending': sched_pending}, indent=2))
+            return
+
+        hhmm = _fmt_minutes_hhmm(sched_time)
+        mode = (sched_mode.strip() if isinstance(sched_mode, str) else None)
+        if not mode and sched_pending is not None:
+            mode = 'On' if sched_pending else 'Off'
+
+        print(f"🚗 {vehicle['display_name']}")
+        print(f"Scheduled charging: {mode or '(unknown)'}")
+        if hhmm:
+            print(f"Start time: {hhmm}")
+        return
+
+    # Mutating actions
+    require_yes(args, 'scheduled-charging')
+
+    if args.action == 'off':
+        vehicle.command('SCHEDULED_CHARGING', enable=False, time=0)
+        print(f"⏱️ {vehicle['display_name']} scheduled charging disabled")
+        return
+
+    if args.action == 'set':
+        minutes = _parse_hhmm(args.time)
+        vehicle.command('SCHEDULED_CHARGING', enable=True, time=minutes)
+        print(f"⏱️ {vehicle['display_name']} scheduled charging set to {_fmt_minutes_hhmm(minutes)}")
+        return
+
+    raise ValueError(f"Unknown action: {args.action}")
+
+
+def _round_coord(x, digits: int = 2):
+    """Round a coordinate for safer display.
+
+    digits=2 is roughly ~1km precision (varies with latitude) and is
+    intended as a non-sensitive default.
+    """
+    try:
+        return round(float(x), digits)
+    except Exception:
+        return None
 
 
 def cmd_location(args):
-    """Get vehicle location (sensitive)."""
-    require_yes(args, 'location')
-    email = resolve_email(args, prompt=False)
-    if not email:
-        print("❌ Missing Tesla email. Set TESLA_EMAIL or pass --email", file=sys.stderr)
-        sys.exit(2)
-    tesla = get_tesla(email)
+    """Get vehicle location.
+
+    Default output is *approximate* (rounded) to reduce accidental leakage.
+    Use --yes for precise coordinates.
+    """
+    tesla = get_tesla(require_email(args))
     vehicle = get_vehicle(tesla, args.car)
     wake_vehicle(vehicle)
 
@@ -429,18 +532,26 @@ def cmd_location(args):
     drive = data['drive_state']
 
     lat, lon = drive['latitude'], drive['longitude']
-    print(f"📍 {vehicle['display_name']} Location: {lat}, {lon}")
-    print(f"   https://www.google.com/maps?q={lat},{lon}")
+
+    if getattr(args, "yes", False):
+        print(f"📍 {vehicle['display_name']} Location (precise): {lat}, {lon}")
+        print(f"   https://www.google.com/maps?q={lat},{lon}")
+        return
+
+    lat_r = _round_coord(lat, 2)
+    lon_r = _round_coord(lon, 2)
+    if lat_r is None or lon_r is None:
+        raise ValueError("Missing location coordinates")
+
+    print(f"📍 {vehicle['display_name']} Location (approx): {lat_r}, {lon_r}")
+    print(f"   https://www.google.com/maps?q={lat_r},{lon_r}")
+    print("   (Use --yes for precise coordinates)")
 
 
 def cmd_trunk(args):
     """Toggle frunk/trunk (requires --yes)."""
     require_yes(args, 'trunk')
-    email = resolve_email(args, prompt=False)
-    if not email:
-        print("❌ Missing Tesla email. Set TESLA_EMAIL or pass --email", file=sys.stderr)
-        sys.exit(2)
-    tesla = get_tesla(email)
+    tesla = get_tesla(require_email(args))
     vehicle = get_vehicle(tesla, args.car)
     wake_vehicle(vehicle)
 
@@ -453,11 +564,7 @@ def cmd_trunk(args):
 def cmd_windows(args):
     """Vent or close windows (requires --yes)."""
     require_yes(args, 'windows')
-    email = resolve_email(args, prompt=False)
-    if not email:
-        print("❌ Missing Tesla email. Set TESLA_EMAIL or pass --email", file=sys.stderr)
-        sys.exit(2)
-    tesla = get_tesla(email)
+    tesla = get_tesla(require_email(args))
     vehicle = get_vehicle(tesla, args.car)
     wake_vehicle(vehicle)
 
@@ -473,11 +580,7 @@ def cmd_windows(args):
 def cmd_honk(args):
     """Honk the horn."""
     require_yes(args, 'honk')
-    email = resolve_email(args, prompt=False)
-    if not email:
-        print("❌ Missing Tesla email. Set TESLA_EMAIL or pass --email", file=sys.stderr)
-        sys.exit(2)
-    tesla = get_tesla(email)
+    tesla = get_tesla(require_email(args))
     vehicle = get_vehicle(tesla, args.car)
     wake_vehicle(vehicle)
     vehicle.command('HONK_HORN')
@@ -493,24 +596,33 @@ def require_yes(args, action: str):
 def cmd_flash(args):
     """Flash the lights."""
     require_yes(args, 'flash')
-    email = resolve_email(args, prompt=False)
-    if not email:
-        print("❌ Missing Tesla email. Set TESLA_EMAIL or pass --email", file=sys.stderr)
-        sys.exit(2)
-    tesla = get_tesla(email)
+    tesla = get_tesla(require_email(args))
     vehicle = get_vehicle(tesla, args.car)
     wake_vehicle(vehicle)
     vehicle.command('FLASH_LIGHTS')
     print(f"💡 {vehicle['display_name']} flashed lights!")
 
 
+def cmd_charge_port(args):
+    """Open/close the charge port door (requires --yes)."""
+    require_yes(args, 'charge-port')
+    tesla = get_tesla(require_email(args))
+    vehicle = get_vehicle(tesla, args.car)
+    wake_vehicle(vehicle)
+
+    if args.action == 'open':
+        vehicle.command('CHARGE_PORT_DOOR_OPEN')
+        print(f"🔌 {vehicle['display_name']} charge port opened")
+    elif args.action == 'close':
+        vehicle.command('CHARGE_PORT_DOOR_CLOSE')
+        print(f"🔌 {vehicle['display_name']} charge port closed")
+    else:
+        raise ValueError(f"Unknown action: {args.action}")
+
+
 def cmd_wake(args):
     """Wake up the vehicle."""
-    email = resolve_email(args, prompt=False)
-    if not email:
-        print("❌ Missing Tesla email. Set TESLA_EMAIL or pass --email", file=sys.stderr)
-        sys.exit(2)
-    tesla = get_tesla(email)
+    tesla = get_tesla(require_email(args))
     vehicle = get_vehicle(tesla, args.car)
     print(f"⏳ Waking {vehicle['display_name']}...")
     vehicle.sync_wake_up()
@@ -548,7 +660,11 @@ def main():
     parser.add_argument(
         "--yes",
         action="store_true",
-        help="Safety confirmation for sensitive/disruptive actions (location/trunk/windows/honk/flash)",
+        help=(
+            "Safety confirmation for sensitive/disruptive actions "
+            "(unlock/charge start|stop/trunk/windows/honk/flash/charge-port open|close/"
+            "scheduled-charging set|off/location precise)"
+        ),
     )
     
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -589,9 +705,14 @@ def main():
     charge_parser = subparsers.add_parser("charge", help="Charging control")
     charge_parser.add_argument("action", choices=["status", "start", "stop", "limit"])
     charge_parser.add_argument("value", nargs="?", help="Charge limit percent for 'limit' (e.g., 80)")
-    
+
+    # Scheduled charging
+    sched_parser = subparsers.add_parser("scheduled-charging", help="Get/set scheduled charging (set/off requires --yes)")
+    sched_parser.add_argument("action", choices=["status", "set", "off"], help="status|set|off")
+    sched_parser.add_argument("time", nargs="?", help="Start time for 'set' as HH:MM (24-hour)")
+
     # Location
-    subparsers.add_parser("location", help="Get vehicle location (requires --yes)")
+    subparsers.add_parser("location", help="Get vehicle location (approx by default; use --yes for precise)")
 
     # Trunk / frunk
     trunk_parser = subparsers.add_parser("trunk", help="Toggle trunk/frunk (requires --yes)")
@@ -604,7 +725,11 @@ def main():
     # Honk/flash
     subparsers.add_parser("honk", help="Honk the horn")
     subparsers.add_parser("flash", help="Flash the lights")
-    
+
+    # Charge port
+    charge_port_parser = subparsers.add_parser("charge-port", help="Open/close the charge port door (requires --yes)")
+    charge_port_parser.add_argument("action", choices=["open", "close"], help="Action to perform")
+
     # Wake
     subparsers.add_parser("wake", help="Wake up the vehicle")
     
@@ -620,11 +745,13 @@ def main():
         "unlock": cmd_unlock,
         "climate": cmd_climate,
         "charge": cmd_charge,
+        "scheduled-charging": cmd_scheduled_charging,
         "location": cmd_location,
         "trunk": cmd_trunk,
         "windows": cmd_windows,
         "honk": cmd_honk,
         "flash": cmd_flash,
+        "charge-port": cmd_charge_port,
         "wake": cmd_wake,
         "default-car": cmd_default_car,
     }

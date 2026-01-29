@@ -3,9 +3,15 @@
   "slug": "my-tesla",
   "displayName": "My Tesla",
   "latest": {
-    "version": "0.1.8",
-    "publishedAt": 1769649566214,
-    "commit": "https://github.com/clawdbot/skills/commit/d24b447491e30f4b95b859dc0b04fc30df6f7e99"
+    "version": "0.1.15",
+    "publishedAt": 1769660366517,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "0.1.8",
+      "publishedAt": 1769649566214,
+      "commit": "https://github.com/clawdbot/skills/commit/d24b447491e30f4b95b859dc0b04fc30df6f7e99"
+    }
+  ]
 }

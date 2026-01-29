@@ -41,7 +41,12 @@ python3 scripts/tesla.py status
 python3 scripts/tesla.py --car "My Model 3" lock
 python3 scripts/tesla.py climate temp 72      # default: °F
 python3 scripts/tesla.py climate temp 22 --celsius
-python3 scripts/tesla.py charge limit 80
+python3 scripts/tesla.py charge limit 80      # 50–100
+
+# Scheduled charging (set/off are safety gated)
+python3 scripts/tesla.py scheduled-charging status
+python3 scripts/tesla.py scheduled-charging set 23:30 --yes
+python3 scripts/tesla.py scheduled-charging off --yes
 
 # Trunk / frunk (safety gated)
 python3 scripts/tesla.py trunk trunk --yes
@@ -51,7 +56,12 @@ python3 scripts/tesla.py trunk frunk --yes
 python3 scripts/tesla.py windows vent  --yes
 python3 scripts/tesla.py windows close --yes
 
-# Location (sensitive)
+# Charge port door (safety gated)
+python3 scripts/tesla.py charge-port open  --yes
+python3 scripts/tesla.py charge-port close --yes
+
+# Location (approx by default; use --yes for precise coordinates)
+python3 scripts/tesla.py location
 python3 scripts/tesla.py location --yes
 ```
 
@@ -64,4 +74,5 @@ python3 -m unittest discover -s tests -v
 ## Privacy / safety
 
 - Never commit tokens, VINs, or location outputs.
-- Some commands (location/trunk/windows/honk/flash) require `--yes`.
+- Some commands (unlock/charge start|stop/trunk/windows/honk/flash/charge-port open|close/scheduled-charging set|off) require `--yes`.
+- `location` shows *approximate* coords by default; add `--yes` for precise coordinates.

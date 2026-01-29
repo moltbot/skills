@@ -59,9 +59,15 @@ python3 {baseDir}/scripts/tesla.py climate temp 22 --celsius
 python3 {baseDir}/scripts/tesla.py charge status
 python3 {baseDir}/scripts/tesla.py charge start
 python3 {baseDir}/scripts/tesla.py charge stop
-python3 {baseDir}/scripts/tesla.py charge limit 80
+python3 {baseDir}/scripts/tesla.py charge limit 80   # 50–100
 
-# Location (sensitive)
+# Scheduled charging (set/off are safety gated)
+python3 {baseDir}/scripts/tesla.py scheduled-charging status
+python3 {baseDir}/scripts/tesla.py scheduled-charging set 23:30 --yes
+python3 {baseDir}/scripts/tesla.py scheduled-charging off --yes
+
+# Location (approx by default; use --yes for precise coordinates)
+python3 {baseDir}/scripts/tesla.py location
 python3 {baseDir}/scripts/tesla.py location --yes
 
 # Trunk / frunk (safety gated)
@@ -72,6 +78,10 @@ python3 {baseDir}/scripts/tesla.py trunk frunk --yes
 python3 {baseDir}/scripts/tesla.py windows vent  --yes
 python3 {baseDir}/scripts/tesla.py windows close --yes
 
+# Charge port door (safety gated)
+python3 {baseDir}/scripts/tesla.py charge-port open  --yes
+python3 {baseDir}/scripts/tesla.py charge-port close --yes
+
 # Fun / attention-grabbing
 python3 {baseDir}/scripts/tesla.py honk   --yes
 python3 {baseDir}/scripts/tesla.py flash  --yes
@@ -80,7 +90,8 @@ python3 {baseDir}/scripts/tesla.py flash  --yes
 ## Safety defaults
 
 Some actions require an explicit confirmation flag:
-- `location`, `trunk`, `windows`, `honk`, `flash` require `--yes`
+- `unlock`, `charge start|stop`, `trunk`, `windows`, `honk`, `flash`, `charge-port open|close`, and `scheduled-charging set|off` require `--yes`
+- `location` is *approximate* by default; add `--yes` for precise coordinates
 
 ## Privacy
 
