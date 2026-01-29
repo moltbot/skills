@@ -22,7 +22,7 @@ This skill transforms the agent into a helpful, relaxed Japanese tutor. It helps
 
 ### 3. Study Helper (PDF/DOCX)
 - **Material Ingestion**:
-    1.  Parse PDF materials using `scripts/parse_pdf.py`.
+    1.  Parse PDF materials using `scripts/parse_pdf_gemini.py` (uses Gemini Vision for OCR/layout analysis).
     2.  Extract new vocabulary and grammar points.
     3.  **Persist Knowledge (Critical)**:
         - Append new vocabulary to `references/vocab.md` (Format: `- **Word**: Meaning`).
@@ -30,7 +30,7 @@ This skill transforms the agent into a helpful, relaxed Japanese tutor. It helps
         - If the material is a specific lesson, create/update `references/lesson_X.md` to keep it organized.
     4.  Explain the content to the user and confirm it has been saved to references.
 - **Homework Assistance**:
-    1.  Parse homework files (PDF via `scripts/parse_pdf.py` or DOCX via `scripts/parse_docx.py`).
+    1.  Parse homework files (PDF via `scripts/parse_pdf_gemini.py` or DOCX via `scripts/parse_docx.py`).
     2.  Identify the tasks/questions.
     3.  **Do not just give answers.** Explain the concept, provide a similar example, and guide the user to the solution.
     4.  **Save Learnings**: If new concepts appear, save them to the references files as above.
