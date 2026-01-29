@@ -1,11 +1,17 @@
 {
   "owner": "lxgicstudios",
   "slug": "ai-landing",
-  "displayName": "Ai Landing",
+  "displayName": "Landing Page Generator",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769657906364,
-    "commit": "https://github.com/clawdbot/skills/commit/25e5d3a2fe29c57d50cfad496a196b7c33b737aa"
+    "version": "1.0.1",
+    "publishedAt": 1769666107620,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769657906364,
+      "commit": "https://github.com/clawdbot/skills/commit/25e5d3a2fe29c57d50cfad496a196b7c33b737aa"
+    }
+  ]
 }
