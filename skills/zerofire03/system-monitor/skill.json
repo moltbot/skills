@@ -1,0 +1,6 @@
+{
+  "name": "system_monitor",
+  "description": "Run this to get real-time CPU, RAM, and GPU (NVIDIA P2000) statistics from the server.",
+  "command": "/root/.clawdbot/skills/system-monitor/monitor.sh",
+  "arguments": []
+}

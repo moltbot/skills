@@ -1,0 +1,11 @@
+{
+  "owner": "zerofire03",
+  "slug": "system-monitor",
+  "displayName": "System Monitor",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769655125434,
+    "commit": null
+  },
+  "history": []
+}
