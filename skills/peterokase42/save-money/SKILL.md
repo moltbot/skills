@@ -1,6 +1,18 @@
 ---
 name: save-money
-description: "Stop wasting tokens. Auto-detect task complexity and route to the right model — Haiku for everyday tasks, Sonnet only when real thinking is needed. Save 50%+ on API costs. | 別再浪費 token 了。自動偵測任務難度，日常對話用便宜模型，深度思考才升級，輕鬆省下 50% 以上費用。"
+description: >-
+  Auto-detect task complexity, route simple tasks to Haiku, escalate complex
+  ones to Sonnet. Save 50%+ on API costs. | 自動偵測任務難度，簡單用 Haiku，複雜升級
+  Sonnet，省 50% 以上。— RULES: Before responding, classify the task. If it
+  matches an escalation trigger, call sessions_spawn with the full task and
+  model anthropic/claude-sonnet-4-20250514 IMMEDIATELY. Do NOT answer complex
+  tasks yourself. ESCALATE: analysis, comparisons, planning, strategy, code
+  >10 lines, reports, proposals, multi-step reasoning, tables, outlines,
+  charts, long writing >3 paragraphs, summarization, long translation. NEVER
+  on Haiku: comparison tables, code >10 lines, multi-step analysis, reports,
+  complex reasoning. STAY on Haiku: factual Q&A, definitions, greetings,
+  reminders, short lookups, casual chat, 1-2 sentence tasks. When in doubt,
+  escalate. Keep Haiku replies concise.
 author: "小安 Ann Agent — Taiwan 台灣"
 homepage: https://github.com/peterann/save-money
 metadata:
