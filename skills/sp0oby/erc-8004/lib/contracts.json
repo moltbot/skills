@@ -1,0 +1,44 @@
+{
+  "networks": {
+    "sepolia": {
+      "chainId": 11155111,
+      "rpc": "https://ethereum-sepolia-rpc.publicnode.com",
+      "explorer": "https://sepolia.etherscan.io",
+      "contracts": {
+        "identityRegistry": "0xf66e7CBdAE1Cb710fee7732E4e1f173624e137A7",
+        "reputationRegistry": "0x6E2a285294B5c74CB76d76AB77C1ef15c2A9E407",
+        "validationRegistry": "0xC26171A3c4e1d958cEA196A5e84B7418C58DCA2C"
+      }
+    }
+  },
+  "abi": {
+    "identityRegistry": [
+      "function register(string agentURI) external returns (uint256 agentId)",
+      "function register() external returns (uint256 agentId)",
+      "function setAgentURI(uint256 agentId, string newURI) external",
+      "function setMetadata(uint256 agentId, string metadataKey, bytes metadataValue) external",
+      "function getMetadata(uint256 agentId, string metadataKey) external view returns (bytes)",
+      "function getAgentWallet(uint256 agentId) external view returns (address)",
+      "function tokenURI(uint256 agentId) external view returns (string)",
+      "function ownerOf(uint256 agentId) external view returns (address)",
+      "function totalAgents() external view returns (uint256)",
+      "function agentExists(uint256 agentId) external view returns (bool)",
+      "event Registered(uint256 indexed agentId, string agentURI, address indexed owner)",
+      "event URIUpdated(uint256 indexed agentId, string newURI, address indexed updatedBy)"
+    ],
+    "reputationRegistry": [
+      "function giveFeedback(uint256 agentId, int128 value, uint8 valueDecimals, string tag1, string tag2, string endpoint, string feedbackURI, bytes32 feedbackHash) external",
+      "function revokeFeedback(uint256 agentId, uint64 feedbackIndex) external",
+      "function getSummary(uint256 agentId, address[] clientAddresses, string tag1, string tag2) external view returns (uint64 count, int128 summaryValue, uint8 summaryValueDecimals)",
+      "function readFeedback(uint256 agentId, address clientAddress, uint64 index) external view returns (int128 value, uint8 valueDecimals, string tag1, string tag2, bool isRevoked)",
+      "function getIdentityRegistry() external view returns (address)",
+      "event NewFeedback(uint256 indexed agentId, address indexed clientAddress, uint64 feedbackIndex, int128 value, uint8 valueDecimals, string indexed indexedTag1, string tag1, string tag2, string endpoint, string feedbackURI, bytes32 feedbackHash)"
+    ],
+    "validationRegistry": [
+      "function validationRequest(address validatorAddress, uint256 agentId, string requestURI, bytes32 requestHash) external",
+      "function validationResponse(bytes32 requestHash, uint8 response, string responseURI, bytes32 responseHash, string tag) external",
+      "function getValidationStatus(bytes32 requestHash) external view returns (address validator, uint256 agentId, uint8 response, bytes32 responseHash, string tag, uint256 lastUpdate)",
+      "function getSummary(uint256 agentId, address[] validators, string tag) external view returns (uint64 count, uint8 avgResponse)"
+    ]
+  }
+}
