@@ -1,0 +1,11 @@
+{
+  "owner": "arnarsson",
+  "slug": "curl-http",
+  "displayName": "Curl Http",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769692053458,
+    "commit": null
+  },
+  "history": []
+}
