@@ -2,7 +2,7 @@
 name: ga4
 description: GA4 Analytics CLI for users, events, funnels, and transcription metrics.
 homepage: https://analytics.google.com
-metadata: {"clawdbot":{"emoji":"📊","requires":{"bins":["bun"],"env":["GOOGLE_APPLICATION_CREDENTIALS"]},"primaryEnv":"GOOGLE_APPLICATION_CREDENTIALS"}}
+metadata: {"moltbot":{"emoji":"📊","requires":{"bins":["bun"],"env":["GOOGLE_APPLICATION_CREDENTIALS"]},"primaryEnv":"GOOGLE_APPLICATION_CREDENTIALS"}}
 ---
 
 # GA4 Analytics CLI
@@ -17,7 +17,7 @@ export GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account.json
 export GA4_PROPERTY_ID=510572418  # Optional, defaults to Speakmac
 ```
 
-Or configure in `~/.clawdbot/clawdbot.json`:
+Or configure in `~/.moltbot/moltbot.json`:
 ```json
 {
   "skills": {

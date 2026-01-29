@@ -2,7 +2,7 @@
 name: lemonsqueezy
 description: LemonSqueezy CLI for revenue, orders, subscriptions, and customer data.
 homepage: https://lemonsqueezy.com
-metadata: {"clawdbot":{"emoji":"🍋","requires":{"bins":["bun"],"env":["LEMONSQUEEZY_API_KEY"]},"primaryEnv":"LEMONSQUEEZY_API_KEY"}}
+metadata: {"moltbot":{"emoji":"🍋","requires":{"bins":["bun"],"env":["LEMONSQUEEZY_API_KEY"]},"primaryEnv":"LEMONSQUEEZY_API_KEY"}}
 ---
 
 # LemonSqueezy CLI
@@ -16,7 +16,7 @@ Set the API key:
 export LEMONSQUEEZY_API_KEY="your_api_key"
 ```
 
-Or configure in `~/.clawdbot/clawdbot.json`:
+Or configure in `~/.moltbot/moltbot.json`:
 ```json
 {
   "skills": {
