@@ -1,0 +1,11 @@
+{
+  "owner": "mavagio",
+  "slug": "mpc-accept-crypto-payments",
+  "displayName": "MoonPay Commerce (Helio) Accept Crypto Payments",
+  "latest": {
+    "version": "0.0.1",
+    "publishedAt": 1769635701274,
+    "commit": null
+  },
+  "history": []
+}
