@@ -77,3 +77,10 @@ Takes your description of database type, schedule, and destination. Generates a 
 ## License
 
 MIT. Free forever. Use it however you want.
+
+---
+
+**Built by LXGIC Studios**
+
+- GitHub: [github.com/lxgicstudios/ai-backup-script](https://github.com/lxgicstudios/ai-backup-script)
+- Twitter: [@lxgicstudios](https://x.com/lxgicstudios)
