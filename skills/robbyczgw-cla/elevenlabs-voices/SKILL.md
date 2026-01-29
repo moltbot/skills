@@ -1,7 +1,7 @@
 ---
 name: elevenlabs-voices
 description: High-quality voice synthesis with 18 personas, 32 languages, sound effects, batch processing, and voice design using ElevenLabs API.
-version: 2.0.1
+version: 2.0.0
 ---
 
 # ElevenLabs Voice Personas v2.0
@@ -296,15 +296,13 @@ Clawdbot has built-in TTS support that can use ElevenLabs. Configure in `~/.claw
 
 ```json
 {
-  "messages": {
-    "tts": {
-      "auto": "always",
-      "provider": "elevenlabs",
-      "elevenlabs": {
-        "apiKey": "your-api-key-here",
-        "voice": "rachel",
-        "model": "eleven_multilingual_v2"
-      }
+  "tts": {
+    "enabled": true,
+    "provider": "elevenlabs",
+    "elevenlabs": {
+      "apiKey": "your-api-key-here",
+      "voice": "rachel",
+      "model": "eleven_multilingual_v2"
     }
   }
 }

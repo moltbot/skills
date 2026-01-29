@@ -3,9 +3,15 @@
   "slug": "elevenlabs-voices",
   "displayName": "Elevenlabs Voices",
   "latest": {
-    "version": "2.0.1",
-    "publishedAt": 1769377050950,
-    "commit": "https://github.com/clawdbot/skills/commit/547d5f74d3fe0808dbfd73a36e258e042fb32130"
+    "version": "2.0.3",
+    "publishedAt": 1769661840220,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "2.0.1",
+      "publishedAt": 1769377050950,
+      "commit": "https://github.com/clawdbot/skills/commit/547d5f74d3fe0808dbfd73a36e258e042fb32130"
+    }
+  ]
 }

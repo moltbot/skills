@@ -425,15 +425,13 @@ python3 scripts/tts.py --text "Configure your nginx server" --voice rachel --no-
 Edit `~/.clawdbot/clawdbot.json`:
 ```json
 {
-  "messages": {
-    "tts": {
-      "auto": "always",
-      "provider": "elevenlabs",
-      "elevenlabs": {
-        "apiKey": "sk-xxxxx",
-        "voice": "rachel",
-        "model": "eleven_multilingual_v2"
-      }
+  "tts": {
+    "enabled": true,
+    "provider": "elevenlabs",
+    "elevenlabs": {
+      "apiKey": "sk-xxxxx",
+      "voice": "rachel",
+      "model": "eleven_multilingual_v2"
     }
   }
 }
