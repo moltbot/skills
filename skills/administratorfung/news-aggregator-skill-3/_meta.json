@@ -1,0 +1,11 @@
+{
+  "owner": "administratorfung",
+  "slug": "news-aggregator-skill-3",
+  "displayName": "News Aggregator Skill",
+  "latest": {
+    "version": "0.1.0",
+    "publishedAt": 1769680924048,
+    "commit": null
+  },
+  "history": []
+}
