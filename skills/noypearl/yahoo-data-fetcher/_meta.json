@@ -1,0 +1,11 @@
+{
+  "owner": "noypearl",
+  "slug": "yahoo-data-fetcher",
+  "displayName": "yahoo fetch data of stonks",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769683001475,
+    "commit": null
+  },
+  "history": []
+}
