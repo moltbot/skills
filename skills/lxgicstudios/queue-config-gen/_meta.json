@@ -3,9 +3,15 @@
   "slug": "queue-config-gen",
   "displayName": "Queue Config Generator",
   "latest": {
-    "version": "1.0.1",
-    "publishedAt": 1769632769755,
-    "commit": "https://github.com/clawdbot/skills/commit/f714e8197a6a46a63386ef9d9965f1c9d5196111"
+    "version": "1.0.2",
+    "publishedAt": 1769666553625,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.1",
+      "publishedAt": 1769632769755,
+      "commit": "https://github.com/clawdbot/skills/commit/f714e8197a6a46a63386ef9d9965f1c9d5196111"
+    }
+  ]
 }

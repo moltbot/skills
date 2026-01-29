@@ -74,3 +74,10 @@ Takes your job description and generates BullMQ queue configuration, worker code
 ## License
 
 MIT. Free forever. Use it however you want.
+
+---
+
+**Built by LXGIC Studios**
+
+- GitHub: [github.com/lxgicstudios/queue-config-gen](https://github.com/lxgicstudios/queue-config-gen)
+- Twitter: [@lxgicstudios](https://x.com/lxgicstudios)
