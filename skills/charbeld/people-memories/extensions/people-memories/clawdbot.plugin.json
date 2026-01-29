@@ -1,0 +1,7 @@
+{
+  "name": "people-memories",
+  "version": "0.1.0",
+  "clawdbot": {
+    "extensions": ["./index.js"]
+  }
+}
