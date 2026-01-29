@@ -1,11 +1,17 @@
 {
   "owner": "lxgicstudios",
   "slug": "ai-branch",
-  "displayName": "Ai Branch",
+  "displayName": "Git Branch Name Generator",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769658132782,
-    "commit": "https://github.com/clawdbot/skills/commit/f0e332ae3b1460ffdb7a9e71e5c299495c6cdc09"
+    "version": "1.0.2",
+    "publishedAt": 1769665012958,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769658132782,
+      "commit": "https://github.com/clawdbot/skills/commit/f0e332ae3b1460ffdb7a9e71e5c299495c6cdc09"
+    }
+  ]
 }

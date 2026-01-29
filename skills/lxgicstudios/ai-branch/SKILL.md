@@ -79,3 +79,10 @@ Takes your description and determines the appropriate branch type (feature, fix,
 ## License
 
 MIT. Free forever. Use it however you want.
+
+---
+
+**Built by LXGIC Studios**
+
+- GitHub: [github.com/lxgicstudios/ai-branch](https://github.com/lxgicstudios/ai-branch)
+- Twitter: [@lxgicstudios](https://x.com/lxgicstudios)
