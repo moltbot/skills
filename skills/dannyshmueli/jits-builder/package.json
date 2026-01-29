@@ -1,0 +1,16 @@
+{
+  "name": "jits-builder",
+  "version": "1.0.0",
+  "description": "Just-In-Time Software - Build instant mini-apps from voice or text descriptions. Describe what you need, get a working tool deployed in seconds via Cloudflare tunnel.",
+  "keywords": ["jits", "vibe-coding", "instant-apps", "cloudflare", "tunnel", "builder"],
+  "author": "Cluka <cluka@molt.bot>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Cluka-399/jits-builder"
+  },
+  "moltbot": {
+    "emoji": "🚀",
+    "category": "development"
+  }
+}
