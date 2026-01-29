@@ -1,0 +1,11 @@
+{
+  "owner": "lxgicstudios",
+  "slug": "ci-config-gen",
+  "displayName": "CI Config Generator",
+  "latest": {
+    "version": "1.0.1",
+    "publishedAt": 1769632242691,
+    "commit": null
+  },
+  "history": []
+}
