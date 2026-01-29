@@ -1,0 +1,27 @@
+{
+  "name": "slack-context-memory",
+  "version": "1.0.0",
+  "description": "Conversation summarization and context compaction for Slack. Reduces context window usage by 70-99%.",
+  "type": "module",
+  "keywords": [
+    "clawdbot",
+    "moltbot",
+    "slack",
+    "context",
+    "memory",
+    "summarization",
+    "compaction"
+  ],
+  "author": "Monday (built with Opus)",
+  "license": "MIT",
+  "dependencies": {
+    "pg": "^8.13.1"
+  },
+  "optionalDependencies": {
+    "openai": "^4.77.0",
+    "@anthropic-ai/sdk": "^0.71.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

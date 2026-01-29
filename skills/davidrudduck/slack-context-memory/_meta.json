@@ -1,0 +1,11 @@
+{
+  "owner": "davidrudduck",
+  "slug": "slack-context-memory",
+  "displayName": "Slack Context Memory",
+  "latest": {
+    "version": "2.0.0",
+    "publishedAt": 1769644872315,
+    "commit": null
+  },
+  "history": []
+}
