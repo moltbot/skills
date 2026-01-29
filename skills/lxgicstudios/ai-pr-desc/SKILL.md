@@ -68,3 +68,10 @@ Node.js 18+. OPENAI_API_KEY required. Must be in git repo.
 ## License
 
 MIT. Free forever.
+
+---
+
+**Built by LXGIC Studios**
+
+- GitHub: [github.com/lxgicstudios/ai-pr-desc](https://github.com/lxgicstudios/ai-pr-desc)
+- Twitter: [@lxgicstudios](https://x.com/lxgicstudios)

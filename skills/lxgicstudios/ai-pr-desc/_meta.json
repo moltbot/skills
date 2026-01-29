@@ -1,11 +1,17 @@
 {
   "owner": "lxgicstudios",
   "slug": "ai-pr-desc",
-  "displayName": "Ai Pr Desc",
+  "displayName": "PR Description Writer",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769657961366,
-    "commit": "https://github.com/clawdbot/skills/commit/23a293db69c574dac95a64cee132e47120fa6e86"
+    "version": "1.0.1",
+    "publishedAt": 1769666276328,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769657961366,
+      "commit": "https://github.com/clawdbot/skills/commit/23a293db69c574dac95a64cee132e47120fa6e86"
+    }
+  ]
 }
