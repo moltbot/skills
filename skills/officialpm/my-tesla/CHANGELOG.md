@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.1.29 — 2026-01-29
+- UX: `report` now includes charge port door + cable status. `report --json` now includes scheduled charging + charge port fields.
+
+## 0.1.28 — 2026-01-29
+- Reliability/privacy: add unit test to ensure `report` output never echoes location fields from raw vehicle_data.
+
+## 0.1.27 — 2026-01-29
+- UX/privacy: `report --json` now outputs a sanitized report object by default (no location). Use `--raw-json` to get full vehicle_data.
+
+## 0.1.26 — 2026-01-29
+- UX: `charge status --json` now prints *only* JSON (subset of `charge_state`) for piping/parsing.
+
+## 0.1.25 — 2026-01-29
+- New capability (safe): add `charge amps <N>` to set charging current (requires `--yes`).
+
+## 0.1.24 — 2026-01-29
+- Reliability: add unit tests for scheduled-charging time parsing/formatting helpers.
+
+## 0.1.23 — 2026-01-28
+- UX: `status --json` now prints *only* JSON (no extra human text), making it safe to pipe/parse.
+
 ## 0.1.22 — 2026-01-28
 - UX: include TPMS tire pressures in `report` output when available.
 - Docs/privacy: remove personal default-car example from README/SKILL.

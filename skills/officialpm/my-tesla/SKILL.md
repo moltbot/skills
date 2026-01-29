@@ -54,6 +54,12 @@ python3 {baseDir}/scripts/tesla.py status
 python3 {baseDir}/scripts/tesla.py status --no-wake
 python3 {baseDir}/scripts/tesla.py --car "My Model 3" status
 
+# JSON output (prints ONLY JSON; good for piping/parsing)
+python3 {baseDir}/scripts/tesla.py status --json          # raw vehicle_data
+python3 {baseDir}/scripts/tesla.py report --json          # sanitized report object (no location; includes scheduled charging + charge port state)
+python3 {baseDir}/scripts/tesla.py report --json --raw-json  # raw vehicle_data (may include location)
+python3 {baseDir}/scripts/tesla.py charge status --json
+
 # Lock / unlock
 python3 {baseDir}/scripts/tesla.py lock
 python3 {baseDir}/scripts/tesla.py unlock
@@ -67,9 +73,10 @@ python3 {baseDir}/scripts/tesla.py climate temp 22 --celsius
 # Charging
 python3 {baseDir}/scripts/tesla.py charge status
 python3 {baseDir}/scripts/tesla.py charge status --no-wake
-python3 {baseDir}/scripts/tesla.py charge start
-python3 {baseDir}/scripts/tesla.py charge stop
-python3 {baseDir}/scripts/tesla.py charge limit 80   # 50–100
+python3 {baseDir}/scripts/tesla.py charge start --yes
+python3 {baseDir}/scripts/tesla.py charge stop  --yes
+python3 {baseDir}/scripts/tesla.py charge limit 80 --yes   # 50–100
+python3 {baseDir}/scripts/tesla.py charge amps 16 --yes    # 1–48 (conservative guardrail)
 
 # Scheduled charging (set/off are safety gated)
 python3 {baseDir}/scripts/tesla.py scheduled-charging status
@@ -112,7 +119,7 @@ python3 {baseDir}/scripts/tesla.py flash  --yes
 ## Safety defaults
 
 Some actions require an explicit confirmation flag:
-- `unlock`, `charge start|stop`, `trunk`, `windows`, `sentry on|off`, `honk`, `flash`, `charge-port open|close`, and `scheduled-charging set|off` require `--yes`
+- `unlock`, `charge start|stop|limit|amps`, `trunk`, `windows`, `sentry on|off`, `honk`, `flash`, `charge-port open|close`, and `scheduled-charging set|off` require `--yes`
 - `location` is *approximate* by default; add `--yes` for precise coordinates
 
 ## Privacy

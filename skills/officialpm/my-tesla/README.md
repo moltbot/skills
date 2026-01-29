@@ -39,7 +39,7 @@ python3 scripts/tesla.py summary
 python3 scripts/tesla.py summary --no-wake   # don't wake a sleeping car
 
 # One-screen report (chat friendly, more detail)
-# Includes battery/charging/climate + (when available) TPMS tire pressures.
+# Includes battery/charging/climate + charge port/cable + (when available) TPMS tire pressures.
 python3 scripts/tesla.py report
 python3 scripts/tesla.py report --no-wake
 
@@ -47,10 +47,17 @@ python3 scripts/tesla.py report --no-wake
 python3 scripts/tesla.py status
 python3 scripts/tesla.py status --no-wake
 
+# JSON output (prints ONLY JSON; good for piping/parsing)
+python3 scripts/tesla.py status --json            # raw vehicle_data
+python3 scripts/tesla.py report --json            # sanitized report object (no location)
+python3 scripts/tesla.py report --json --raw-json # raw vehicle_data (may include location)
+python3 scripts/tesla.py charge status --json
+
 python3 scripts/tesla.py --car "My Model 3" lock
 python3 scripts/tesla.py climate temp 72      # default: °F
 python3 scripts/tesla.py climate temp 22 --celsius
-python3 scripts/tesla.py charge limit 80      # 50–100
+python3 scripts/tesla.py charge limit 80 --yes   # 50–100
+python3 scripts/tesla.py charge amps 16 --yes     # 1–48 (conservative guardrail)
 
 # Scheduled charging (set/off are safety gated)
 python3 scripts/tesla.py scheduled-charging status
@@ -94,6 +101,6 @@ python3 -m unittest discover -s tests -v
 ## Privacy / safety
 
 - Never commit tokens, VINs, or location outputs.
-- Some commands (unlock/charge start|stop/trunk/windows/sentry on|off/honk/flash/charge-port open|close/scheduled-charging set|off) require `--yes`.
+- Some commands (unlock/charge start|stop|limit|amps/trunk/windows/sentry on|off/honk/flash/charge-port open|close/scheduled-charging set|off) require `--yes`.
 - Read-only commands support `--no-wake` to avoid waking the car (will fail if the vehicle is asleep/offline).
 - `location` shows *approximate* coords by default; add `--yes` for precise coordinates.

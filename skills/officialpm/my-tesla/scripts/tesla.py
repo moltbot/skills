@@ -348,6 +348,14 @@ def _report(vehicle, data):
         suffix = f" ({', '.join(extra)})" if extra else ""
         lines.append(f"Charging: {charging_state}{suffix}")
 
+    # Charge port / cable state
+    cpd = charge.get('charge_port_door_open')
+    if cpd is not None:
+        lines.append(f"Charge port door: {_fmt_bool(cpd, 'Open', 'Closed')}")
+    cable = charge.get('conn_charge_cable')
+    if cable is not None:
+        lines.append(f"Charge cable: {cable}")
+
     sched_time = charge.get('scheduled_charging_start_time')
     sched_mode = charge.get('scheduled_charging_mode')
     sched_pending = charge.get('scheduled_charging_pending')
@@ -392,6 +400,78 @@ def _report(vehicle, data):
     return "\n".join(lines)
 
 
+def _report_json(vehicle, data: dict) -> dict:
+    """Sanitized JSON equivalent of `_report`.
+
+    Intentionally excludes location/drive_state.
+    """
+    charge = data.get('charge_state', {})
+    climate = data.get('climate_state', {})
+    vs = data.get('vehicle_state', {})
+
+    out = {
+        "vehicle": {
+            "display_name": vehicle.get('display_name'),
+            "state": vehicle.get('state'),
+        },
+        "battery": {
+            "level_percent": charge.get('battery_level'),
+            "range_mi": charge.get('battery_range'),
+            "usable_battery_level_percent": charge.get('usable_battery_level'),
+        },
+        "charging": {
+            "charging_state": charge.get('charging_state'),
+            "charge_limit_percent": charge.get('charge_limit_soc'),
+            "minutes_to_full_charge": charge.get('minutes_to_full_charge'),
+            "time_to_full_charge_hours": charge.get('time_to_full_charge'),
+            "charge_rate_mph": charge.get('charge_rate'),
+            "charger_power_kw": charge.get('charger_power'),
+            "charger_voltage_v": charge.get('charger_voltage'),
+            "charger_actual_current_a": charge.get('charger_actual_current'),
+            "charge_current_request_a": charge.get('charge_current_request'),
+            "charge_current_request_max_a": charge.get('charge_current_request_max'),
+            "charging_amps": charge.get('charging_amps'),
+            "charge_port_door_open": charge.get('charge_port_door_open'),
+            "conn_charge_cable": charge.get('conn_charge_cable'),
+        },
+        "scheduled_charging": {
+            "mode": charge.get('scheduled_charging_mode'),
+            "pending": charge.get('scheduled_charging_pending'),
+            "start_time_hhmm": _fmt_minutes_hhmm(charge.get('scheduled_charging_start_time')),
+        },
+        "climate": {
+            "inside_temp_c": climate.get('inside_temp'),
+            "outside_temp_c": climate.get('outside_temp'),
+            "is_climate_on": climate.get('is_climate_on'),
+        },
+        "security": {
+            "locked": vs.get('locked'),
+            "sentry_mode": vs.get('sentry_mode'),
+        },
+        "tpms": {
+            "pressure_fl": vs.get('tpms_pressure_fl'),
+            "pressure_fr": vs.get('tpms_pressure_fr'),
+            "pressure_rl": vs.get('tpms_pressure_rl'),
+            "pressure_rr": vs.get('tpms_pressure_rr'),
+        },
+        "odometer_mi": vs.get('odometer'),
+    }
+
+    # Drop empty nested dicts for cleaner output.
+    for k in list(out.keys()):
+        v = out[k]
+        if isinstance(v, dict):
+            v2 = {kk: vv for kk, vv in v.items() if vv is not None}
+            if v2:
+                out[k] = v2
+            else:
+                del out[k]
+        elif v is None:
+            del out[k]
+
+    return out
+
+
 def _ensure_online_or_exit(vehicle, allow_wake: bool):
     if wake_vehicle(vehicle, allow_wake=allow_wake):
         return
@@ -414,7 +494,13 @@ def cmd_report(args):
     data = vehicle.get_vehicle_data()
 
     if args.json:
-        print(json.dumps(data, indent=2))
+        # Default JSON output is a structured, sanitized report object.
+        # Use --raw-json if you explicitly want the full vehicle_data payload
+        # (which may include location/drive_state).
+        if getattr(args, "raw_json", False):
+            print(json.dumps(data, indent=2))
+        else:
+            print(json.dumps(_report_json(vehicle, data), indent=2))
         return
 
     print(_report(vehicle, data))
@@ -427,6 +513,12 @@ def cmd_status(args):
 
     _ensure_online_or_exit(vehicle, allow_wake=not getattr(args, 'no_wake', False))
     data = vehicle.get_vehicle_data()
+
+    # When --json is requested, print *only* JSON (no extra human text), so it can
+    # be reliably piped/parsed.
+    if args.json:
+        print(json.dumps(data, indent=2))
+        return
 
     charge = data.get('charge_state', {})
     climate = data.get('climate_state', {})
@@ -473,9 +565,6 @@ def cmd_status(args):
     odo = vehicle_state.get('odometer')
     if odo is not None:
         print(f"   Odometer: {odo:.0f} mi")
-
-    if args.json:
-        print(json.dumps(data, indent=2))
 
 
 def cmd_lock(args):
@@ -541,6 +630,25 @@ def cmd_charge(args):
     if args.action == 'status':
         data = vehicle.get_vehicle_data()
         charge = data['charge_state']
+
+        if args.json:
+            # Print *only* JSON (no extra human text) so it can be piped/parsed.
+            # Keep it focused to avoid leaking unrelated vehicle details.
+            keys = [
+                'battery_level',
+                'battery_range',
+                'charging_state',
+                'charge_limit_soc',
+                'time_to_full_charge',
+                'charge_rate',
+                'scheduled_charging_start_time',
+                'scheduled_charging_mode',
+                'scheduled_charging_pending',
+            ]
+            out = {k: charge.get(k) for k in keys}
+            print(json.dumps(out, indent=2))
+            return
+
         print(f"🔋 {vehicle['display_name']} Battery: {charge['battery_level']}%")
         print(f"   Range: {charge['battery_range']:.0f} mi")
         print(f"   State: {charge['charging_state']}")
@@ -548,15 +656,22 @@ def cmd_charge(args):
         if charge['charging_state'] == 'Charging':
             print(f"   Time left: {charge['time_to_full_charge']:.1f} hrs")
             print(f"   Rate: {charge['charge_rate']} mph")
-    elif args.action == 'start':
+        return
+
+    if args.action == 'start':
         require_yes(args, 'charge start')
         vehicle.command('START_CHARGE')
         print(f"⚡ {vehicle['display_name']} charging started")
-    elif args.action == 'stop':
+        return
+
+    if args.action == 'stop':
         require_yes(args, 'charge stop')
         vehicle.command('STOP_CHARGE')
         print(f"🛑 {vehicle['display_name']} charging stopped")
-    elif args.action == 'limit':
+        return
+
+    if args.action == 'limit':
+        require_yes(args, 'charge limit')
         if args.value is None:
             raise ValueError("Missing charge limit percent (e.g., charge limit 80)")
         pct = int(args.value)
@@ -564,6 +679,21 @@ def cmd_charge(args):
             raise ValueError("Invalid charge limit percent. Expected 50–100")
         vehicle.command('CHANGE_CHARGE_LIMIT', percent=pct)
         print(f"🎚️ {vehicle['display_name']} charge limit set to {pct}%")
+        return
+
+    if args.action == 'amps':
+        require_yes(args, 'charge amps')
+        if args.value is None:
+            raise ValueError("Missing amps value (e.g., charge amps 16)")
+        amps = int(args.value)
+        if amps < 1 or amps > 48:
+            # Conservative guardrail. Many cars support 5-48A depending on setup.
+            raise ValueError("Invalid amps. Expected 1–48")
+        vehicle.command('CHARGING_AMPS', charging_amps=amps)
+        print(f"🔌 {vehicle['display_name']} charging amps set to {amps}A")
+        return
+
+    raise ValueError(f"Unknown action: {args.action}")
 
 
 def _parse_hhmm(value: str):
@@ -861,11 +991,19 @@ def main():
     parser.add_argument("--car", "-c", help="Vehicle name (default: first vehicle)")
     parser.add_argument("--json", "-j", action="store_true", help="Output JSON")
     parser.add_argument(
+        "--raw-json",
+        action="store_true",
+        help=(
+            "When used with --json on supported commands, output raw vehicle_data (may include location). "
+            "Default JSON output is sanitized/summary for safety."
+        ),
+    )
+    parser.add_argument(
         "--yes",
         action="store_true",
         help=(
             "Safety confirmation for sensitive/disruptive actions "
-            "(unlock/charge start|stop/trunk/windows/honk/flash/charge-port open|close/"
+            "(unlock/charge start|stop|limit|amps/trunk/windows/honk/flash/charge-port open|close/"
             "scheduled-charging set|off/sentry on|off/location precise)"
         ),
     )
@@ -909,8 +1047,12 @@ def main():
     
     # Charge
     charge_parser = subparsers.add_parser("charge", help="Charging control")
-    charge_parser.add_argument("action", choices=["status", "start", "stop", "limit"])
-    charge_parser.add_argument("value", nargs="?", help="Charge limit percent for 'limit' (e.g., 80)")
+    charge_parser.add_argument("action", choices=["status", "start", "stop", "limit", "amps"])
+    charge_parser.add_argument(
+        "value",
+        nargs="?",
+        help="For 'limit': percent (e.g., 80). For 'amps': amps (e.g., 16).",
+    )
     charge_parser.add_argument("--no-wake", action="store_true", help="(status only) Do not wake the car")
 
     # Scheduled charging
