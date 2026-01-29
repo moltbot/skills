@@ -1,0 +1,11 @@
+{
+  "owner": "paradoxfuzzle",
+  "slug": "ddg-search",
+  "displayName": "DuckDuckGo Search",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769670946614,
+    "commit": null
+  },
+  "history": []
+}
