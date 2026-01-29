@@ -79,3 +79,10 @@ Takes your description and generates both the Worker code and wrangler.toml conf
 ## License
 
 MIT. Free forever. Use it however you want.
+
+---
+
+**Built by LXGIC Studios**
+
+- GitHub: [github.com/lxgicstudios/ai-cloudflare](https://github.com/lxgicstudios/ai-cloudflare)
+- Twitter: [@lxgicstudios](https://x.com/lxgicstudios)

@@ -1,11 +1,17 @@
 {
   "owner": "lxgicstudios",
   "slug": "ai-cloudflare",
-  "displayName": "Ai Cloudflare",
+  "displayName": "Cloudflare Workers Generator",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769658207442,
-    "commit": "https://github.com/clawdbot/skills/commit/796ef96cd87ac129f5d61a7e9e50ace821b413e1"
+    "version": "1.0.1",
+    "publishedAt": 1769665324770,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769658207442,
+      "commit": "https://github.com/clawdbot/skills/commit/796ef96cd87ac129f5d61a7e9e50ace821b413e1"
+    }
+  ]
 }
