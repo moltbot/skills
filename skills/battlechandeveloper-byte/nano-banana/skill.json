@@ -1,0 +1,9 @@
+{
+  "name": "Nano Banana",
+  "slug": "nano-banana",
+  "version": "1.0.1",
+  "description": "Minimal nano skill",
+  "entry": "index.js",
+  "tags": ["latest"]
+}
+
