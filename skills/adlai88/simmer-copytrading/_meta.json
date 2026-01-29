@@ -3,9 +3,15 @@
   "slug": "simmer-copytrading",
   "displayName": "Simmer Copytrading",
   "latest": {
-    "version": "1.1.0",
-    "publishedAt": 1769648683521,
-    "commit": "https://github.com/clawdbot/skills/commit/f711deb59cdfcf19a91dd1cc000f983a610e3294"
+    "version": "1.2.1",
+    "publishedAt": 1769669735547,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.1.0",
+      "publishedAt": 1769648683521,
+      "commit": "https://github.com/clawdbot/skills/commit/f711deb59cdfcf19a91dd1cc000f983a610e3294"
+    }
+  ]
 }
