@@ -1,0 +1,71 @@
+// Clawdbot Configuration Example for Linear Webhook Skill
+// Add this to your ~/.clawd/config.json5 or workspace config
+
+{
+  // ... other config ...
+
+  // Enable webhooks
+  hooks: {
+    enabled: true,
+    token: "your-secret-token-here", // Generate with: openssl rand -base64 32
+    path: "/hooks",
+    
+    // Point to transform directory
+    transformsDir: "/home/sven/clawd-mason/skills/linear-webhook",
+    
+    // Linear webhook mapping
+    mappings: [
+      {
+        name: "linear",
+        match: {
+          path: "/linear",
+          method: "POST"
+        },
+        action: "agent",
+        transform: {
+          module: "./linear-transform.js",
+          export: "transformLinearWebhook"
+        },
+        // Don't auto-deliver to chat - responses will be posted to Linear
+        deliver: false,
+        
+        // Optional: Also send notifications to Telegram
+        // deliver: true,
+        // channel: "telegram",
+        // to: "1878354815",
+      }
+    ]
+  },
+
+  // Optional: Agent-specific configurations
+  agents: {
+    enabled: true,
+    defaults: {
+      model: "anthropic/claude-sonnet-4-5",
+      thinking: "low",
+      timeoutSeconds: 300,
+    },
+    // Ensure mason and eureka agents are allowed
+    sessions: {
+      mason: {
+        label: "Mason - Code Agent",
+        model: "anthropic/claude-sonnet-4-5",
+      },
+      eureka: {
+        label: "Eureka - Planning Agent",
+        model: "anthropic/claude-sonnet-4-5",
+      }
+    }
+  },
+
+  // ... other config ...
+}
+
+// Environment Variables Needed:
+// - CLAWDBOT_HOOK_TOKEN (or set in config above)
+// - CLAWDBOT_LINEAR_API_KEY or LINEAR_API_KEY (for posting comments back)
+//
+// Generate Linear API key:
+// 1. Go to Linear Settings → API → Personal API keys
+// 2. Create new token with 'write' scope
+// 3. Set as environment variable or in config

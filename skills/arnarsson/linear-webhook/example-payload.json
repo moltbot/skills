@@ -1,0 +1,60 @@
+{
+  "type": "Comment",
+  "action": "create",
+  "createdAt": "2026-01-27T00:00:00.000Z",
+  "data": {
+    "id": "comment-abc123",
+    "createdAt": "2026-01-27T00:00:00.000Z",
+    "body": "@mason implement user authentication with OAuth2. Use Google and GitHub as providers.",
+    "url": "https://linear.app/team/issue/ABC-123#comment-abc123",
+    "user": {
+      "id": "user-123",
+      "name": "Sven Arnarsson",
+      "email": "sven@example.com"
+    },
+    "issue": {
+      "id": "issue-abc123",
+      "identifier": "ABC-123",
+      "title": "Add user authentication",
+      "description": "We need OAuth2 authentication for the app to allow users to sign in with their Google or GitHub accounts. This should include:\n\n- OAuth2 flow implementation\n- User session management\n- Token refresh logic\n- Secure storage of credentials",
+      "url": "https://linear.app/team/issue/ABC-123",
+      "state": {
+        "id": "state-123",
+        "name": "In Progress",
+        "type": "started"
+      },
+      "priority": 1,
+      "assignee": {
+        "id": "user-123",
+        "name": "Sven Arnarsson",
+        "email": "sven@example.com"
+      },
+      "team": {
+        "id": "team-123",
+        "name": "Engineering",
+        "key": "ENG"
+      },
+      "labels": {
+        "nodes": [
+          {
+            "id": "label-1",
+            "name": "backend",
+            "color": "#4a90e2"
+          },
+          {
+            "id": "label-2",
+            "name": "security",
+            "color": "#e24a4a"
+          },
+          {
+            "id": "label-3",
+            "name": "priority",
+            "color": "#f5a623"
+          }
+        ]
+      }
+    }
+  },
+  "organizationId": "org-123",
+  "webhookId": "webhook-123"
+}
