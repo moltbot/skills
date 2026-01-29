@@ -1,0 +1,11 @@
+{
+  "owner": "lxgicstudios",
+  "slug": "nginx-config-gen",
+  "displayName": "Nginx Config Generator",
+  "latest": {
+    "version": "1.0.1",
+    "publishedAt": 1769632690229,
+    "commit": null
+  },
+  "history": []
+}
