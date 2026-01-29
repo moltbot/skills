@@ -102,40 +102,40 @@ python3 ~/.clawdbot/skills/moodcast/scripts/moodcast.py --text "Hello world!"
 
 ### Basic Usage
 ```bash
-python moodcast.py --text "This is amazing news!"
+python3 moodcast.py --text "This is amazing news!"
 ```
 
 ### With Mood Preset
 ```bash
-python moodcast.py --text "The door creaked open slowly..." --mood scary
+python3 moodcast.py --text "The door creaked open slowly..." --mood scary
 ```
 
 ### With Ambient Sound
 ```bash
-python moodcast.py --text "Welcome to my café" --ambient "coffee shop busy morning"
+python3 moodcast.py --text "Welcome to my café" --ambient "coffee shop busy morning"
 ```
 
 ### Save to File
 ```bash
-python moodcast.py --text "Your story here" --output narration.mp3
+python3 moodcast.py --text "Your story here" --output narration.mp3
 ```
 
 ### Show Enhanced Text
 ```bash
-python moodcast.py --text "Wow this is great!" --show-enhanced
+python3 moodcast.py --text "Wow this is great!" --show-enhanced
 # Output: [excited] Wow this is great!
 ```
 
 ### Custom Configuration
 ```bash
 # Custom voice, model, and output format
-python moodcast.py --text "Hello" --voice VOICE_ID --model eleven_v3 --output-format mp3_44100_128
+python3 moodcast.py --text "Hello" --voice VOICE_ID --model eleven_v3 --output-format mp3_44100_128
 
 # Override mood's default voice
-python moodcast.py --text "Dramatic scene" --mood dramatic --voice CUSTOM_VOICE_ID
+python3 moodcast.py --text "Dramatic scene" --mood dramatic --voice CUSTOM_VOICE_ID
 
 # Skip emotion enhancement
-python moodcast.py --text "Plain text" --no-enhance
+python3 moodcast.py --text "Plain text" --no-enhance
 ```
 
 ---

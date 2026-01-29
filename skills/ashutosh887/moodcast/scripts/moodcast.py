@@ -260,12 +260,12 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python moodcast.py --text "This is amazing news!"
-  python moodcast.py --text "A dark night..." --mood scary
-  python moodcast.py --text "Hello world" --ambient "coffee shop"
-  python moodcast.py --text "Story..." --output story.mp3
-  python moodcast.py --text "Test" --voice VOICE_ID --model eleven_v3 --output-format mp3_44100_128
-  python moodcast.py --list-voices
+  python3 moodcast.py --text "This is amazing news!"
+  python3 moodcast.py --text "A dark night..." --mood scary
+  python3 moodcast.py --text "Hello world" --ambient "coffee shop"
+  python3 moodcast.py --text "Story..." --output story.mp3
+  python3 moodcast.py --text "Test" --voice VOICE_ID --model eleven_v3 --output-format mp3_44100_128
+  python3 moodcast.py --list-voices
         """
     )
     

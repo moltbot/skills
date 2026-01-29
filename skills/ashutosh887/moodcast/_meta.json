@@ -3,9 +3,15 @@
   "slug": "moodcast",
   "displayName": "MoodCast",
   "latest": {
-    "version": "1.0.1",
-    "publishedAt": 1769670131882,
-    "commit": "https://github.com/clawdbot/skills/commit/cb17504933f2bf1f5f44b524d5736c6a342325dd"
+    "version": "1.0.2",
+    "publishedAt": 1769673751850,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.1",
+      "publishedAt": 1769670131882,
+      "commit": "https://github.com/clawdbot/skills/commit/cb17504933f2bf1f5f44b524d5736c6a342325dd"
+    }
+  ]
 }
