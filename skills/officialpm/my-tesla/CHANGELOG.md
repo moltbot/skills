@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.1.38 — 2026-01-29
+- UX: `list --json` now outputs a privacy-safe, machine-readable vehicle list (no VINs).
+
+## 0.1.37 — 2026-01-29
+- Packaging: keep `VERSION.txt` in sync with `VERSION` so installed skills report the correct version.
+
+## 0.1.36 — 2026-01-29
+- Reliability: harden test runner to clean stray Python bytecode and fail if `__pycache__` / `*.pyc` are produced.
+
+## 0.1.35 — 2026-01-29
+- Docs/privacy: document `MY_TESLA_DEFAULT_CAR` and clarify that `status --json` outputs raw `vehicle_data` (may include location); recommend `report --json` for sanitized output.
+
+## 0.1.34 — 2026-01-29
+- UX: make `--car` selection errors clearer when a partial name matches multiple vehicles (shows matches + suggests using an index).
+
+## 0.1.33 — 2026-01-29
+- UX: add `climate status` (read-only) with `--no-wake` and `--json` support for a focused climate-only view.
+
+## 0.1.32 — 2026-01-29
+- Reliability: add `./scripts/run_tests.sh` and recommend `PYTHONDONTWRITEBYTECODE=1` to prevent repo-local `__pycache__`.
+
+## 0.1.31 — 2026-01-29
+- UX: fix `status --summary` to actually include the one-line summary *and* the detailed status output.
+
+## 0.1.30 — 2026-01-29
+- New capability (safe): add `openings` command to show which doors/trunks/windows are open (supports `--no-wake` + `--json`).
+
 ## 0.1.29 — 2026-01-29
 - UX: `report` now includes charge port door + cable status. `report --json` now includes scheduled charging + charge port fields.
 

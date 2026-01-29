@@ -25,12 +25,15 @@ TESLA_EMAIL="you@email.com" python3 {baseDir}/scripts/tesla.py auth
 This opens a Tesla login URL. Log in, then paste the callback URL back into the CLI.
 
 - Token cache: `~/.tesla_cache.json` (local only)
+- Optional: set `MY_TESLA_DEFAULT_CAR` to a vehicle display name to pick a default car via env var
+- Or persist a local default with: `python3 {baseDir}/scripts/tesla.py default-car "Name"` (writes `~/.my_tesla.json`)
 
 ## Commands
 
 ```bash
 # List vehicles
 python3 {baseDir}/scripts/tesla.py list
+python3 {baseDir}/scripts/tesla.py list --json   # machine-readable, privacy-safe
 
 # Pick a car (optional)
 # --car accepts: exact name, partial name (substring match), or a 1-based index from `list`
@@ -52,11 +55,14 @@ python3 {baseDir}/scripts/tesla.py report --no-wake
 # Detailed status
 python3 {baseDir}/scripts/tesla.py status
 python3 {baseDir}/scripts/tesla.py status --no-wake
+python3 {baseDir}/scripts/tesla.py status --summary   # include one-line summary + detailed output
 python3 {baseDir}/scripts/tesla.py --car "My Model 3" status
 
 # JSON output (prints ONLY JSON; good for piping/parsing)
-python3 {baseDir}/scripts/tesla.py status --json          # raw vehicle_data
-python3 {baseDir}/scripts/tesla.py report --json          # sanitized report object (no location; includes scheduled charging + charge port state)
+# NOTE: `status --json` outputs *raw* `vehicle_data`, which may include location/drive_state.
+# Prefer `report --json` (sanitized) unless you explicitly need the raw payload.
+python3 {baseDir}/scripts/tesla.py status --json             # raw vehicle_data (may include location)
+python3 {baseDir}/scripts/tesla.py report --json             # sanitized report object (no location; includes scheduled charging + charge port state)
 python3 {baseDir}/scripts/tesla.py report --json --raw-json  # raw vehicle_data (may include location)
 python3 {baseDir}/scripts/tesla.py charge status --json
 
@@ -64,7 +70,9 @@ python3 {baseDir}/scripts/tesla.py charge status --json
 python3 {baseDir}/scripts/tesla.py lock
 python3 {baseDir}/scripts/tesla.py unlock
 
-# Climate
+# Climate (status is read-only)
+python3 {baseDir}/scripts/tesla.py climate status
+python3 {baseDir}/scripts/tesla.py climate status --no-wake
 python3 {baseDir}/scripts/tesla.py climate on
 python3 {baseDir}/scripts/tesla.py climate off
 python3 {baseDir}/scripts/tesla.py climate temp 72      # default: °F
@@ -92,6 +100,11 @@ python3 {baseDir}/scripts/tesla.py location --yes
 # Tire pressures (TPMS)
 python3 {baseDir}/scripts/tesla.py tires
 python3 {baseDir}/scripts/tesla.py tires --no-wake
+
+# Openings (doors/trunks/windows)
+python3 {baseDir}/scripts/tesla.py openings
+python3 {baseDir}/scripts/tesla.py openings --no-wake
+python3 {baseDir}/scripts/tesla.py openings --json
 
 # Trunk / frunk (safety gated)
 python3 {baseDir}/scripts/tesla.py trunk trunk --yes

@@ -20,11 +20,16 @@ TESLA_EMAIL="you@email.com" python3 scripts/tesla.py auth
 
 This uses a browser-based login flow and stores tokens locally in `~/.tesla_cache.json`.
 
+Optional defaults:
+- `MY_TESLA_DEFAULT_CAR` — default vehicle display name (overrides `default-car` setting)
+- `python3 scripts/tesla.py default-car "Name"` stores a local default in `~/.my_tesla.json`
+
 ## Usage
 
 ```bash
 # List vehicles (shows which one is default)
 python3 scripts/tesla.py list
+python3 scripts/tesla.py list --json   # machine-readable, privacy-safe
 
 # Pick a car (optional)
 # --car accepts: exact name, partial name (substring match), or a 1-based index from `list`
@@ -46,14 +51,20 @@ python3 scripts/tesla.py report --no-wake
 # Detailed status
 python3 scripts/tesla.py status
 python3 scripts/tesla.py status --no-wake
+python3 scripts/tesla.py status --summary   # include one-line summary + detailed output
 
 # JSON output (prints ONLY JSON; good for piping/parsing)
-python3 scripts/tesla.py status --json            # raw vehicle_data
+# NOTE: `status --json` outputs *raw* `vehicle_data`, which may include location/drive_state.
+# Prefer `report --json` (sanitized) unless you explicitly need the raw payload.
+python3 scripts/tesla.py status --json            # raw vehicle_data (may include location)
 python3 scripts/tesla.py report --json            # sanitized report object (no location)
 python3 scripts/tesla.py report --json --raw-json # raw vehicle_data (may include location)
 python3 scripts/tesla.py charge status --json
 
 python3 scripts/tesla.py --car "My Model 3" lock
+# Climate (status is read-only)
+python3 scripts/tesla.py climate status
+python3 scripts/tesla.py climate status --no-wake
 python3 scripts/tesla.py climate temp 72      # default: °F
 python3 scripts/tesla.py climate temp 22 --celsius
 python3 scripts/tesla.py charge limit 80 --yes   # 50–100
@@ -90,12 +101,21 @@ python3 scripts/tesla.py location --yes
 # Tire pressures (TPMS)
 python3 scripts/tesla.py tires
 python3 scripts/tesla.py tires --no-wake
+
+# Openings (doors/trunks/windows)
+python3 scripts/tesla.py openings
+python3 scripts/tesla.py openings --no-wake
+python3 scripts/tesla.py openings --json
 ```
 
 ## Tests
 
 ```bash
-python3 -m unittest discover -s tests -v
+# (Recommended) avoid writing __pycache__/ bytecode files into the repo
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+
+# Or use the helper (cleans stray bytecode first and fails if any is produced):
+./scripts/run_tests.sh
 ```
 
 ## Privacy / safety

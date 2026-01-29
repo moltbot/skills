@@ -40,6 +40,32 @@ class VehicleSelectTests(unittest.TestCase):
         ]
         self.assertIsNone(tesla._select_vehicle(vehicles, "alp"))
 
+    def test_get_vehicle_ambiguous_error_is_helpful(self):
+        class FakeTesla:
+            def vehicle_list(self_inner):
+                return [
+                    {"display_name": "Alpha"},
+                    {"display_name": "Alphanumeric"},
+                    {"display_name": "Beta"},
+                ]
+
+        # Force ambiguity and assert we mention that it's ambiguous + show index hint.
+        stderr = sys.stderr
+        try:
+            from io import StringIO
+
+            buf = StringIO()
+            sys.stderr = buf
+            with self.assertRaises(SystemExit) as ctx:
+                tesla.get_vehicle(FakeTesla(), name="alp")
+            self.assertEqual(ctx.exception.code, 1)
+            out = buf.getvalue()
+            self.assertIn("ambiguous", out.lower())
+            self.assertIn("--car <N>", out)
+            self.assertIn("Matches:", out)
+        finally:
+            sys.stderr = stderr
+
 
 if __name__ == "__main__":
     unittest.main()

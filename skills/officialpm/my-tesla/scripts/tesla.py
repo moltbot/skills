@@ -138,15 +138,39 @@ def get_vehicle(tesla, name: str = None):
             return selected
 
         # Give a more helpful error (and show numeric indices too).
+        s = str(target_name).strip()
+        ambiguous = False
+        matches = []
+        if s and not s.isdigit():
+            s_l = s.lower()
+            matches = [
+                (i + 1, v) for i, v in enumerate(vehicles)
+                if s_l in v.get('display_name', '').lower()
+            ]
+            ambiguous = len(matches) > 1
+
         options = "\n".join(
             f"   {i+1}. {v.get('display_name')}" for i, v in enumerate(vehicles)
         )
-        print(
-            f"❌ Vehicle '{target_name}' not found (or ambiguous).\n"
-            "   Tip: you can pass --car with a partial name (substring match) or a 1-based index.\n"
-            f"Available vehicles:\n{options}",
-            file=sys.stderr,
-        )
+
+        if ambiguous:
+            match_lines = "\n".join(
+                f"   {idx}. {v.get('display_name')}" for idx, v in matches
+            )
+            print(
+                f"❌ Vehicle '{target_name}' is ambiguous (matched multiple vehicles).\n"
+                "   Tip: use a more specific name, or choose by index: --car <N>\n"
+                f"Matches:\n{match_lines}\n\n"
+                f"All vehicles:\n{options}",
+                file=sys.stderr,
+            )
+        else:
+            print(
+                f"❌ Vehicle '{target_name}' not found.\n"
+                "   Tip: you can pass --car with a partial name (substring match) or a 1-based index.\n"
+                f"Available vehicles:\n{options}",
+                file=sys.stderr,
+            )
         sys.exit(1)
 
     return vehicles[0]
@@ -201,11 +225,25 @@ def cmd_list(args):
 
     default_name = resolve_default_car_name()
 
+    if getattr(args, "json", False):
+        # Keep JSON output small + privacy-safe (no VINs).
+        out = []
+        for i, v in enumerate(vehicles):
+            name = v.get('display_name')
+            out.append({
+                'index': i + 1,
+                'display_name': name,
+                'state': v.get('state'),
+                'is_default': bool(default_name and isinstance(name, str) and name.lower() == default_name.lower()),
+            })
+        print(json.dumps({'vehicles': out, 'default_car': default_name}, indent=2))
+        return
+
     print(f"Found {len(vehicles)} vehicle(s):\n")
     for i, v in enumerate(vehicles):
         star = " (default)" if default_name and v['display_name'].lower() == default_name.lower() else ""
         print(f"{i+1}. {v['display_name']}{star}")
-        # Avoid printing VIN in normal output (privacy). Use --json if you really need full data.
+        # Avoid printing VIN in normal output (privacy).
         print(f"   State: {v['state']}")
         print()
 
@@ -525,8 +563,10 @@ def cmd_status(args):
     vehicle_state = data.get('vehicle_state', {})
 
     if getattr(args, 'summary', False):
+        # Print a one-line summary *in addition* to the detailed view.
+        # (If you only want the one-liner, use the `summary` command.)
         print(_short_status(vehicle, data))
-        return
+        print()
 
     # Human-friendly detailed view
     print(f"🚗 {vehicle['display_name']}")
@@ -590,8 +630,49 @@ def cmd_climate(args):
     """Control climate."""
     tesla = get_tesla(require_email(args))
     vehicle = get_vehicle(tesla, args.car)
+
+    # Read-only action can skip waking the car.
+    allow_wake = True
+    if args.action == 'status':
+        allow_wake = not getattr(args, 'no_wake', False)
+
+    _ensure_online_or_exit(vehicle, allow_wake=allow_wake)
+
+    if args.action == 'status':
+        data = vehicle.get_vehicle_data()
+        climate = data.get('climate_state', {})
+
+        out = {
+            'is_climate_on': climate.get('is_climate_on'),
+            'inside_temp_c': climate.get('inside_temp'),
+            'outside_temp_c': climate.get('outside_temp'),
+            'driver_temp_setting_c': climate.get('driver_temp_setting'),
+            'passenger_temp_setting_c': climate.get('passenger_temp_setting'),
+        }
+
+        if args.json:
+            print(json.dumps(out, indent=2))
+            return
+
+        inside = _fmt_temp_pair(climate.get('inside_temp'))
+        outside = _fmt_temp_pair(climate.get('outside_temp'))
+        print(f"🚗 {vehicle['display_name']}")
+        if out.get('is_climate_on') is not None:
+            print(f"Climate: {_fmt_bool(out.get('is_climate_on'), 'On', 'Off')}")
+        if inside:
+            print(f"Inside: {inside}")
+        if outside:
+            print(f"Outside: {outside}")
+
+        driver = _fmt_temp_pair(climate.get('driver_temp_setting'))
+        passenger = _fmt_temp_pair(climate.get('passenger_temp_setting'))
+        if driver or passenger:
+            print(f"Setpoint: driver {driver or '(unknown)'} | passenger {passenger or '(unknown)'}")
+        return
+
+    # Mutating actions
     wake_vehicle(vehicle)
-    
+
     if args.action == 'on':
         vehicle.command('CLIMATE_ON')
         print(f"❄️ {vehicle['display_name']} climate turned on")
@@ -840,6 +921,77 @@ def cmd_tires(args):
     print(f"  RR: {rr or '(unknown)'}")
 
 
+
+def _fmt_open(v):
+    if v is None:
+        return None
+    # Tesla often uses 0/1 ints for open states.
+    if isinstance(v, bool):
+        return 'Open' if v else 'Closed'
+    try:
+        i = int(v)
+        return 'Open' if i else 'Closed'
+    except Exception:
+        return None
+
+
+def cmd_openings(args):
+    """Show which doors/trunks/windows are open (read-only)."""
+    tesla = get_tesla(require_email(args))
+    vehicle = get_vehicle(tesla, args.car)
+
+    allow_wake = not getattr(args, 'no_wake', False)
+    _ensure_online_or_exit(vehicle, allow_wake=allow_wake)
+
+    data = vehicle.get_vehicle_data()
+    vs = data.get('vehicle_state', {})
+
+    out = {
+        'doors': {
+            'driver_front': _fmt_open(vs.get('df')),
+            'driver_rear': _fmt_open(vs.get('dr')),
+            'passenger_front': _fmt_open(vs.get('pf')),
+            'passenger_rear': _fmt_open(vs.get('pr')),
+        },
+        'trunks': {
+            'frunk': _fmt_open(vs.get('ft')),
+            'trunk': _fmt_open(vs.get('rt')),
+        },
+        'windows': {
+            'front_driver': _fmt_open(vs.get('fd_window')),
+            'front_passenger': _fmt_open(vs.get('fp_window')),
+            'rear_driver': _fmt_open(vs.get('rd_window')),
+            'rear_passenger': _fmt_open(vs.get('rp_window')),
+        },
+    }
+
+    # Drop unknown keys for cleaner output.
+    for k in list(out.keys()):
+        out[k] = {kk: vv for kk, vv in out[k].items() if vv is not None}
+        if not out[k]:
+            del out[k]
+
+    if args.json:
+        print(json.dumps(out, indent=2))
+        return
+
+    print(f"🚗 {vehicle['display_name']}")
+    if not out:
+        print("Openings: (unavailable)")
+        return
+
+    def _section(title, d):
+        if not d:
+            return
+        print(f"{title}:")
+        for kk, vv in d.items():
+            print(f"  - {kk.replace('_',' ')}: {vv}")
+
+    _section('Doors', out.get('doors'))
+    _section('Trunks', out.get('trunks'))
+    _section('Windows', out.get('windows'))
+
+
 def cmd_trunk(args):
     """Toggle frunk/trunk (requires --yes)."""
     require_yes(args, 'trunk')
@@ -1039,8 +1191,9 @@ def main():
     
     # Climate
     climate_parser = subparsers.add_parser("climate", help="Climate control")
-    climate_parser.add_argument("action", choices=["on", "off", "temp"])
-    climate_parser.add_argument("value", nargs="?", help="Temperature value")
+    climate_parser.add_argument("action", choices=["status", "on", "off", "temp"])
+    climate_parser.add_argument("value", nargs="?", help="Temperature value (temp only)")
+    climate_parser.add_argument("--no-wake", action="store_true", help="(status only) Do not wake the car")
     temp_units = climate_parser.add_mutually_exclusive_group()
     temp_units.add_argument("--fahrenheit", "-f", action="store_true", help="Temperature value is in °F (default)")
     temp_units.add_argument("--celsius", action="store_true", help="Temperature value is in °C")
@@ -1068,6 +1221,10 @@ def main():
     # Tire pressures (TPMS)
     tires_parser = subparsers.add_parser("tires", help="Show tire pressures (TPMS)")
     tires_parser.add_argument("--no-wake", action="store_true", help="Do not wake the car (fails if asleep)")
+
+    # Openings (doors/trunks/windows)
+    openings_parser = subparsers.add_parser("openings", help="Show which doors/trunks/windows are open")
+    openings_parser.add_argument("--no-wake", action="store_true", help="Do not wake the car (fails if asleep)")
 
     # Trunk / frunk
     trunk_parser = subparsers.add_parser("trunk", help="Toggle trunk/frunk (requires --yes)")
@@ -1108,6 +1265,7 @@ def main():
         "scheduled-charging": cmd_scheduled_charging,
         "location": cmd_location,
         "tires": cmd_tires,
+        "openings": cmd_openings,
         "trunk": cmd_trunk,
         "windows": cmd_windows,
         "sentry": cmd_sentry,
