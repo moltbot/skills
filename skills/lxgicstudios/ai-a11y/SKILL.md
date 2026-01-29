@@ -64,3 +64,10 @@ Node.js 18+. Needs OPENAI_API_KEY environment variable.
 ## License
 
 MIT. Free forever.
+
+---
+
+**Built by LXGIC Studios**
+
+- GitHub: [github.com/lxgicstudios/ai-a11y](https://github.com/lxgicstudios/ai-a11y)
+- Twitter: [@lxgicstudios](https://x.com/lxgicstudios)

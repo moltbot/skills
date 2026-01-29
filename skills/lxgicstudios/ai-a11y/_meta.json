@@ -1,11 +1,17 @@
 {
   "owner": "lxgicstudios",
   "slug": "ai-a11y",
-  "displayName": "Ai A11y",
+  "displayName": "Accessibility Scanner",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769657767466,
-    "commit": "https://github.com/clawdbot/skills/commit/b48f0450b4d4f68fe988d99193b4a43129eea605"
+    "version": "1.0.2",
+    "publishedAt": 1769664326736,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769657767466,
+      "commit": "https://github.com/clawdbot/skills/commit/b48f0450b4d4f68fe988d99193b4a43129eea605"
+    }
+  ]
 }
