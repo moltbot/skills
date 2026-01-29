@@ -1,13 +1,18 @@
 {
   "owner": "kys42",
   "slug": "stock-info-explorer",
-  "displayName": "Stock Information Explorer",
+  "displayName": "Stock Info Explorer",
   "latest": {
-    "version": "1.2.8",
-    "publishedAt": 1769672361195,
-    "commit": "https://github.com/clawdbot/skills/commit/07fe48fe440910be4a66fad4c53ddcc9e40ceee0"
+    "version": "1.2.10",
+    "publishedAt": 1769694294993,
+    "commit": null
   },
   "history": [
+    {
+      "version": "1.2.8",
+      "publishedAt": 1769672361195,
+      "commit": "https://github.com/clawdbot/skills/commit/07fe48fe440910be4a66fad4c53ddcc9e40ceee0"
+    },
     {
       "version": "1.2.2",
       "publishedAt": 1769671960284,
