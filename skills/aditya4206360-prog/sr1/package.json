@@ -1,0 +1,51 @@
+{
+  "name": "clawdbot-skill-swiggy",
+  "version": "1.0.2",
+  "description": "Swiggy integration for Clawdbot - order food, groceries, and book restaurants in India",
+  "main": "bin/swiggy",
+  "bin": {
+    "swiggy": "./bin/swiggy"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "swiggy",
+    "food-delivery",
+    "groceries",
+    "instamart",
+    "dineout",
+    "india",
+    "mcp",
+    "clawdbot"
+  ],
+  "author": "Neil Agarwal",
+  "license": "MIT",
+  "dependencies": {},
+  "peerDependencies": {
+    "clawdbot": "*"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "clawdbot": {
+    "skill": {
+      "name": "swiggy",
+      "category": "lifestyle",
+      "mcpServers": {
+        "swiggy-food": {
+          "type": "http",
+          "url": "https://mcp.swiggy.com/food"
+        },
+        "swiggy-instamart": {
+          "type": "http",
+          "url": "https://mcp.swiggy.com/im"
+        },
+        "swiggy-dineout": {
+          "type": "http",
+          "url": "https://mcp.swiggy.com/dineout"
+        }
+      }
+    }
+  }
+}
