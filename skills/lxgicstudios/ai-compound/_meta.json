@@ -1,11 +1,17 @@
 {
   "owner": "lxgicstudios",
   "slug": "ai-compound",
-  "displayName": "Ai Compound",
+  "displayName": "Compound Engineering",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769658274325,
-    "commit": "https://github.com/clawdbot/skills/commit/5efc986a48a678406bd77f006bf74e9c5f9ab079"
+    "version": "1.0.1",
+    "publishedAt": 1769663248108,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769658274325,
+      "commit": "https://github.com/clawdbot/skills/commit/5efc986a48a678406bd77f006bf74e9c5f9ab079"
+    }
+  ]
 }

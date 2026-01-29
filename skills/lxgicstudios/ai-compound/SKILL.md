@@ -247,3 +247,10 @@ Knowledge compounds. Every session makes future sessions better.
 ---
 
 Built by **LXGIC Studios** - [@lxgicstudios](https://x.com/lxgicstudios)
+
+---
+
+**Built by LXGIC Studios**
+
+- GitHub: [github.com/lxgicstudios/ai-compound](https://github.com/lxgicstudios/ai-compound)
+- Twitter: [@lxgicstudios](https://x.com/lxgicstudios)
