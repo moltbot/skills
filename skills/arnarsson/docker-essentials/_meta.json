@@ -1,0 +1,11 @@
+{
+  "owner": "arnarsson",
+  "slug": "docker-essentials",
+  "displayName": "Docker Essentials",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769692040015,
+    "commit": null
+  },
+  "history": []
+}
