@@ -1,0 +1,14 @@
+{
+  "name": "ai-e2e-gen",
+  "version": "1.0.0",
+  "description": "Generate Playwright e2e tests from a URL or component file",
+  "main": "dist/index.js",
+  "bin": { "ai-e2e-gen": "dist/cli.js" },
+  "scripts": { "build": "tsc" },
+  "keywords": ["playwright", "e2e", "testing", "ai", "cli", "test-generation"],
+  "license": "MIT",
+  "dependencies": { "commander": "^12.1.0", "openai": "^4.73.0", "ora": "^5.4.1" },
+  "devDependencies": { "typescript": "^5.6.0", "@types/node": "^22.0.0" },
+  "author": "LXGIC Studios",
+  "repository": { "type": "git", "url": "https://github.com/lxgicstudios/ai-e2e-gen" }
+}
