@@ -1,62 +1,73 @@
 # Polymarket API Reference
 
-Gamma API endpoints for market data retrieval.
+Two main APIs: **Gamma** (markets) and **Data** (user profiles).
 
-## Base URL
+## Base URLs
 
 ```
-https://gamma-api.polymarket.com
+Gamma API: https://gamma-api.polymarket.com
+Data API:  https://data-api.polymarket.com
+CLOB API:  https://clob.polymarket.com
 ```
 
-## Endpoints
+## Data API (User Profiles)
+
+### User Positions
+```bash
+GET https://data-api.polymarket.com/positions?user={wallet_address}
+```
+
+Response fields per position:
+- `market`: Market name/question
+- `outcome`: YES/NO
+- `size`: Number of shares
+- `avgPrice`: Entry price
+- `currentPrice`: Current market price
+- `pnl`: Unrealized profit/loss
+
+### User Trades
+```bash
+GET https://data-api.polymarket.com/trades?user={wallet_address}
+```
+
+### Profit/Loss History
+```bash
+GET https://data-api.polymarket.com/profit-loss?user={wallet_address}
+```
+
+### User Leaderboard Rank
+```bash
+GET https://data-api.polymarket.com/leaderboard?user={wallet_address}
+```
+
+## Gamma API (Markets)
 
 ### List Markets
 ```bash
-GET /markets
-GET /markets?closed=false&active=true
+GET /markets?active=true&closed=false&limit=50
 ```
-
-Response fields:
-- `id`: Market identifier
-- `question`: Market question text
-- `outcomes`: ["Yes", "No"] or multi-outcome
-- `outcomePrices`: Current prices array
-- `volume`: Total traded volume
-- `liquidity`: Current liquidity
-- `endDate`: Resolution date
 
 ### Market Details
 ```bash
 GET /markets/{market_id}
 ```
 
-Additional fields:
-- `description`: Full market description
-- `resolutionSource`: Oracle/resolution info
-- `tags`: Category tags
-- `conditionId`: On-chain condition ID
+### Market by Slug
+```bash
+GET /markets?slug={market-slug}
+```
 
 ### Order Book
 ```bash
 GET /book/{token_id}
 ```
 
-Returns:
-- `bids`: Buy orders [price, size]
-- `asks`: Sell orders [price, size]
-- `spread`: Current bid-ask spread
-
 ### Price History
 ```bash
-GET /prices/{token_id}?interval=1h&fidelity=1
+GET /prices/{token_id}?interval=1h
 ```
 
 Intervals: `1m`, `5m`, `15m`, `1h`, `4h`, `1d`
-
-### User Positions
-```bash
-GET /positions?user={wallet_address}
-```
 
 ### Leaderboard
 ```bash
@@ -65,37 +76,41 @@ GET /leaderboard?window=all
 
 Windows: `daily`, `weekly`, `monthly`, `all`
 
-## Token IDs
+## CLOB API (Trading)
 
-Each outcome has unique token ID:
-- YES token: `{condition_id}_0`
-- NO token: `{condition_id}_1`
+### Price
+```bash
+GET /price?tokenId={token_id}
+```
 
-Find via market details endpoint.
+### Midpoint
+```bash
+GET /midpoint?tokenId={token_id}
+```
+
+### Order Book
+```bash
+GET /book?tokenId={token_id}
+```
+
+## Examples
+
+```bash
+# User positions
+curl "https://data-api.polymarket.com/positions?user=0x7845bc5e15bc9c41be5ac0725e68a16ec02b51b5"
+
+# User trades
+curl "https://data-api.polymarket.com/trades?user=0x7845bc5e15bc9c41be5ac0725e68a16ec02b51b5"
+
+# Active markets
+curl "https://gamma-api.polymarket.com/markets?active=true&closed=false"
+
+# Market by slug
+curl "https://gamma-api.polymarket.com/markets?slug=will-bitcoin-outperform-gold-in-2026"
+```
 
 ## Rate Limits
 
 - Public endpoints: ~100 req/min
 - No auth required for read-only
-- WebSocket available for real-time
-
-## WebSocket
-
-```
-wss://ws-subscriptions-clob.polymarket.com/ws/market
-```
-
-Subscribe to order book updates, trades, price changes.
-
-## Example: Fetch Market Data
-
-```bash
-# Get active markets
-curl "https://gamma-api.polymarket.com/markets?active=true&closed=false"
-
-# Get specific market
-curl "https://gamma-api.polymarket.com/markets/0x..."
-
-# Get order book depth
-curl "https://gamma-api.polymarket.com/book/{token_id}"
-```
+- WebSocket: `wss://ws-subscriptions-clob.polymarket.com/ws/market`

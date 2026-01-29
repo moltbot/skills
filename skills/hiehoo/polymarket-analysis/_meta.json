@@ -3,9 +3,15 @@
   "slug": "polymarket-analysis",
   "displayName": "Polymarket Analysis",
   "latest": {
-    "version": "2.0.0",
-    "publishedAt": 1769595358296,
-    "commit": "https://github.com/clawdbot/skills/commit/59b76df3f203f2b153cd755d5ab1557d8bf8bb90"
+    "version": "2.1.0",
+    "publishedAt": 1769662255777,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "2.0.0",
+      "publishedAt": 1769595358296,
+      "commit": "https://github.com/clawdbot/skills/commit/59b76df3f203f2b153cd755d5ab1557d8bf8bb90"
+    }
+  ]
 }
