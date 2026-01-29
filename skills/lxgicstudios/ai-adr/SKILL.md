@@ -75,3 +75,10 @@ The tool takes your decision statement, researches common alternatives and trade
 ## License
 
 MIT. Free forever. Use it however you want.
+
+---
+
+**Built by LXGIC Studios**
+
+- GitHub: [github.com/lxgicstudios/ai-adr](https://github.com/lxgicstudios/ai-adr)
+- Twitter: [@lxgicstudios](https://x.com/lxgicstudios)

@@ -1,11 +1,17 @@
 {
   "owner": "lxgicstudios",
   "slug": "ai-adr",
-  "displayName": "Ai Adr",
+  "displayName": "Architecture Decision Records",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769658083906,
-    "commit": "https://github.com/clawdbot/skills/commit/b22e992814a82a9db08713d2b4b2f189077aea4f"
+    "version": "1.0.2",
+    "publishedAt": 1769664400493,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769658083906,
+      "commit": "https://github.com/clawdbot/skills/commit/b22e992814a82a9db08713d2b4b2f189077aea4f"
+    }
+  ]
 }
