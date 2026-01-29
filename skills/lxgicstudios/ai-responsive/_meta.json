@@ -1,11 +1,17 @@
 {
   "owner": "lxgicstudios",
   "slug": "ai-responsive",
-  "displayName": "Ai Responsive",
+  "displayName": "Responsive Design Checker",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769657974351,
-    "commit": "https://github.com/clawdbot/skills/commit/bd0a7e16d4dbc0341e002bc71c28d1bcdbf907fa"
+    "version": "1.0.1",
+    "publishedAt": 1769666318671,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769657974351,
+      "commit": "https://github.com/clawdbot/skills/commit/bd0a7e16d4dbc0341e002bc71c28d1bcdbf907fa"
+    }
+  ]
 }
