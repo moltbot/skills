@@ -74,3 +74,10 @@ Reads your file, sends it to GPT-4o-mini for analysis, and shows refactoring sug
 ## License
 
 MIT. Free forever. Use it however you want.
+
+---
+
+**Built by LXGIC Studios**
+
+- GitHub: [github.com/lxgicstudios/refactor-suggest](https://github.com/lxgicstudios/refactor-suggest)
+- Twitter: [@lxgicstudios](https://x.com/lxgicstudios)

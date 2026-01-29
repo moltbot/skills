@@ -1,11 +1,17 @@
 {
   "owner": "lxgicstudios",
   "slug": "refactor-suggest",
-  "displayName": "Code Refactor Suggester",
+  "displayName": "Refactoring Assistant",
   "latest": {
-    "version": "1.0.1",
-    "publishedAt": 1769632793293,
-    "commit": "https://github.com/clawdbot/skills/commit/aa349b569cc634eac5b48189e0b3fe48cfc52688"
+    "version": "1.0.2",
+    "publishedAt": 1769666726831,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.1",
+      "publishedAt": 1769632793293,
+      "commit": "https://github.com/clawdbot/skills/commit/aa349b569cc634eac5b48189e0b3fe48cfc52688"
+    }
+  ]
 }
