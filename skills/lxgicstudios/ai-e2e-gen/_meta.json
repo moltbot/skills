@@ -1,11 +1,17 @@
 {
   "owner": "lxgicstudios",
   "slug": "ai-e2e-gen",
-  "displayName": "Ai E2e Gen",
+  "displayName": "E2E Test Generator",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769657877641,
-    "commit": "https://github.com/clawdbot/skills/commit/66c683110ed9141754f6ca78fb755ebe2897ed57"
+    "version": "1.0.1",
+    "publishedAt": 1769666026426,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769657877641,
+      "commit": "https://github.com/clawdbot/skills/commit/66c683110ed9141754f6ca78fb755ebe2897ed57"
+    }
+  ]
 }

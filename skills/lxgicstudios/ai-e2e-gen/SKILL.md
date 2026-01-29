@@ -51,3 +51,10 @@ Node.js 18+. OPENAI_API_KEY required.
 ## License
 
 MIT. Free forever.
+
+---
+
+**Built by LXGIC Studios**
+
+- GitHub: [github.com/lxgicstudios/ai-e2e-gen](https://github.com/lxgicstudios/ai-e2e-gen)
+- Twitter: [@lxgicstudios](https://x.com/lxgicstudios)
