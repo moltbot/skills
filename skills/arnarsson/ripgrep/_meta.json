@@ -1,0 +1,11 @@
+{
+  "owner": "arnarsson",
+  "slug": "ripgrep",
+  "displayName": "Ripgrep",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769692018910,
+    "commit": null
+  },
+  "history": []
+}
