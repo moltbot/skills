@@ -47,3 +47,10 @@ Node.js 18+. OPENAI_API_KEY required.
 ## License
 
 MIT. Free forever.
+
+---
+
+**Built by LXGIC Studios**
+
+- GitHub: [github.com/lxgicstudios/ai-css-to-tailwind](https://github.com/lxgicstudios/ai-css-to-tailwind)
+- Twitter: [@lxgicstudios](https://x.com/lxgicstudios)

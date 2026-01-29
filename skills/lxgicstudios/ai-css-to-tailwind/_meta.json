@@ -1,11 +1,17 @@
 {
   "owner": "lxgicstudios",
   "slug": "ai-css-to-tailwind",
-  "displayName": "Ai Css To Tailwind",
+  "displayName": "CSS to Tailwind Converter",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769657839331,
-    "commit": "https://github.com/clawdbot/skills/commit/c92df8403507d2cf37046f2796d5312f43aaf462"
+    "version": "1.0.1",
+    "publishedAt": 1769665880595,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769657839331,
+      "commit": "https://github.com/clawdbot/skills/commit/c92df8403507d2cf37046f2796d5312f43aaf462"
+    }
+  ]
 }
