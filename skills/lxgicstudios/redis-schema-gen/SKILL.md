@@ -74,3 +74,10 @@ Takes your use case description and designs appropriate Redis key patterns and d
 ## License
 
 MIT. Free forever. Use it however you want.
+
+---
+
+**Built by LXGIC Studios**
+
+- GitHub: [github.com/lxgicstudios/redis-schema-gen](https://github.com/lxgicstudios/redis-schema-gen)
+- Twitter: [@lxgicstudios](https://x.com/lxgicstudios)
