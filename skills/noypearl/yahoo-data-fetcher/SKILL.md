@@ -1,10 +1,17 @@
+---
+name: stock-quote
+description: Get current stock quotes (price, change, changePercent) from Yahoo Finance.
+user-invocable: true
+metadata: {"moltbot":{"emoji":"📈","requires":{"bins":["node"]},"homepage":"https://query1.finance.yahoo.com/v7/finance/quote"}}
+---
+
 # Stock Quote (Yahoo Finance)
 
 Get current stock price data from Yahoo Finance.
 
 ## Command
 
-### `stock quote`
+### `/stock quote`
 
 Fetch the latest quote for one or more stock symbols.
 
@@ -21,15 +28,29 @@ For each symbol:
 - currency
 - marketState
 
-## Example
+## How to run (implementation)
 
-- “Stock quote for AAPL”
-- “Get stock quote for TSLA and NVDA”
+This skill is implemented by a local Node script at:
+
+- `{baseDir}/stock-quote.js`
+
+Run it with Node and pass symbols as args:
+
+- `node "{baseDir}/stock-quote.js" AAPL`
+- `node "{baseDir}/stock-quote.js" AAPL MSFT TSLA`
+- `node "{baseDir}/stock-quote.js" "AAPL,MSFT,TSLA"`
+
+Or pass JSON as the first argument:
+
+- `node "{baseDir}/stock-quote.js" '{"symbols":["AAPL","MSFT"]}'`
+
+The script prints JSON to stdout.
 
 ## Data source
 
 Yahoo Finance quote API:
 https://query1.finance.yahoo.com/v7/finance/quote
+
 ## Notes
 
 - No authentication required
@@ -38,4 +59,4 @@ https://query1.finance.yahoo.com/v7/finance/quote
 
 ## Version
 
-v1.0
+v1.2
