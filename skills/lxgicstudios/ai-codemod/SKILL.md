@@ -77,3 +77,10 @@ Takes your plain English description of the transformation and generates a jscod
 ## License
 
 MIT. Free forever. Use it however you want.
+
+---
+
+**Built by LXGIC Studios**
+
+- GitHub: [github.com/lxgicstudios/ai-codemod](https://github.com/lxgicstudios/ai-codemod)
+- Twitter: [@lxgicstudios](https://x.com/lxgicstudios)

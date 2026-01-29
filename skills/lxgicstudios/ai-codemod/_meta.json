@@ -1,11 +1,17 @@
 {
   "owner": "lxgicstudios",
   "slug": "ai-codemod",
-  "displayName": "Ai Codemod",
+  "displayName": "Codemod Generator",
   "latest": {
-    "version": "1.0.0",
-    "publishedAt": 1769658241777,
-    "commit": "https://github.com/clawdbot/skills/commit/d3e2883395f5e7e556d80fd9ec034eac3c8a8a32"
+    "version": "1.0.1",
+    "publishedAt": 1769665446861,
+    "commit": null
   },
-  "history": []
+  "history": [
+    {
+      "version": "1.0.0",
+      "publishedAt": 1769658241777,
+      "commit": "https://github.com/clawdbot/skills/commit/d3e2883395f5e7e556d80fd9ec034eac3c8a8a32"
+    }
+  ]
 }
