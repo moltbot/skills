@@ -1,0 +1,11 @@
+{
+  "owner": "mrgoodb",
+  "slug": "freshdesk",
+  "displayName": "Freshdesk",
+  "latest": {
+    "version": "1.0.0",
+    "publishedAt": 1769780250524,
+    "commit": null
+  },
+  "history": []
+}
