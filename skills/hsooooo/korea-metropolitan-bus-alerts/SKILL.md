@@ -7,6 +7,21 @@ description: Create and manage scheduled bus arrival alerts using Korea TAGO (�
 
 Scheduled bus arrival alerts powered by **국토교통부 TAGO OpenAPI**.
 
+## Install in ~60 seconds (recommended)
+1) Set up your TAGO key + wire it into the Gateway (so cron runs can access it):
+```bash
+python3 korea-metropolitan-bus-alerts/scripts/setup.py
+```
+
+2) Register an alert (examples):
+- `평일 07:00, 서창센트라스아파트후문, 535 알림 등록해줘`
+- `평일 17:27, 향동초등학교(19716), 730 알림 등록해줘`
+
+3) Verify:
+- `버스 알림 목록 보여줘`
+
+---
+
 This skill is designed for users running **Clawdbot Gateway + Clawdbot cron**. Users register rules like:
 - "평일 오전 7시, 인천 한빛초등학교, 535"
 - "평일 오후 5시30분, 고양 향동초등학교, 730, 503"
@@ -73,6 +88,11 @@ Tell the agent something like:
 - "평일 07:00, 인천 한빛초등학교, 535 알림 등록해줘"
 
 If the stop name is ambiguous (e.g., opposite side of road), the agent MUST ask a follow-up question to pick the correct direction/stop candidate before creating the rule.
+
+**Disambiguation UX (required):** when presenting multiple stop candidates, include a clickable Google Maps link for each candidate using its `(lat,long)` so the user can visually confirm.
+Example:
+- 1) 정류장명 … https://maps.google.com/?q=<lat>,<long>
+- 2) 정류장명 … https://maps.google.com/?q=<lat>,<long>
 
 ### C) List rules
 - "버스 알림 목록 보여줘"

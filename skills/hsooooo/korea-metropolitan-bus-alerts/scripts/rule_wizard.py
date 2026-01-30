@@ -135,9 +135,13 @@ def _interactive_resolve_stop() -> Tuple[str, str, str]:
     labels = []
     for s in cands:
         loc = ""
+        gmap = ""
         if s.gps_lat is not None and s.gps_long is not None:
             loc = f" ({s.gps_lat:.5f},{s.gps_long:.5f})"
-        labels.append(f"{s.name} | cityCode={s.city_code} nodeId={s.node_id}{loc}")
+            gmap = f"https://maps.google.com/?q={s.gps_lat},{s.gps_long}"
+        meta = f"{s.name} | cityCode={s.city_code} nodeId={s.node_id}{loc}"
+        # Put the map link on a new line so users can click and visually confirm.
+        labels.append(meta + (f"\n    {gmap}" if gmap else ""))
 
     print("\nCandidates:")
     for idx, line in enumerate(labels, start=1):
