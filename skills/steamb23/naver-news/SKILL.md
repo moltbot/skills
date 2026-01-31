@@ -1,6 +1,8 @@
 ---
 name: naver-news
 description: Search Korean news articles using Naver Search API. Use when searching for Korean news, getting latest news updates, finding news about specific topics, or preparing daily news summaries. Supports relevance and date-based sorting.
+homepage: https://developers.naver.com/docs/serviceapi/search/news/news.md
+metadata: {"openclaw":{"emoji":"📰","requires":{"bins":["python3"],"env":["NAVER_CLIENT_ID","NAVER_CLIENT_SECRET"]}}}
 ---
 
 # Naver News Search
@@ -36,8 +38,8 @@ NAVER_CLIENT_SECRET=your_client_secret
 ```
 
 **Configuration locations:**
-- **Sandbox (default):** Add to `agents.defaults.sandbox.docker.env` in Clawdbot config
-- **Host:** Add to `env.vars` in Clawdbot config
+- **Sandbox (default):** Add to `agents.defaults.sandbox.docker.env` in OpenClaw config
+- **Host:** Add to `env.vars` in OpenClaw config
 
 ### Getting API Credentials
 
