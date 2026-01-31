@@ -1,0 +1,11 @@
+{
+  "owner": "drjmz",
+  "slug": "moltbook-registry",
+  "displayName": "Moltbook Agent Registry",
+  "latest": {
+    "version": "1.0.1",
+    "publishedAt": 1769844383041,
+    "commit": null
+  },
+  "history": []
+}
