@@ -1,0 +1,11 @@
+{
+  "owner": "orosha-ai",
+  "slug": "agent-observability-dashboard",
+  "displayName": "Agent Observability Dashboard",
+  "latest": {
+    "version": "0.1.0",
+    "publishedAt": 1769873369789,
+    "commit": null
+  },
+  "history": []
+}
