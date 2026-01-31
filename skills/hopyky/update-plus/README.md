@@ -1,8 +1,6 @@
 # Update Plus
 
-A comprehensive backup, update, and restore tool for your entire Moltbot/Clawdbot environment. Protect your config, workspace, and skills with automatic rollback, encrypted backups, and cloud sync.
-
-**Auto-detect**: Works with both `moltbot` and `clawdbot`.
+A comprehensive backup, update, and restore tool for your OpenClaw environment. Protect your config, workspace, and skills with automatic rollback, encrypted backups, and cloud sync.
 
 ## Quick Start
 
@@ -20,7 +18,7 @@ update-plus update
 update-plus update --dry-run
 
 # Restore from backup
-update-plus restore update-plus-2026-01-25-12:00:00.tar.gz
+update-plus restore openclaw-backup-2026-01-25-12:00:00.tar.gz
 ```
 
 ## Features
@@ -36,24 +34,20 @@ update-plus restore update-plus-2026-01-25-12:00:00.tar.gz
 | **Cloud Sync** | Upload backups to Google Drive, S3, Dropbox via rclone |
 | **Notifications** | Get notified via WhatsApp, Telegram, or Discord |
 | **Connection Retry** | Auto-retry on network failure (configurable) |
-| **Bot Auto-detect** | Works with moltbot and clawdbot |
 
 ## Installation
 
 ```bash
-# Clone manually
-git clone https://github.com/hopyky/update-plus.git ~/.moltbot/skills/update-plus
+git clone https://github.com/hopyky/update-plus.git ~/.openclaw/skills/update-plus
 ```
 
 ### Add to PATH
-
-Create a symlink to use the command globally:
 
 ```bash
 mkdir -p ~/bin
 echo 'export PATH="$HOME/bin:$PATH"' >> ~/.zshrc  # or ~/.bashrc
 source ~/.zshrc
-ln -sf ~/.moltbot/skills/update-plus/bin/update-plus ~/bin/update-plus
+ln -sf ~/.openclaw/skills/update-plus/bin/update-plus ~/bin/update-plus
 ```
 
 ### Dependencies
@@ -68,25 +62,24 @@ ln -sf ~/.moltbot/skills/update-plus/bin/update-plus ~/bin/update-plus
 
 ## Configuration
 
-Create `~/.moltbot/update-plus.json` (or `~/.clawdbot/update-plus.json`):
+Create `~/.openclaw/update-plus.json`:
 
 ```json
 {
-  "backup_dir": "~/.moltbot/backups",
+  "backup_dir": "~/.openclaw/backups",
   "backup_before_update": true,
   "backup_count": 5,
   "backup_paths": [
-    {"path": "~/.moltbot", "label": "config", "exclude": ["backups", "logs", "media", "*.lock"]},
-    {"path": "~/clawd", "label": "workspace", "exclude": ["node_modules", ".venv"]}
+    {"path": "~/.openclaw", "label": "config", "exclude": ["backups", "logs", "media"]},
+    {"path": "~/.openclaw/workspace", "label": "workspace", "exclude": ["node_modules", ".venv"]}
   ],
   "skills_dirs": [
-    {"path": "~/.moltbot/skills", "label": "prod", "update": true},
-    {"path": "~/clawd/skills", "label": "dev", "update": false}
+    {"path": "~/.openclaw/skills", "label": "prod", "update": true}
   ],
   "remote_storage": {
     "enabled": false,
     "rclone_remote": "gdrive:",
-    "path": "moltbot-backups"
+    "path": "openclaw-backups"
   },
   "encryption": {
     "enabled": false,
@@ -102,13 +95,6 @@ Create `~/.moltbot/update-plus.json` (or `~/.clawdbot/update-plus.json`):
   "connection_retry_delay": 60
 }
 ```
-
-### Config file locations (searched in order)
-
-1. `~/.moltbot/update-plus.json`
-2. `~/.clawdbot/update-plus.json`
-3. `~/.moltbot/moltbot-update.json` (legacy)
-4. `~/.clawdbot/clawdbot-update.json` (legacy)
 
 ## Connection Retry
 
@@ -160,9 +146,6 @@ update-plus restore backup.tar.gz config
 
 # Restore only workspace
 update-plus restore backup.tar.gz workspace
-
-# Force (no confirmation)
-update-plus restore backup.tar.gz --force
 ```
 
 ### `check` — Check for Updates
@@ -202,54 +185,14 @@ Target format determines channel:
 - `@username` → Telegram
 - `channel:123` → Discord
 
-## Cloud Storage
-
-### Setup rclone
-
-```bash
-# Install
-brew install rclone  # macOS
-curl https://rclone.org/install.sh | sudo bash  # Linux
-
-# Configure
-rclone config
-```
-
-### Enable in Config
-
-```json
-"remote_storage": {
-  "enabled": true,
-  "rclone_remote": "gdrive:",
-  "path": "moltbot-backups"
-}
-```
-
-## Logs
-
-All operations are logged to `~/.moltbot/backups/update.log`:
-
-```
-[2026-01-25 20:22:48] === Update started 2026-01-25 20:22:48 ===
-[2026-01-25 20:23:39] Creating backup...
-[2026-01-25 20:23:39] Backup created: update-plus-2026-01-25-20:22:48.tar.gz (625M)
-[2026-01-25 20:23:39] moltbot current version: 2026.1.22
-[2026-01-25 20:23:41] Starting skills update
-[2026-01-25 20:23:41] === Update completed 2026-01-25 20:23:41 ===
-```
-
-**Log retention**: Logs older than 30 days are automatically deleted.
-
-## Architecture (v3.0)
+## Architecture
 
 ```
 bin/
 ├── update-plus              # Main entry point
-├── moltbot-update-plus      # Symlink (compatibility)
-├── clawdbot-update-plus     # Symlink (compatibility)
 └── lib/
     ├── utils.sh             # Logging, helpers, connection retry
-    ├── config.sh            # Configuration (auto-detect bot)
+    ├── config.sh            # Configuration
     ├── backup.sh            # Backup functions
     ├── restore.sh           # Restore functions
     ├── update.sh            # Update functions
@@ -259,41 +202,24 @@ bin/
 
 ## Changelog
 
-### v3.0.0
-- Renamed to `update-plus` (simpler, bot-agnostic)
-- Config file: `update-plus.json` (with legacy fallback)
-- Auto-detect bot (moltbot preferred, clawdbot fallback)
-- Connection retry with configurable attempts and delay
-- Improved cron PATH handling for all package managers
-- Compatibility symlinks for `moltbot-update-plus` and `clawdbot-update-plus`
+### v4.0.1
+- Added Homebrew path detection (`/opt/homebrew/bin`) for cron jobs
+- Added `~/bin` to cron PATH for local symlinks
+- Updated example config with clearer workspace structure
 
-### v2.1.x
-- Fix pnpm launcher bug workaround
+### v4.0.0
+- OpenClaw only (removed moltbot/clawdbot legacy support)
+- Simplified configuration and paths
+- Config: ~/.openclaw/update-plus.json
+- Backups named: openclaw-backup-YYYY-MM-DD-HH:MM:SS.tar.gz
+
+### v3.x
+- Multi-bot support (openclaw, moltbot, clawdbot)
+- Connection retry for cron jobs
+
+### v2.x
+- Modular architecture
 - Smart package manager detection
-
-### v2.0.0
-- Complete architecture rewrite
-- Modular design (7 separate modules)
-
-## Migration from clawdbot-update-plus
-
-1. Rename your config file:
-   ```bash
-   mv ~/.clawdbot/clawdbot-update.json ~/.clawdbot/update-plus.json
-   # or for moltbot:
-   mv ~/.moltbot/moltbot-update.json ~/.moltbot/update-plus.json
-   ```
-
-2. Update your cron job:
-   ```bash
-   update-plus uninstall-cron
-   update-plus install-cron
-   ```
-
-3. Update your PATH symlink:
-   ```bash
-   ln -sf ~/.moltbot/skills/update-plus/bin/update-plus ~/bin/update-plus
-   ```
 
 ## Author
 

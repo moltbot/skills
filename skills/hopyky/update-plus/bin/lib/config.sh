@@ -1,51 +1,20 @@
 #!/usr/bin/env bash
 # Update Plus - Configuration management
-# Version: 3.0.0
-# Supports both moltbot and clawdbot
+# Version: 4.0.1
+# For OpenClaw
 
-# Detect which bot is installed (moltbot preferred, clawdbot as fallback)
-detect_bot_name() {
-  if command -v moltbot &>/dev/null; then
-    echo "moltbot"
-  elif command -v clawdbot &>/dev/null; then
-    echo "clawdbot"
-  else
-    # Check common paths
-    if [[ -d "${HOME}/.moltbot" ]]; then
-      echo "moltbot"
-    elif [[ -d "${HOME}/.clawdbot" ]]; then
-      echo "clawdbot"
-    else
-      echo "moltbot"  # Default to new name
-    fi
-  fi
-}
+# Bot name
+BOT_NAME="openclaw"
+BOT_NAME_UPPER="OPENCLAW"
 
-# Bot name (moltbot or clawdbot)
-BOT_NAME=$(detect_bot_name)
-BOT_NAME_UPPER=$(echo "$BOT_NAME" | tr '[:lower:]' '[:upper:]')
-
-# Default paths (adapt based on detected bot)
-WORKSPACE_DEFAULT="${HOME}/clawd"
-if [[ "$BOT_NAME" == "moltbot" ]]; then
-  BOT_DIR="${HOME}/.moltbot"
-  # Also check legacy .clawdbot if .moltbot doesn't exist
-  [[ ! -d "$BOT_DIR" ]] && [[ -d "${HOME}/.clawdbot" ]] && BOT_DIR="${HOME}/.clawdbot"
-else
-  BOT_DIR="${HOME}/.clawdbot"
-fi
-
+# Default paths
+BOT_DIR="${HOME}/.openclaw"
+WORKSPACE_DEFAULT="${HOME}/.openclaw/workspace"
 BACKUP_DIR_DEFAULT="${BOT_DIR}/backups"
 
-# Config file (searched in order: update-plus.json first, then legacy names)
-if [[ -f "${HOME}/.moltbot/update-plus.json" ]]; then
-  CONFIG_FILE="${HOME}/.moltbot/update-plus.json"
-elif [[ -f "${HOME}/.clawdbot/update-plus.json" ]]; then
-  CONFIG_FILE="${HOME}/.clawdbot/update-plus.json"
-elif [[ -f "${HOME}/.moltbot/moltbot-update.json" ]]; then
-  CONFIG_FILE="${HOME}/.moltbot/moltbot-update.json"
-elif [[ -f "${HOME}/.clawdbot/clawdbot-update.json" ]]; then
-  CONFIG_FILE="${HOME}/.clawdbot/clawdbot-update.json"
+# Config file
+if [[ -f "${BOT_DIR}/update-plus.json" ]]; then
+  CONFIG_FILE="${BOT_DIR}/update-plus.json"
 else
   CONFIG_FILE="${BOT_DIR}/update-plus.json"
 fi
@@ -62,7 +31,7 @@ load_config() {
   BACKUP_COUNT="5"
   EXCLUDED_SKILLS=""
 
-  # Backup paths (new v2 format)
+  # Backup paths (v2 format)
   BACKUP_PATHS_JSON=""
 
   # Skills dirs (for updates)
@@ -124,17 +93,12 @@ load_config() {
     if jq -e '.skills_dirs' "$CONFIG_FILE" >/dev/null 2>&1; then
       SKILLS_DIRS_JSON=$(jq -c '.skills_dirs' "$CONFIG_FILE")
     else
-      # Legacy: single skills_dir
-      local skills_dir=$(jq -r '.skills_dir // "'"${HOME}/.clawdbot/skills"'"' "$CONFIG_FILE")
-      SKILLS_DIRS_JSON=$(jq -n --arg path "$skills_dir" '[{path: $path, label: "default", update: true}]')
+      # Default skills dir
+      SKILLS_DIRS_JSON=$(jq -n '[{path: "~/.openclaw/skills", label: "default", update: true}]')
     fi
   else
-    # No config file, use defaults (try moltbot path first, then clawdbot)
-    if [[ -d "${HOME}/.moltbot/skills" ]]; then
-      SKILLS_DIRS_JSON=$(jq -n '[{path: "~/.moltbot/skills", label: "default", update: true}]')
-    else
-      SKILLS_DIRS_JSON=$(jq -n '[{path: "~/.clawdbot/skills", label: "default", update: true}]')
-    fi
+    # No config file, use defaults
+    SKILLS_DIRS_JSON=$(jq -n '[{path: "~/.openclaw/skills", label: "default", update: true}]')
   fi
 
   # Ensure directories exist
@@ -172,7 +136,7 @@ get_backup_paths() {
   if [[ -n "$BACKUP_PATHS_JSON" ]] && [[ "$BACKUP_PATHS_JSON" != "null" ]]; then
     echo "$BACKUP_PATHS_JSON"
   else
-    # Legacy fallback: derive from skills_dirs
+    # Default: backup skills_dirs
     echo "$SKILLS_DIRS_JSON" | jq -c '[.[] | {path: .path, label: .label, exclude: [".venv", "node_modules", "*.pyc", "__pycache__"]}]'
   fi
 }

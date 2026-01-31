@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Update Plus - Notification functions
-# Version: 3.0.0
-# Supports both moltbot and clawdbot
+# Version: 4.0.1
+# For OpenClaw
 
 # Detect channel from target format
 detect_channel() {
@@ -18,7 +18,7 @@ detect_channel() {
   fi
 }
 
-# Send notification via Clawdbot messaging
+# Send notification via OpenClaw messaging
 send_notification() {
   local status="$1"  # "success", "info", or "error"
   local details="${2:-}"
@@ -49,31 +49,25 @@ send_notification() {
 
   log_info "Sending notification..."
 
-  # Check if bot command is available (moltbot or clawdbot)
-  local notify_cmd=""
-  if command_exists moltbot; then
-    notify_cmd="moltbot"
-  elif command_exists clawdbot; then
-    notify_cmd="clawdbot"
-  else
-    log_warning "Neither moltbot nor clawdbot command found, skipping notification"
+  # Check if openclaw command is available
+  if ! command_exists openclaw; then
+    log_warning "openclaw command not found, skipping notification"
     return 0
   fi
 
   # Detect channel from target format
   local channel=$(detect_channel "$NOTIFY_TARGET")
 
-  # Build message (use detected bot name)
-  local bot_label=$(echo "$notify_cmd" | sed 's/.*/\u&/')  # Capitalize
+  # Build message
   local message=""
   if [[ "$status" == "success" ]]; then
-    message="✅ *${bot_label} Update Complete*"
+    message="✅ *OpenClaw Update Complete*"
     message+="\n\n📦 Updates applied successfully."
   elif [[ "$status" == "info" ]]; then
-    message="ℹ️ *${bot_label} Update Check*"
+    message="ℹ️ *OpenClaw Update Check*"
     message+="\n\n📋 Everything is already up to date."
   else
-    message="❌ *${bot_label} Update Failed*"
+    message="❌ *OpenClaw Update Failed*"
     message+="\n\n⚠️ An error occurred during the update."
   fi
 
@@ -83,8 +77,8 @@ send_notification() {
 
   message+="\n\n🕐 $(date '+%Y-%m-%d %H:%M:%S')"
 
-  # Send via bot message command
-  if $notify_cmd message send --channel "$channel" --target "$NOTIFY_TARGET" --message "$message" 2>/dev/null; then
+  # Send via openclaw message
+  if openclaw message send --channel "$channel" --target "$NOTIFY_TARGET" --message "$message" 2>/dev/null; then
     log_success "Notification sent to $NOTIFY_TARGET via $channel"
     log_to_file "Notification sent to $NOTIFY_TARGET via $channel"
   else

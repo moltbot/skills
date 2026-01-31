@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Update Plus - Backup functions
-# Version: 3.0.0
-# Supports both moltbot and clawdbot
+# Version: 4.0.1
+# For OpenClaw
 
 # Create timestamped backup
 create_backup() {
-  local backup_name="moltbot-update-$(date +%Y-%m-%d-%H:%M:%S).tar.gz"
+  local backup_name="openclaw-backup-$(date +%Y-%m-%d-%H:%M:%S).tar.gz"
   local backup_path="${BACKUP_DIR}/${backup_name}"
   local tmp_backup_dir=$(mktemp -d)
   local dirs_backed_up=0

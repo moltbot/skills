@@ -1,20 +1,31 @@
 {
-  "backup_dir": "~/.moltbot/backups",
+  "workspace": "~/clawd",
+  "backup_dir": "~/.openclaw/backups",
   "backup_before_update": true,
   "backup_count": 5,
   "excluded_skills": [],
   "backup_paths": [
-    {"path": "~/.moltbot", "label": "config", "exclude": ["backups", "logs", "media", "*.lock"]},
-    {"path": "~/clawd", "label": "workspace", "exclude": ["node_modules", ".venv", "__pycache__"]}
+    {
+      "path": "~/.openclaw",
+      "label": "config",
+      "description": "System config, credentials, logs",
+      "exclude": ["backups", "logs", "media", "*.lock"]
+    },
+    {
+      "path": "~/clawd",
+      "label": "workspace",
+      "description": "Working directory, projects, dev skills",
+      "exclude": ["node_modules", ".venv", "__pycache__", ".git"]
+    }
   ],
   "skills_dirs": [
-    {"path": "~/.moltbot/skills", "label": "prod", "update": true},
+    {"path": "~/.openclaw/skills", "label": "prod", "update": true},
     {"path": "~/clawd/skills", "label": "dev", "update": false}
   ],
   "remote_storage": {
     "enabled": false,
     "rclone_remote": "gdrive:",
-    "path": "moltbot-backups"
+    "path": "openclaw-backups"
   },
   "encryption": {
     "enabled": false,

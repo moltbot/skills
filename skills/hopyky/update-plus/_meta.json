@@ -3,20 +3,20 @@
   "slug": "update-plus",
   "displayName": "Update Plus",
   "latest": {
-    "version": "3.0.0",
-    "publishedAt": 1769711882805,
-    "commit": "https://github.com/clawdbot/skills/commit/f421ac620b9a2dd9abbe0ad7f6937cc8845e9c83"
+    "version": "4.0.3",
+    "publishedAt": 1769841494386,
+    "commit": null
   },
   "history": [
+    {
+      "version": "3.0.0",
+      "publishedAt": 1769711882805,
+      "commit": "https://github.com/clawdbot/skills/commit/f421ac620b9a2dd9abbe0ad7f6937cc8845e9c83"
+    },
     {
       "version": "4.0.1",
       "publishedAt": 1769789353160,
       "commit": "https://github.com/clawdbot/skills/commit/0cf2693f861a9350b98478b410472f8e67c6abfe"
-    },
-    {
-      "version": "3.0.0",
-      "publishedAt": 1769711882805,
-      "commit": "https://github.com/clawdbot/skills/commit/7d5fe1fd615c9b29c795d499b1891eb8fb21ebc3"
     }
   ]
 }

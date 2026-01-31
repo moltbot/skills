@@ -1,23 +1,86 @@
 #!/usr/bin/env bash
 # Update Plus - Update functions
-# Version: 3.0.0
-# Supports both moltbot and clawdbot
+# Version: 4.0.3
+# For OpenClaw
 
 # Global tracking
 BOT_UPDATED=false
-CLAWDBOT_UPDATED=false  # Legacy alias
 SKILLS_UPDATED=0
+OPENCLAW_UPDATE_AVAILABLE=false
+SKILLS_UPDATE_AVAILABLE=false
+
+# Quick check if any updates are available (before backup)
+has_updates_available() {
+  log_info "Checking for available updates..."
+
+  OPENCLAW_UPDATE_AVAILABLE=false
+  SKILLS_UPDATE_AVAILABLE=false
+
+  # Check OpenClaw version
+  if command_exists openclaw; then
+    local current_version=$(openclaw --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+(-[0-9]+)?' | head -1 || echo "unknown")
+    local latest_version="unknown"
+
+    if command_exists npm; then
+      latest_version=$(npm view openclaw version 2>/dev/null || echo "unknown")
+    elif command_exists pnpm; then
+      latest_version=$(pnpm view openclaw version 2>/dev/null || echo "unknown")
+    fi
+
+    if [[ "$latest_version" != "unknown" ]] && [[ "$current_version" != "$latest_version" ]]; then
+      log_info "OpenClaw update available: $current_version → $latest_version"
+      OPENCLAW_UPDATE_AVAILABLE=true
+    else
+      log_info "OpenClaw is up to date ($current_version)"
+    fi
+  fi
+
+  # Check skills for updates
+  local skills_dirs_json=$(get_skills_dirs)
+
+  while IFS= read -r dir_config; do
+    local dir_path=$(echo "$dir_config" | jq -r '.path')
+    dir_path=$(expand_path "$dir_path")
+    local dir_update=$(echo "$dir_config" | jq -r '.update')
+
+    [[ "$dir_update" != "true" ]] && continue
+    [[ ! -d "$dir_path" ]] && continue
+
+    for skill_dir in "$dir_path"/*/; do
+      [[ -d "$skill_dir/.git" ]] || continue
+
+      local skill_name=$(basename "$skill_dir")
+      is_excluded "$skill_name" && continue
+
+      cd "$skill_dir"
+      git fetch --quiet 2>/dev/null || continue
+
+      local behind=$(git rev-list --count HEAD..@{u} 2>/dev/null || echo "0")
+      if [[ "$behind" -gt 0 ]]; then
+        log_info "Skill update available: $skill_name ($behind commits behind)"
+        SKILLS_UPDATE_AVAILABLE=true
+      fi
+    done
+  done < <(echo "$skills_dirs_json" | jq -c '.[]')
+
+  # Return true if any updates available
+  if [[ "$OPENCLAW_UPDATE_AVAILABLE" == true ]] || [[ "$SKILLS_UPDATE_AVAILABLE" == true ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
 
 # Fix pnpm launcher script bug (pnpm doesn't update the launcher after upgrade)
 fix_pnpm_launcher() {
-  local bot_bin=$(which "$BOT_NAME" 2>/dev/null || which moltbot 2>/dev/null || which clawdbot 2>/dev/null)
+  local bot_bin=$(which openclaw 2>/dev/null)
 
   if [[ -z "$bot_bin" ]]; then
     return 0
   fi
 
-  # Check if bot works
-  if $BOT_NAME --version &>/dev/null; then
+  # Check if openclaw works
+  if openclaw --version &>/dev/null; then
     return 0  # Works fine, no fix needed
   fi
 
@@ -31,24 +94,18 @@ fix_pnpm_launcher() {
     return 1
   fi
 
-  # Find the latest bot version directory (try moltbot first, then clawdbot)
-  local latest_bot_dir=$(ls -d "$pnpm_global_dir"/moltbot@* 2>/dev/null | sort -V | tail -1)
-  local pkg_pattern="moltbot"
+  # Find the latest openclaw version directory
+  local latest_bot_dir=$(ls -d "$pnpm_global_dir"/openclaw@* 2>/dev/null | sort -V | tail -1)
 
   if [[ -z "$latest_bot_dir" ]]; then
-    latest_bot_dir=$(ls -d "$pnpm_global_dir"/clawdbot@* 2>/dev/null | sort -V | tail -1)
-    pkg_pattern="clawdbot"
-  fi
-
-  if [[ -z "$latest_bot_dir" ]]; then
-    log_warning "Could not find moltbot/clawdbot installation"
+    log_warning "Could not find openclaw installation"
     return 1
   fi
 
   local latest_bot_name=$(basename "$latest_bot_dir")
 
   # Extract the old version from the launcher script
-  local old_version=$(grep -oE "${pkg_pattern}@[^/]+" "$bot_bin" | head -1)
+  local old_version=$(grep -oE 'openclaw@[^/]+' "$bot_bin" | head -1)
 
   if [[ -z "$old_version" ]] || [[ "$old_version" == "$latest_bot_name" ]]; then
     return 0  # Already correct or can't determine
@@ -59,7 +116,7 @@ fix_pnpm_launcher() {
   sed -i '' "s|$old_version|$latest_bot_name|g" "$bot_bin" 2>/dev/null
 
   # Verify fix worked
-  if $BOT_NAME --version &>/dev/null; then
+  if openclaw --version &>/dev/null; then
     log_success "pnpm launcher fixed"
     log_to_file "Fixed pnpm launcher: $old_version -> $latest_bot_name"
   else
@@ -69,10 +126,9 @@ fix_pnpm_launcher() {
   return 0
 }
 
-# Detect package manager used to install bot
+# Detect package manager used to install openclaw
 detect_package_manager() {
-  # Check if bot is in a pnpm/yarn/bun global path
-  local bot_path=$(which "$BOT_NAME" 2>/dev/null || which moltbot 2>/dev/null || which clawdbot 2>/dev/null)
+  local bot_path=$(which openclaw 2>/dev/null)
 
   if [[ "$bot_path" == *"pnpm"* ]]; then
     echo "pnpm"
@@ -80,11 +136,11 @@ detect_package_manager() {
     echo "yarn"
   elif [[ "$bot_path" == *"bun"* ]]; then
     echo "bun"
-  elif command_exists pnpm && (pnpm list -g moltbot 2>/dev/null | grep -qE 'moltbot|clawdbot' || pnpm list -g clawdbot 2>/dev/null | grep -q clawdbot); then
+  elif command_exists pnpm && pnpm list -g openclaw 2>/dev/null | grep -q openclaw; then
     echo "pnpm"
-  elif command_exists yarn && (yarn global list 2>/dev/null | grep -qE 'moltbot|clawdbot'); then
+  elif command_exists yarn && yarn global list 2>/dev/null | grep -q openclaw; then
     echo "yarn"
-  elif command_exists bun && (bun pm ls -g 2>/dev/null | grep -qE 'moltbot|clawdbot'); then
+  elif command_exists bun && bun pm ls -g 2>/dev/null | grep -q openclaw; then
     echo "bun"
   elif command_exists npm; then
     echo "npm"
@@ -93,114 +149,88 @@ detect_package_manager() {
   fi
 }
 
-# Update bot binary (moltbot or clawdbot)
+# Update OpenClaw
 update_bot() {
   if [[ "$DRY_RUN" == true ]]; then
-    log_dry_run "Would update $BOT_NAME"
+    log_dry_run "Would update openclaw"
     return 0
   fi
 
-  log_info "Updating $BOT_NAME..."
+  log_info "Updating OpenClaw..."
 
-  # Check if bot command exists
-  if ! command_exists "$BOT_NAME"; then
-    # Try the other name as fallback
-    local alt_name=$([[ "$BOT_NAME" == "moltbot" ]] && echo "clawdbot" || echo "moltbot")
-    if command_exists "$alt_name"; then
-      BOT_NAME="$alt_name"
-      log_info "Using $BOT_NAME (fallback)"
-    else
-      log_error "Neither moltbot nor clawdbot command found"
-      return 1
-    fi
+  if ! command_exists openclaw; then
+    log_error "openclaw command not found"
+    return 1
   fi
 
   local current_version
-  current_version=$($BOT_NAME --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+(-[0-9]+)?' | head -1 || echo "unknown")
+  current_version=$(openclaw --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+(-[0-9]+)?' | head -1 || echo "unknown")
   log_info "Current version: $current_version"
-  log_to_file "$BOT_NAME current version: $current_version"
+  log_to_file "OpenClaw current version: $current_version"
 
   # Detect package manager
   local pkg_manager=$(detect_package_manager)
   log_info "Package manager: $pkg_manager"
 
-  # Determine package name (moltbot preferred, clawdbot as fallback)
-  local pkg_name="moltbot"
-  # Check if moltbot package exists on npm
-  if ! npm view moltbot version &>/dev/null 2>&1; then
-    pkg_name="clawdbot"
-  fi
-
   # Run appropriate update command
   local update_success=false
   case "$pkg_manager" in
     pnpm)
-      log_info "Running: pnpm add -g ${pkg_name}@latest"
-      if pnpm add -g "${pkg_name}@latest" 2>&1; then
+      log_info "Running: pnpm add -g openclaw@latest"
+      if pnpm add -g openclaw@latest 2>&1; then
         update_success=true
       fi
       ;;
     npm)
-      log_info "Running: npm install -g ${pkg_name}@latest"
-      if npm install -g "${pkg_name}@latest" 2>&1; then
+      log_info "Running: npm install -g openclaw@latest"
+      if npm install -g openclaw@latest 2>&1; then
         update_success=true
       fi
       ;;
     yarn)
-      log_info "Running: yarn global add ${pkg_name}@latest"
-      if yarn global add "${pkg_name}@latest" 2>&1; then
+      log_info "Running: yarn global add openclaw@latest"
+      if yarn global add openclaw@latest 2>&1; then
         update_success=true
       fi
       ;;
     bun)
-      log_info "Running: bun add -g ${pkg_name}@latest"
-      if bun add -g "${pkg_name}@latest" 2>&1; then
+      log_info "Running: bun add -g openclaw@latest"
+      if bun add -g openclaw@latest 2>&1; then
         update_success=true
       fi
       ;;
     *)
-      log_warning "Unknown package manager, trying $BOT_NAME update..."
-      if $BOT_NAME update 2>&1; then
+      log_warning "Unknown package manager, trying openclaw update..."
+      if openclaw update 2>&1; then
         update_success=true
       fi
       ;;
   esac
 
   if [[ "$update_success" != true ]]; then
-    log_error "$BOT_NAME update failed"
-    log_to_file "ERROR: $BOT_NAME update failed"
+    log_error "OpenClaw update failed"
+    log_to_file "ERROR: OpenClaw update failed"
     return 1
   fi
 
-  # Fix pnpm launcher script if needed (pnpm bug workaround)
+  # Fix pnpm launcher script if needed
   if [[ "$pkg_manager" == "pnpm" ]]; then
     fix_pnpm_launcher
   fi
 
-  # Re-detect bot name after update (might have changed from clawdbot to moltbot)
-  if command_exists moltbot; then
-    BOT_NAME="moltbot"
-  fi
-
   # Check new version
   local new_version
-  new_version=$($BOT_NAME --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+(-[0-9]+)?' | head -1 || echo "unknown")
+  new_version=$(openclaw --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+(-[0-9]+)?' | head -1 || echo "unknown")
 
   if [[ "$current_version" != "$new_version" ]]; then
-    log_success "$BOT_NAME updated: $current_version → $new_version"
-    log_to_file "$BOT_NAME updated: $current_version -> $new_version"
+    log_success "OpenClaw updated: $current_version → $new_version"
+    log_to_file "OpenClaw updated: $current_version -> $new_version"
     BOT_UPDATED=true
-    CLAWDBOT_UPDATED=true  # Legacy compatibility
   else
-    log_info "$BOT_NAME is already up to date ($current_version)"
+    log_info "OpenClaw is already up to date ($current_version)"
   fi
 
   return 0
-}
-
-# Legacy alias
-update_clawdbot() {
-  update_bot "$@"
 }
 
 # Update all skills
@@ -214,12 +244,6 @@ update_skills() {
 
   log_info "Updating all skills..."
   log_to_file "Starting skills update"
-
-  # Use claudhub if available
-  if command_exists claudhub; then
-    log_info "Updating skills via claudhub..."
-    claudhub update --all 2>/dev/null || log_warning "claudhub update failed, trying git..."
-  fi
 
   # Always run git skill update
   update_git_skills
@@ -313,28 +337,22 @@ check_updates() {
   log_info "Checking for updates..."
   echo ""
 
-  # Check bot version (moltbot or clawdbot)
-  if command_exists "$BOT_NAME" || command_exists moltbot || command_exists clawdbot; then
-    local bot_cmd="$BOT_NAME"
-    command_exists "$bot_cmd" || bot_cmd=$(command_exists moltbot && echo "moltbot" || echo "clawdbot")
-
-    local current_version=$($bot_cmd --version 2>/dev/null | head -1 || echo "unknown")
+  # Check OpenClaw version
+  if command_exists openclaw; then
+    local current_version=$(openclaw --version 2>/dev/null | head -1 || echo "unknown")
     local latest_version="unknown"
 
-    # Try to get latest version (try moltbot first, then clawdbot)
-    local pkg_name="moltbot"
+    # Try to get latest version
     if command_exists npm; then
-      latest_version=$(npm view moltbot version 2>/dev/null || echo "")
-      [[ -z "$latest_version" ]] && latest_version=$(npm view clawdbot version 2>/dev/null || echo "unknown") && pkg_name="clawdbot"
+      latest_version=$(npm view openclaw version 2>/dev/null || echo "unknown")
     elif command_exists pnpm; then
-      latest_version=$(pnpm view moltbot version 2>/dev/null || echo "")
-      [[ -z "$latest_version" ]] && latest_version=$(pnpm view clawdbot version 2>/dev/null || echo "unknown") && pkg_name="clawdbot"
+      latest_version=$(pnpm view openclaw version 2>/dev/null || echo "unknown")
     fi
 
-    echo -e "  ${BLUE}${BOT_NAME_UPPER}${NC}"
+    echo -e "  ${BLUE}OpenClaw${NC}"
     echo "    Installed: $current_version"
 
-    if [[ "$latest_version" != "unknown" ]] && [[ -n "$latest_version" ]]; then
+    if [[ "$latest_version" != "unknown" ]]; then
       echo "    Latest:    $latest_version"
       if [[ "$current_version" != "$latest_version" ]]; then
         echo -e "    ${YELLOW}→ Update available${NC}"
